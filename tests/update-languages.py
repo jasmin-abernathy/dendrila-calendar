@@ -12,6 +12,9 @@ entries = {json.loads('"'+k+'"'):json.loads('"'+v+'"') for k,v in entries.items(
 entries.update({
     'Select all': 'Tout sélectionner',
     'Select none': 'Tout désélectionner',
+    'Find events': 'Rechercher des événements',
+    'Search title or status': 'Rechercher par titre ou statut',
+    'Export filtered events (ICS)': 'Exporter les événements filtrés (ICS)',
     'Appointment': 'Rendez-vous',
     'Event': 'Événement',
     'Reserved day': 'Journée réservée',

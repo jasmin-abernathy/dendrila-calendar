@@ -9,6 +9,8 @@
 ## What currently works
 
 - Day-by-day **month, week and list** views; source filters and keyboard-operable controls.
+- **Instant search** by event title, status or source name within the loaded range, with no extra network calls.
+- **Private ICS export** of the filtered events, generated locally in the administrator's browser; no remote feeds or public endpoints.
 - **Dendrila events**: create/edit your own events using a private WordPress post type (admin only).
 - **Optional event sources**: Event Organiser, Events Manager and The Events Calendar (single published events only; recurring occurrences are not yet included).
 - **Optional booking sources**: Amelia, Booking Calendar, Bookly, Easy Appointments, FluentBooking, Oryx Bookings and Simply Schedule Appointments.
@@ -75,8 +77,11 @@ Source IDs must match `[a-z][a-z0-9_-]{0,31}`. Source adapters must filter by th
 ```sh
 find . -name '*.php' -print0 | xargs -0 -n1 php -l
 node --check assets/calendar.js
+node --check assets/calendar-ics.js
+node tests/test-calendar-ics.js
 php tests/test-sources.php
 php tests/test-integrations.php
+php tests/test-calendar-ui.php
 ```
 
 License: GPL-2.0-or-later.

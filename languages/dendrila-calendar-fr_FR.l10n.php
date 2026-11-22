@@ -53,5 +53,8 @@ return array(
         'View' => 'Vue',
         'Week' => 'Semaine',
         'You are not allowed to view this calendar.' => 'Vous n’avez pas le droit de consulter ce calendrier.',
+        'Find events' => 'Rechercher des événements',
+        'Search title or status' => 'Rechercher par titre ou statut',
+        'Export filtered events (ICS)' => 'Exporter les événements filtrés (ICS)',
     ),
 );

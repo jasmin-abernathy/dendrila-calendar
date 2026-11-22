@@ -23,7 +23,7 @@ Dendrila Calendar is an independent WordPress administration calendar that bring
 * Booking sources: Amelia, Booking Calendar, Bookly, Easy Appointments, FluentBooking, Oryx Bookings and Simply Schedule Appointments.
 * Ten external sources in total, all optional and read-only.
 
-No external CDN, custom booking tables or mandatory dependency.
+Search loaded calendar events locally and download filtered events as an ICS file without exposing a public calendar feed. No external CDN, custom booking tables or mandatory dependency.
 
 == Installation ==
 
@@ -46,6 +46,7 @@ No. Only users with manage_options can view the private calendar.
 
 = 0.0.1 (development; first internal test) =
 * Initial unified calendar with local events and optional, read-only source integrations.
+* Added client-side event search and RFC 5545-style private ICS export with UTF-8 folding and DST-aware all-day dates.
 * Added source selection controls, timezone navigation safeguards and isolated adapter regression tests.
 * ICS Calendar feed integration is deferred until a secure, explicit configuration exists.
 * Not yet released or tested end-to-end on a production-like WordPress installation.

@@ -143,3 +143,12 @@ msgstr ""
 
 msgid "You are not allowed to view this calendar."
 msgstr ""
+
+msgid "Find events"
+msgstr ""
+
+msgid "Search title or status"
+msgstr ""
+
+msgid "Export filtered events (ICS)"
+msgstr ""

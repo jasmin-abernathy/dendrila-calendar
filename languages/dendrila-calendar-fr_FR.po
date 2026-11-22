@@ -145,3 +145,12 @@ msgstr "Semaine"
 
 msgid "You are not allowed to view this calendar."
 msgstr "Vous n’avez pas le droit de consulter ce calendrier."
+
+msgid "Find events"
+msgstr "Rechercher des événements"
+
+msgid "Search title or status"
+msgstr "Rechercher par titre ou statut"
+
+msgid "Export filtered events (ICS)"
+msgstr "Exporter les événements filtrés (ICS)"
