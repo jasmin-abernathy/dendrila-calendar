@@ -1,0 +1,48 @@
+.dendrila-calendar-wrap {max-width: 1400px;}
+.dendrila-calendar-toolbar {display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:18px 0;}
+.dendrila-calendar-toolbar h2 {margin:0 12px; font-size:1.3rem; flex:1 1 220px;}
+.dendrila-calendar-sources {border:1px solid #c3c4c7; background:#fff; border-radius:5px; padding:10px 14px; margin-bottom:14px;}
+.dendrila-calendar-sources legend {font-weight:600; padding:0 4px;}
+#dendrila-source-toggles {display:flex; flex-wrap:wrap; gap:14px;}
+.dendrila-source-option {display:flex; align-items:center; gap:4px;}
+.dendrila-grid {display:grid; background:#fff; border:1px solid #c3c4c7; border-radius:6px; overflow:hidden;}
+.dendrila-grid--month,.dendrila-grid--week {grid-template-columns:repeat(7,minmax(0,1fr));}
+.dendrila-grid--list {grid-template-columns:1fr;}
+.dendrila-day-heading {font-weight:600; text-align:center; padding:10px 4px; background:#f6f7f7; border-bottom:1px solid #c3c4c7;}
+.dendrila-day {min-width:0; padding:8px; border-right:1px solid #dcdcde; border-bottom:1px solid #dcdcde;}
+.dendrila-grid--month .dendrila-day {min-height:120px;}
+.dendrila-day--outside {background:#f6f7f7;}
+.dendrila-day--today {box-shadow:inset 0 0 0 2px #2271b1;}
+.dendrila-day-date {font-size:0.92rem; margin:0 0 8px;}
+.dendrila-day-events {margin:0; padding:0; list-style:none;}
+.dendrila-day-events li {margin:0 0 5px; min-width:0;}
+.dendrila-event {display:block; background:#f0f5fa; border-left:3px solid #2271b1; padding:4px 6px; border-radius:3px; overflow-wrap:anywhere; color:#1d2327; line-height:1.3;}
+.dendrila-event[data-source="oryx"] {border-left-color:#8a3ffc;}
+.dendrila-event[data-source="tec"] {border-left-color:#00866e;}
+a.dendrila-event:hover,a.dendrila-event:focus {background:#d9e9f8; color:#003d71;}
+.dendrila-grid--list .dendrila-day {border-right:0;}
+.dendrila-grid--list .dendrila-day-events {display:flex; flex-wrap:wrap; gap:8px;}
+.dendrila-grid--list .dendrila-day-events li {flex:0 1 290px;}
+.dendrila-empty {padding:18px; grid-column:1/-1;}
+#dendrila-message:not(:empty) {padding:10px 0;}
+@media(max-width:1000px) {
+ .dendrila-grid--month .dendrila-day {min-height:92px; padding:4px;}
+ .dendrila-event {font-size:11px;}
+ .dendrila-grid--week {grid-template-columns:1fr;}
+ .dendrila-grid--week .dendrila-day {border-right:0;}
+}
+@media(max-width:650px) {
+ .dendrila-grid--month {grid-template-columns:1fr;}
+ .dendrila-grid--month .dendrila-day-heading {display:none;}
+ .dendrila-grid--month .dendrila-day {min-height:0; padding:8px;}
+ .dendrila-grid--month .dendrila-day--outside {display:none;}
+ .dendrila-grid--month .dendrila-day-date {font-size:1rem;}
+}
+@media(prefers-reduced-motion:reduce) { .dendrila-calendar-wrap * {scroll-behavior:auto; transition:none!important;} }
+
+.dendrila-source-actions { display: flex; gap: 8px; margin: 8px 0 12px; flex-wrap: wrap; }
+
+.dendrila-calendar-tools {display:flex; align-items:center; flex-wrap:wrap; gap:10px; margin:0 0 14px;}
+.dendrila-calendar-tools input[type=search] {flex:1 1 210px; max-width:420px;}
+.dendrila-calendar-tools button {margin-left:auto;}
+@media(max-width:650px) {.dendrila-calendar-tools button {margin-left:0; width:100%;}}

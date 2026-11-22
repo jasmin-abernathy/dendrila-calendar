@@ -1,0 +1,156 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Dendrila Calendar 0.0.1\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: fr_FR\n"
+"Plural-Forms: nplurals=2; plural=n>1;\n"
+
+msgid "Add an event"
+msgstr "Ajouter un événement"
+
+msgid "Add calendar event"
+msgstr "Ajouter un événement au calendrier"
+
+msgid "All day"
+msgstr "Toute la journée"
+
+msgid "Amelia"
+msgstr "Amelia"
+
+msgid "Appointment"
+msgstr "Rendez-vous"
+
+msgid "Approved"
+msgstr "Approuvé"
+
+msgid "Booking"
+msgstr "Réservation"
+
+msgid "Booking Calendar"
+msgstr "Booking Calendar"
+
+msgid "Bookly"
+msgstr "Bookly"
+
+msgid "Calendar event"
+msgstr "Événement du calendrier"
+
+msgid "Calendar events"
+msgstr "Événements du calendrier"
+
+msgid "Date and time"
+msgstr "Date et heure"
+
+msgid "Date range is too large"
+msgstr "La période demandée est trop longue"
+
+msgid "Dendrila Calendar"
+msgstr "Dendrila Calendar"
+
+msgid "Dendrila events"
+msgstr "Événements Dendrila"
+
+msgid "Easy Appointments"
+msgstr "Easy Appointments"
+
+msgid "Edit calendar event"
+msgstr "Modifier l’événement"
+
+msgid "End"
+msgstr "Fin"
+
+msgid "Event"
+msgstr "Événement"
+
+msgid "Event Organiser"
+msgstr "Event Organiser"
+
+msgid "Events Manager"
+msgstr "Events Manager"
+
+msgid "FluentBooking"
+msgstr "FluentBooking"
+
+msgid "Forbidden"
+msgstr "Accès refusé"
+
+msgid "Invalid date range"
+msgstr "Période invalide"
+
+msgid "List"
+msgstr "Liste"
+
+msgid "Loading events…"
+msgstr "Chargement des événements…"
+
+msgid "Month"
+msgstr "Mois"
+
+msgid "Next"
+msgstr "Suivant"
+
+msgid "No events for this period."
+msgstr "Aucun événement pour cette période."
+
+msgid "One private calendar for your WordPress events and compatible booking tools. Imported sources are read-only."
+msgstr "Un calendrier privé réunissant vos événements WordPress et les outils de réservation compatibles. Les sources importées sont en lecture seule."
+
+msgid "Oryx Bookings"
+msgstr "Oryx Bookings"
+
+msgid "Pending"
+msgstr "En attente"
+
+msgid "Previous"
+msgstr "Précédent"
+
+msgid "Reserved day"
+msgstr "Journée réservée"
+
+msgid "Select all"
+msgstr "Tout sélectionner"
+
+msgid "Select none"
+msgstr "Tout désélectionner"
+
+msgid "Simply Schedule Appointments"
+msgstr "Simply Schedule Appointments"
+
+msgid "Sources"
+msgstr "Sources"
+
+msgid "Start"
+msgstr "Début"
+
+msgid "The Events Calendar"
+msgstr "The Events Calendar"
+
+msgid "Times use the site timezone: %s. The event is visible only to administrators."
+msgstr "Les horaires utilisent le fuseau horaire du site : %s. L’événement est visible uniquement par les administrateurs."
+
+msgid "Today"
+msgstr "Aujourd’hui"
+
+msgid "Unable to load events. Please try again."
+msgstr "Impossible de charger les événements. Réessayez."
+
+msgid "Unified calendar"
+msgstr "Calendrier unifié"
+
+msgid "View"
+msgstr "Vue"
+
+msgid "Week"
+msgstr "Semaine"
+
+msgid "You are not allowed to view this calendar."
+msgstr "Vous n’avez pas le droit de consulter ce calendrier."
+
+msgid "Find events"
+msgstr "Rechercher des événements"
+
+msgid "Search title or status"
+msgstr "Rechercher par titre ou statut"
+
+msgid "Export filtered events (ICS)"
+msgstr "Exporter les événements filtrés (ICS)"

@@ -1,0 +1,154 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Dendrila Calendar 0.0.1\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Add an event"
+msgstr ""
+
+msgid "Add calendar event"
+msgstr ""
+
+msgid "All day"
+msgstr ""
+
+msgid "Amelia"
+msgstr ""
+
+msgid "Appointment"
+msgstr ""
+
+msgid "Approved"
+msgstr ""
+
+msgid "Booking"
+msgstr ""
+
+msgid "Booking Calendar"
+msgstr ""
+
+msgid "Bookly"
+msgstr ""
+
+msgid "Calendar event"
+msgstr ""
+
+msgid "Calendar events"
+msgstr ""
+
+msgid "Date and time"
+msgstr ""
+
+msgid "Date range is too large"
+msgstr ""
+
+msgid "Dendrila Calendar"
+msgstr ""
+
+msgid "Dendrila events"
+msgstr ""
+
+msgid "Easy Appointments"
+msgstr ""
+
+msgid "Edit calendar event"
+msgstr ""
+
+msgid "End"
+msgstr ""
+
+msgid "Event"
+msgstr ""
+
+msgid "Event Organiser"
+msgstr ""
+
+msgid "Events Manager"
+msgstr ""
+
+msgid "FluentBooking"
+msgstr ""
+
+msgid "Forbidden"
+msgstr ""
+
+msgid "Invalid date range"
+msgstr ""
+
+msgid "List"
+msgstr ""
+
+msgid "Loading events…"
+msgstr ""
+
+msgid "Month"
+msgstr ""
+
+msgid "Next"
+msgstr ""
+
+msgid "No events for this period."
+msgstr ""
+
+msgid "One private calendar for your WordPress events and compatible booking tools. Imported sources are read-only."
+msgstr ""
+
+msgid "Oryx Bookings"
+msgstr ""
+
+msgid "Pending"
+msgstr ""
+
+msgid "Previous"
+msgstr ""
+
+msgid "Reserved day"
+msgstr ""
+
+msgid "Select all"
+msgstr ""
+
+msgid "Select none"
+msgstr ""
+
+msgid "Simply Schedule Appointments"
+msgstr ""
+
+msgid "Sources"
+msgstr ""
+
+msgid "Start"
+msgstr ""
+
+msgid "The Events Calendar"
+msgstr ""
+
+msgid "Times use the site timezone: %s. The event is visible only to administrators."
+msgstr ""
+
+msgid "Today"
+msgstr ""
+
+msgid "Unable to load events. Please try again."
+msgstr ""
+
+msgid "Unified calendar"
+msgstr ""
+
+msgid "View"
+msgstr ""
+
+msgid "Week"
+msgstr ""
+
+msgid "You are not allowed to view this calendar."
+msgstr ""
+
+msgid "Find events"
+msgstr ""
+
+msgid "Search title or status"
+msgstr ""
+
+msgid "Export filtered events (ICS)"
+msgstr ""
