@@ -1,0 +1,24 @@
+name: Static checks
+on:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: PHP syntax
+        run: find . -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: JavaScript syntax
+        run: node --check assets/calendar.js
+      - name: Adapter smoke tests
+        run: php tests/test-sources.php
+      - name: Package contains all required assets
+        run: |
+          test -f dendrila-calendar.php
+          test -f includes/class-dendrila-calendar.php
+          test -f includes/class-dendrila-calendar-sources.php
+          test -s assets/calendar.js
+          test -s assets/calendar.css
+          test -s languages/dendrila-calendar.pot
+          ! grep -R -E 'https?://(unpkg|cdnjs|cdn\.jsdelivr)' assets includes dendrila-calendar.php
