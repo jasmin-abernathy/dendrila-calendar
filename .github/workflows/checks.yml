@@ -13,6 +13,8 @@ jobs:
         run: node --check assets/calendar.js
       - name: Adapter smoke tests
         run: php tests/test-sources.php
+      - name: French translation coverage
+        run: php tests/test-translation.php
       - name: Package contains all required assets
         run: |
           test -f dendrila-calendar.php

@@ -11,6 +11,7 @@ A **private, unified admin calendar** for WordPress. It collects existing data w
 - **Oryx Bookings 1.1.3**: read bookings through its existing `BookingRepository::get_by_date_range()`; displays service and status, **not customer names, email addresses, phone numbers or private notes**.
 - **The Events Calendar**: display published single events from the plugin's UTC event metadata. **Recurring occurrences are not yet included.**
 - **Optional adapter API**: register sources through WordPress filters without patching other plugins.
+- French translation files (`.po` and WordPress 6.5+ `.l10n.php`) plus a gettext `.pot` template.
 - No vendor scripts, CDN, tracking, third-party API calls, custom tables, or mandatory WooCommerce dependency.
 
 ## Requirements and installation

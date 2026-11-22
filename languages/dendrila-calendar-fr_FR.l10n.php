@@ -1,0 +1,44 @@
+<?php
+/** French translations for Dendrila Calendar (WordPress 6.5+). */
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+return array(
+    'project-id-version' => 'Dendrila Calendar 0.1.0',
+    'language' => 'fr_FR',
+    'plural-forms' => 'nplurals=2; plural=n>1;',
+    'messages' => array(
+        'Add an event' => 'Ajouter un événement',
+        'Add calendar event' => 'Ajouter un événement au calendrier',
+        'All day' => 'Toute la journée',
+        'Booking' => 'Réservation',
+        'Calendar event' => 'Événement du calendrier',
+        'Calendar events' => 'Événements du calendrier',
+        'Date and time' => 'Date et heure',
+        'Date range is too large' => 'La période demandée est trop longue',
+        'Dendrila Calendar' => 'Dendrila Calendar',
+        'Dendrila events' => 'Événements Dendrila',
+        'Edit calendar event' => 'Modifier l’événement',
+        'End' => 'Fin',
+        'Forbidden' => 'Accès refusé',
+        'Invalid date range' => 'Période invalide',
+        'List' => 'Liste',
+        'Loading events…' => 'Chargement des événements…',
+        'Month' => 'Mois',
+        'Next' => 'Suivant',
+        'No events for this period.' => 'Aucun événement pour cette période.',
+        'One private calendar for your WordPress events and compatible booking tools. Imported sources are read-only.' => 'Un calendrier privé réunissant vos événements WordPress et les outils de réservation compatibles. Les sources importées sont en lecture seule.',
+        'Oryx Bookings' => 'Oryx Bookings',
+        'Previous' => 'Précédent',
+        'Sources' => 'Sources',
+        'Start' => 'Début',
+        'The Events Calendar' => 'The Events Calendar',
+        'Times use the site timezone: %s. The event is visible only to administrators.' => 'Les horaires utilisent le fuseau horaire du site : %s. L’événement est visible uniquement par les administrateurs.',
+        'Today' => 'Aujourd’hui',
+        'Unable to load events. Please try again.' => 'Impossible de charger les événements. Réessayez.',
+        'Unified calendar' => 'Calendrier unifié',
+        'View' => 'Vue',
+        'Week' => 'Semaine',
+        'You are not allowed to view this calendar.' => 'Vous n’avez pas le droit de consulter ce calendrier.',
+    ),
+);
