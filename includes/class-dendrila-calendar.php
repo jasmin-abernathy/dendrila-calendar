@@ -137,9 +137,14 @@ final class Dendrila_Calendar {
             return;
         }
         $url = plugin_dir_url( dirname( __DIR__ ) . '/dendrila-calendar.php' );
-        wp_enqueue_style( 'dendrila-calendar-admin', $url . 'assets/calendar.css', array(), self::VERSION );
-        wp_enqueue_script( 'dendrila-calendar-admin', $url . 'assets/calendar.js', array(), self::VERSION, true );
-        wp_enqueue_script( 'dendrila-calendar-subscriptions', $url . 'assets/calendar-subscriptions.js', array(), self::VERSION, true );
+        // Keep the plugin version 0.0.1 while busting stale asset caches on every build.
+        $asset_version = static function ( $file ) {
+            $path = dirname( __DIR__ ) . '/assets/' . $file;
+            return is_file( $path ) ? (string) filemtime( $path ) : self::VERSION;
+        };
+        wp_enqueue_style( 'dendrila-calendar-admin', $url . 'assets/calendar.css', array(), $asset_version( 'calendar.css' ) );
+        wp_enqueue_script( 'dendrila-calendar-admin', $url . 'assets/calendar.js', array(), $asset_version( 'calendar.js' ), true );
+        wp_enqueue_script( 'dendrila-calendar-subscriptions', $url . 'assets/calendar-subscriptions.js', array(), $asset_version( 'calendar-subscriptions.js' ), true );
         wp_localize_script( 'dendrila-calendar-subscriptions', 'dendrilaCalendarSubscriptions', array(
             'ajaxUrl' => admin_url( 'admin-ajax.php' ),
             'nonce' => wp_create_nonce( 'dendrila_calendar_subscription' ),
@@ -227,6 +232,13 @@ final class Dendrila_Calendar {
         $start_utc = $start_date->setTimezone( new DateTimeZone( 'UTC' ) )->format( 'Y-m-d H:i:s' );
         $end_utc = $end_date->setTimezone( new DateTimeZone( 'UTC' ) )->format( 'Y-m-d H:i:s' );
         $events = Dendrila_Calendar_Sources::events( $start_utc, $end_utc, $requested );
-        wp_send_json_success( array( 'events' => $events ) );
+        // Administrator-only aggregate source counts for non-sensitive diagnostics.
+        $source_counts = array_fill_keys( $requested, 0 );
+        foreach ( $events as $event ) {
+            if ( isset( $event['source'], $source_counts[ $event['source'] ] ) ) {
+                ++$source_counts[ $event['source'] ];
+            }
+        }
+        wp_send_json_success( array( 'events' => $events, 'source_counts' => $source_counts ) );
     }
 }

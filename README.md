@@ -92,3 +92,7 @@ php tests/test-integrations.php
 ```
 
 License: GPL-2.0-or-later.
+
+## Missing events in the administration calendar
+
+After loading, Dendrila Calendar shows how many records each selected source returned for the visible period. If Easy Appointments reports `0`, check the source plugin's appointment dates and that the source checkbox is enabled. If it reports a positive count but an event is not displayed, check the selected month, search query and browser console. These are aggregate counts only; client details remain private. Assets use file modification time for cache busting while the plugin remains at version `0.0.1`.

@@ -6,7 +6,7 @@
  * Version: 0.0.1
  * Requires at least: 6.5
  * Requires PHP: 7.4
- * Author: Le Verger du Numérique
+ * Author: Le Potager du Web
  * License: GPL-2.0-or-later
  * Text Domain: dendrila-calendar
  * Domain Path: /languages

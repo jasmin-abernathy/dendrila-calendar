@@ -10,7 +10,7 @@
   const viewSelect = document.getElementById('dendrila-view');
   const toggles = document.getElementById('dendrila-source-toggles');
   const search = document.getElementById('dendrila-search');
-  if (!root || !period || !message || !viewSelect || !toggles || !search) return;
+  if (!root || !period || !message || !viewSelect || !toggles) return;
 
   const locale = (config.locale || 'en').replace(/_/g, '-');
   const timeZone = config.timezone || 'UTC';
@@ -81,7 +81,7 @@
     return siteKey(start) <= dateKey && siteKey(new Date(end.getTime() - 1)) >= dateKey;
   }
   function filteredEvents() {
-    const query = search.value.trim().toLocaleLowerCase(locale);
+    const query = search ? search.value.trim().toLocaleLowerCase(locale) : '';
     if (!query) return state.events;
     return state.events.filter(event => [event.title, event.status, sources[event.source] || '']
       .some(value => String(value || '').toLocaleLowerCase(locale).includes(query)));
@@ -162,7 +162,12 @@
       state.events = payload.data.events;
       state.loaded = true;
       renderFiltered();
-      message.textContent = '';
+      // Per-source counters distinguish an empty provider from a display/filter problem.
+      const counts = payload.data.source_counts || {};
+      message.textContent = Object.keys(sources)
+        .filter(source => state.selectedSources.has(source))
+        .map(source => `${sources[source]}: ${Number(counts[source] || 0)}`)
+        .join(' · ');
     } catch (error) {
       if (error.name === 'AbortError' || state.request !== controller) return;
       root.replaceChildren();
@@ -183,7 +188,7 @@
     label.append(checkbox, document.createTextNode(' ' + title));
     toggles.append(label);
   });
-  search.addEventListener('input', () => { if (state.loaded) renderFiltered(); });
+  if (search) search.addEventListener('input', () => { if (state.loaded) renderFiltered(); });
   const setAllSources = selected => {
     toggles.querySelectorAll('input[type=checkbox]').forEach(box => { box.checked = selected; });
     state.selectedSources = new Set(selected ? Object.keys(sources) : []);

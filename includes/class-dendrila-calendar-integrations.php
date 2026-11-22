@@ -191,7 +191,7 @@ final class Dendrila_Calendar_Integrations {
         );
         return self::collect( $rows, static function ( $row ) use ( $start, $end ) {
             $from = self::site_date( (string) $row->date . ' ' . (string) $row->start );
-            $end_day = ! empty( $row->end_date ) ? $row->end_date : $row->date;
+            $end_day = ! empty( $row->end_date ) && '0000-00-00' !== $row->end_date ? $row->end_date : $row->date;
             $to = self::site_date( (string) $end_day . ' ' . (string) $row->end );
             return self::result(
                 'ea-' . absint( $row->id ), $row->service_title ?: __( 'Appointment', 'dendrila-calendar' ),
