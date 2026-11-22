@@ -118,12 +118,12 @@ namespace {
         throw new \Exception( 'Unknown provider accepted' );
     }
     // All-day reservations must span 23/25 actual hours over Paris DST transitions.
-    $method = new \\ReflectionMethod( \\Dendrila_Calendar_Integrations::class, 'site_date' );
+    $method = new \ReflectionMethod( \Dendrila_Calendar_Integrations::class, 'site_date' );
     foreach ( array( array('2027-03-28', '2027-03-29', 23), array('2027-10-31', '2027-11-01', 25) ) as $span ) {
         $day_start = $method->invoke( null, $span[0] . ' 00:00:00' );
         $day_end = $method->invoke( null, $span[1] . ' 00:00:00' );
         if ( ( $day_end->getTimestamp() - $day_start->getTimestamp() ) !== $span[2] * 3600 ) {
-            throw new \\Exception( 'DST all-day conversion incorrect on ' . $span[0] );
+            throw new \Exception( 'DST all-day conversion incorrect on ' . $span[0] );
         }
     }
     echo 'Eight integration providers passed, ' . count( $events ) . ' fixture events (no PII/no writes)'.PHP_EOL;
