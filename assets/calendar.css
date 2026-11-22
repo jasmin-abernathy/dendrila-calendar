@@ -46,3 +46,16 @@ a.dendrila-event:hover,a.dendrila-event:focus {background:#d9e9f8; color:#003d71
 .dendrila-calendar-tools input[type=search] {flex:1 1 210px; max-width:420px;}
 .dendrila-calendar-tools button {margin-left:auto;}
 @media(max-width:650px) {.dendrila-calendar-tools button {margin-left:0; width:100%;}}
+
+/* Live subscription links: intentionally distinct from the visible calendar filters. */
+.dendrila-subscriptions {border:1px solid #c3c4c7; background:#fff; border-radius:6px; padding:12px 16px; margin:14px 0;}
+.dendrila-subscriptions summary {cursor:pointer; font-weight:600; font-size:1.05rem; padding:4px 0;}
+.dendrila-subscriptions fieldset {display:flex; flex-wrap:wrap; gap:8px 18px;}
+.dendrila-subscriptions legend {font-weight:600; padding-bottom:6px;}
+.dendrila-subscriptions input[type=text] {max-width:100%; width:330px;}
+#dendrila-subscription-result {display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin:10px 0;}
+#dendrila-subscription-result > p {flex-basis:100%; margin:0;}
+#dendrila-subscription-result input[type=url] {flex:1 1 360px; max-width:100%;}
+.dendrila-copy-feedback {font-style:italic;}
+.dendrila-subscription-list {display:grid; gap:8px; margin:10px 0;}
+.dendrila-subscription-list li {display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap; margin:0; padding:8px; background:#f6f7f7; border-radius:4px; overflow-wrap:anywhere;}

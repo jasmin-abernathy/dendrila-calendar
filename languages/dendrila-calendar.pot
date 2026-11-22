@@ -36,6 +36,18 @@ msgstr ""
 msgid "Calendar events"
 msgstr ""
 
+msgid "Calendar synchronization"
+msgstr ""
+
+msgid "Copy link"
+msgstr ""
+
+msgid "Create a private, revocable subscription link. Add it by URL in your calendar app; updates are pulled automatically when that app refreshes. Changes made in the calendar app will not modify WordPress bookings."
+msgstr ""
+
+msgid "Create subscription link"
+msgstr ""
+
 msgid "Date and time"
 msgstr ""
 
@@ -66,13 +78,22 @@ msgstr ""
 msgid "Events Manager"
 msgstr ""
 
+msgid "Find events"
+msgstr ""
+
 msgid "FluentBooking"
 msgstr ""
 
 msgid "Forbidden"
 msgstr ""
 
+msgid "HTTPS is required for private calendar subscriptions."
+msgstr ""
+
 msgid "Invalid date range"
+msgstr ""
+
+msgid "Link copied."
 msgstr ""
 
 msgid "List"
@@ -81,7 +102,13 @@ msgstr ""
 msgid "Loading events…"
 msgstr ""
 
+msgid "Maximum number of subscriptions reached. Revoke an old link first."
+msgstr ""
+
 msgid "Month"
+msgstr ""
+
+msgid "My calendar"
 msgstr ""
 
 msgid "Next"
@@ -105,7 +132,22 @@ msgstr ""
 msgid "Reserved day"
 msgstr ""
 
+msgid "Revoke link"
+msgstr ""
+
+msgid "Revoke this subscription? Connected calendars will stop updating."
+msgstr ""
+
+msgid "Search title or status"
+msgstr ""
+
 msgid "Select all"
+msgstr ""
+
+msgid "Select and copy the link manually."
+msgstr ""
+
+msgid "Select at least one calendar source."
 msgstr ""
 
 msgid "Select none"
@@ -117,10 +159,28 @@ msgstr ""
 msgid "Sources"
 msgstr ""
 
+msgid "Sources to synchronize"
+msgstr ""
+
 msgid "Start"
 msgstr ""
 
+msgid "Subscription created. Copy the URL now; it will not be shown again."
+msgstr ""
+
+msgid "Subscription name (e.g. personal calendar)"
+msgstr ""
+
+msgid "Subscription not found."
+msgstr ""
+
+msgid "Subscription revoked."
+msgstr ""
+
 msgid "The Events Calendar"
+msgstr ""
+
+msgid "The full link is displayed only once after creation. If it is lost, revoke it and create a new one."
 msgstr ""
 
 msgid "Times use the site timezone: %s. The event is visible only to administrators."
@@ -129,7 +189,16 @@ msgstr ""
 msgid "Today"
 msgstr ""
 
+msgid "Treat the link as a password. Anyone holding it can read the selected event titles and dates. Only HTTPS sites can create links."
+msgstr ""
+
+msgid "Unable to generate a private link."
+msgstr ""
+
 msgid "Unable to load events. Please try again."
+msgstr ""
+
+msgid "Unable to update the subscription."
 msgstr ""
 
 msgid "Unified calendar"
@@ -144,11 +213,5 @@ msgstr ""
 msgid "You are not allowed to view this calendar."
 msgstr ""
 
-msgid "Find events"
-msgstr ""
-
-msgid "Search title or status"
-msgstr ""
-
-msgid "Export filtered events (ICS)"
+msgid "You cannot manage calendar subscriptions."
 msgstr ""

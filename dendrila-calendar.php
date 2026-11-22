@@ -19,5 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once __DIR__ . '/includes/class-dendrila-calendar-integrations.php';
 require_once __DIR__ . '/includes/class-dendrila-calendar-sources.php';
 require_once __DIR__ . '/includes/class-dendrila-calendar.php';
+require_once __DIR__ . '/includes/class-dendrila-calendar-subscriptions.php';
 
 add_action( 'plugins_loaded', array( 'Dendrila_Calendar', 'boot' ) );
+add_action( 'plugins_loaded', array( 'Dendrila_Calendar_Subscriptions', 'boot' ) );

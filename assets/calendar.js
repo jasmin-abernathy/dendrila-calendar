@@ -10,8 +10,7 @@
   const viewSelect = document.getElementById('dendrila-view');
   const toggles = document.getElementById('dendrila-source-toggles');
   const search = document.getElementById('dendrila-search');
-  const exportButton = document.getElementById('dendrila-export');
-  if (!root || !period || !message || !viewSelect || !toggles || !search || !exportButton) return;
+  if (!root || !period || !message || !viewSelect || !toggles || !search) return;
 
   const locale = (config.locale || 'en').replace(/_/g, '-');
   const timeZone = config.timezone || 'UTC';
@@ -90,7 +89,6 @@
   function renderFiltered() {
     const events = filteredEvents();
     display(events);
-    exportButton.disabled = !state.loaded || events.length === 0 || !window.DendrilaCalendarIcs;
   }
   function display(events) {
     root.replaceChildren();
@@ -149,7 +147,6 @@
     message.textContent = i18n.loading || 'Loading…';
     state.events = [];
     state.loaded = false;
-    exportButton.disabled = true;
     const url = new URL(config.ajaxUrl);
     url.searchParams.set('action', 'dendrila_calendar_events');
     url.searchParams.set('nonce', config.nonce);
@@ -170,8 +167,7 @@
       if (error.name === 'AbortError' || state.request !== controller) return;
       root.replaceChildren();
       state.loaded = false;
-      exportButton.disabled = true;
-      message.textContent = i18n.failed || 'Unable to load events.';
+        message.textContent = i18n.failed || 'Unable to load events.';
     }
   }
   Object.entries(sources).forEach(([slug, title]) => {
@@ -188,21 +184,6 @@
     toggles.append(label);
   });
   search.addEventListener('input', () => { if (state.loaded) renderFiltered(); });
-  exportButton.addEventListener('click', () => {
-    if (!state.loaded || !window.DendrilaCalendarIcs || exportButton.disabled) return;
-    const events = filteredEvents();
-    if (!events.length) return;
-    const content = window.DendrilaCalendarIcs.generate(events, siteKey, new Date(), window.location.hostname);
-    const blobUrl = URL.createObjectURL(new Blob([content], { type: 'text/calendar;charset=utf-8' }));
-    const link = el('a');
-    link.href = blobUrl;
-    const dates = range();
-    link.download = 'dendrila-calendar-' + key(dates.start) + '-' + key(addDays(dates.end, -1)) + '.ics';
-    document.body.append(link);
-    link.click();
-    link.remove();
-    window.setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
-  });
   const setAllSources = selected => {
     toggles.querySelectorAll('input[type=checkbox]').forEach(box => { box.checked = selected; });
     state.selectedSources = new Set(selected ? Object.keys(sources) : []);

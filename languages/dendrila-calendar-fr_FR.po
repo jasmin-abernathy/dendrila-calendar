@@ -38,6 +38,18 @@ msgstr "Événement du calendrier"
 msgid "Calendar events"
 msgstr "Événements du calendrier"
 
+msgid "Calendar synchronization"
+msgstr "Synchronisation du calendrier"
+
+msgid "Copy link"
+msgstr "Copier le lien"
+
+msgid "Create a private, revocable subscription link. Add it by URL in your calendar app; updates are pulled automatically when that app refreshes. Changes made in the calendar app will not modify WordPress bookings."
+msgstr "Créez un lien d’abonnement privé et révocable. Ajoutez-le par URL dans votre application de calendrier : les événements seront actualisés lors des rafraîchissements de celle-ci. Les modifications effectuées dans cette application ne changeront pas les réservations WordPress."
+
+msgid "Create subscription link"
+msgstr "Créer un lien d’abonnement"
+
 msgid "Date and time"
 msgstr "Date et heure"
 
@@ -68,14 +80,23 @@ msgstr "Event Organiser"
 msgid "Events Manager"
 msgstr "Events Manager"
 
+msgid "Find events"
+msgstr "Rechercher des événements"
+
 msgid "FluentBooking"
 msgstr "FluentBooking"
 
 msgid "Forbidden"
 msgstr "Accès refusé"
 
+msgid "HTTPS is required for private calendar subscriptions."
+msgstr "Le protocole HTTPS est obligatoire pour les abonnements privés."
+
 msgid "Invalid date range"
 msgstr "Période invalide"
+
+msgid "Link copied."
+msgstr "Lien copié."
 
 msgid "List"
 msgstr "Liste"
@@ -83,8 +104,14 @@ msgstr "Liste"
 msgid "Loading events…"
 msgstr "Chargement des événements…"
 
+msgid "Maximum number of subscriptions reached. Revoke an old link first."
+msgstr "Nombre maximal d’abonnements atteint. Révoquez d’abord un ancien lien."
+
 msgid "Month"
 msgstr "Mois"
+
+msgid "My calendar"
+msgstr "Mon calendrier"
 
 msgid "Next"
 msgstr "Suivant"
@@ -107,8 +134,23 @@ msgstr "Précédent"
 msgid "Reserved day"
 msgstr "Journée réservée"
 
+msgid "Revoke link"
+msgstr "Révoquer le lien"
+
+msgid "Revoke this subscription? Connected calendars will stop updating."
+msgstr "Révoquer cet abonnement ? Les calendriers connectés cesseront de recevoir ses mises à jour."
+
+msgid "Search title or status"
+msgstr "Rechercher par titre ou statut"
+
 msgid "Select all"
 msgstr "Tout sélectionner"
+
+msgid "Select and copy the link manually."
+msgstr "Sélectionnez et copiez le lien manuellement."
+
+msgid "Select at least one calendar source."
+msgstr "Sélectionnez au moins une source de calendrier."
 
 msgid "Select none"
 msgstr "Tout désélectionner"
@@ -119,11 +161,29 @@ msgstr "Simply Schedule Appointments"
 msgid "Sources"
 msgstr "Sources"
 
+msgid "Sources to synchronize"
+msgstr "Sources à synchroniser"
+
 msgid "Start"
 msgstr "Début"
 
+msgid "Subscription created. Copy the URL now; it will not be shown again."
+msgstr "Abonnement créé. Copiez l’URL maintenant : elle ne sera plus affichée."
+
+msgid "Subscription name (e.g. personal calendar)"
+msgstr "Nom de l’abonnement (ex. calendrier personnel)"
+
+msgid "Subscription not found."
+msgstr "Abonnement introuvable."
+
+msgid "Subscription revoked."
+msgstr "Abonnement révoqué."
+
 msgid "The Events Calendar"
 msgstr "The Events Calendar"
+
+msgid "The full link is displayed only once after creation. If it is lost, revoke it and create a new one."
+msgstr "Le lien complet ne s’affiche qu’une fois après sa création. S’il est perdu, révoquez-le et créez-en un autre."
 
 msgid "Times use the site timezone: %s. The event is visible only to administrators."
 msgstr "Les horaires utilisent le fuseau horaire du site : %s. L’événement est visible uniquement par les administrateurs."
@@ -131,8 +191,17 @@ msgstr "Les horaires utilisent le fuseau horaire du site : %s. L’événement e
 msgid "Today"
 msgstr "Aujourd’hui"
 
+msgid "Treat the link as a password. Anyone holding it can read the selected event titles and dates. Only HTTPS sites can create links."
+msgstr "Traitez ce lien comme un mot de passe. Toute personne qui le possède peut consulter les titres et dates des événements sélectionnés. Un site HTTPS est nécessaire pour créer des liens."
+
+msgid "Unable to generate a private link."
+msgstr "Impossible de générer un lien privé."
+
 msgid "Unable to load events. Please try again."
 msgstr "Impossible de charger les événements. Réessayez."
+
+msgid "Unable to update the subscription."
+msgstr "Impossible de mettre à jour l’abonnement."
 
 msgid "Unified calendar"
 msgstr "Calendrier unifié"
@@ -146,11 +215,5 @@ msgstr "Semaine"
 msgid "You are not allowed to view this calendar."
 msgstr "Vous n’avez pas le droit de consulter ce calendrier."
 
-msgid "Find events"
-msgstr "Rechercher des événements"
-
-msgid "Search title or status"
-msgstr "Rechercher par titre ou statut"
-
-msgid "Export filtered events (ICS)"
-msgstr "Exporter les événements filtrés (ICS)"
+msgid "You cannot manage calendar subscriptions."
+msgstr "Vous ne pouvez pas gérer les abonnements du calendrier."

@@ -1,5 +1,5 @@
 <?php
-/** Check that the admin UI wires the ICS exporter and search without requiring WordPress to run. */
+/** Check the WordPress admin UI wires search and secure subscription management. */
 define( 'ABSPATH', __DIR__ );
 $GLOBALS['queued_scripts'] = array();
 $GLOBALS['localized_scripts'] = array();
@@ -24,16 +24,15 @@ class Dendrila_Calendar_Sources {
     public static function available() { return array( 'native' => 'Local events' ); }
 }
 require dirname( __DIR__ ) . '/includes/class-dendrila-calendar.php';
+require dirname( __DIR__ ) . '/includes/class-dendrila-calendar-subscriptions.php';
 Dendrila_Calendar::enqueue( 'not-the-calendar' );
-if ( ! empty( $GLOBALS['queued_scripts'] ) ) {
-    throw new RuntimeException( 'Calendar assets loaded on unrelated admin screen' );
-}
+if ( ! empty( $GLOBALS['queued_scripts'] ) ) { throw new RuntimeException( 'Calendar assets loaded on unrelated admin screen' ); }
 Dendrila_Calendar::enqueue( 'toplevel_page_dendrila-calendar' );
-if ( ! isset( $GLOBALS['queued_scripts']['dendrila-calendar-ics'], $GLOBALS['queued_scripts']['dendrila-calendar-admin'] ) ) {
-    throw new RuntimeException( 'ICS exporter or calendar UI asset not enqueued' );
+if ( ! isset( $GLOBALS['queued_scripts']['dendrila-calendar-subscriptions'], $GLOBALS['queued_scripts']['dendrila-calendar-admin'] ) ) {
+    throw new RuntimeException( 'Subscription or calendar UI asset not enqueued' );
 }
-if ( $GLOBALS['queued_scripts']['dendrila-calendar-admin']['deps'] !== array( 'dendrila-calendar-ics' ) ) {
-    throw new RuntimeException( 'ICS dependency load order is not enforced' );
+if ( $GLOBALS['queued_scripts']['dendrila-calendar-admin']['deps'] !== array() ) {
+    throw new RuntimeException( 'Unexpected calendar JS dependencies' );
 }
 if ( $GLOBALS['queued_scripts']['dendrila-calendar-admin']['version'] !== '0.0.1' ) {
     throw new RuntimeException( 'Development version mismatch' );
@@ -41,12 +40,12 @@ if ( $GLOBALS['queued_scripts']['dendrila-calendar-admin']['version'] !== '0.0.1
 ob_start();
 Dendrila_Calendar::render();
 $markup = ob_get_clean();
-foreach ( array( 'id="dendrila-grid"', 'id="dendrila-search"', 'id="dendrila-export"', 'id="dendrila-source-toggles"' ) as $id ) {
+foreach ( array( 'id="dendrila-grid"', 'id="dendrila-search"', 'id="dendrila-subscription-form"', 'id="dendrila-source-toggles"' ) as $id ) {
     if ( strpos( $markup, $id ) === false ) {
         throw new RuntimeException( 'Missing UI control: ' . $id );
     }
 }
-if ( strpos( $markup, 'Export filtered events (ICS)' ) === false || strpos( $markup, 'type="search"' ) === false ) {
+if ( strpos( $markup, 'Create subscription link' ) === false || strpos( $markup, 'type="search"' ) === false || strpos( $markup, 'Export filtered events' ) !== false ) {
     throw new RuntimeException( 'Missing functional calendar controls' );
 }
 echo "Admin UI and asset loading passed\n";

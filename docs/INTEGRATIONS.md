@@ -1,6 +1,6 @@
 # Integration contract and source audit (22 November 2026)
 
-All providers are **optional, read-only**, and executed inside the authenticated WordPress admin AJAX endpoint, with `manage_options` plus nonce verification. They are not public calendar feeds. The original plugin is the source of truth; no appointment mutations, mirroring tables, or customer data exports.
+All providers are **optional, read-only**, and executed inside the authenticated WordPress admin AJAX endpoint, with `manage_options` plus nonce verification. The main admin interface is private; optional public-facing subscription URLs require a long, revocable bearer token. The original plugin is the source of truth; no appointment mutations, mirroring tables, or customer data exports.
 
 ## Supported source archives and inspected interfaces
 
@@ -40,3 +40,13 @@ All providers are **optional, read-only**, and executed inside the authenticated
 8. Enable optional booking plugins separately, then disable them: no data migration and no side effects on their bookings.
 
 This is a development integration matrix, not a certification that all combinations are working in production.
+
+## Live subscriptions to external calendar apps
+
+Dendrila Calendar generates a **private, revocable HTTPS subscription URL**. It is not a file download and not a bidirectional sync API. When Google Calendar, Apple Calendar, Outlook, Nextcloud Calendar or ICS Calendar subscribes to a URL, the receiving application decides when it fetches new data; the feed advertises a 1-hour refresh hint but cannot force a refresh. This functionality is built on the same ten read-only adapters listed above, and can select any subset of the source plugins installed on the site.
+
+Security: 256-bit random URL token; only a SHA-256 fingerprint stored in non-autoloaded WordPress options; optional sources selected per link; revocation; HTTPS-only creation; no customer identity, customer contact, payment details or admin edit URLs exported. The calendar includes event title, date/time, source and status, which may themselves be sensitive; treat the URL as a password. If a link is disclosed, revoke it. The feed endpoint sends no-store, no-index and no-referrer headers; exclude the query parameter `dendrila_calendar_feed` from page cache/redirect rules.
+
+The feed is generated on demand, without cron. It covers 30 days in the past through 365 days ahead (maximum 2,500 events; source adapters may enforce smaller caps), using 85-day windows with stable, deduplicated event UIDs and the WordPress site timezone for all-day events. Published updates/deletions become visible on the next destination-side refresh. Test that the provider's query range and access restrictions behave correctly on a WordPress staging site. No two-way changes are sent to third-party plugins.
+
+ICS Calendar 12.3.0 is an **outbound destination**: paste the private URL into its ICS Feed URL field. Inbound feeds configured on ICS Calendar would require separate source discovery, safe remote access controls and caching; do not assume remote URLs are trusted.

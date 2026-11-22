@@ -19,11 +19,17 @@ Dendrila Calendar is an independent WordPress administration calendar that bring
 = Sources =
 
 * Dendrila events: manually created private WordPress events.
-* Event sources: Event Organiser, Events Manager and The Events Calendar (published, non-recurring events).
+* Event sources: Event Organiser, Events Manager and The Events Calendar (published single events only).
 * Booking sources: Amelia, Booking Calendar, Bookly, Easy Appointments, FluentBooking, Oryx Bookings and Simply Schedule Appointments.
 * Ten external sources in total, all optional and read-only.
 
-Search loaded calendar events locally and download filtered events as an ICS file without exposing a public calendar feed. No external CDN, custom booking tables or mandatory dependency.
+Search loaded calendar events locally. Subscribe to a revocable private feed for continuously refreshed events. No external CDN, custom booking tables or mandatory dependency.
+
+= Calendar subscriptions =
+
+Create a private, revocable subscription URL in Dendrila Calendar > Calendar synchronization. Choose the source plugins to include. Add the link in an external calendar using Subscribe from URL (not one-time file import). The calendar application controls its refresh schedule. The link is shown only once and should be kept secret. Requires HTTPS. Subscriptions provide read-only synchronization; they do not update source bookings from external calendar apps.
+
+ICS Calendar can subscribe to the URL as a destination. Importing remote feeds that ICS Calendar itself displays is not yet supported.
 
 == Installation ==
 
@@ -31,6 +37,7 @@ Search loaded calendar events locally and download filtered events as an ICS fil
 2. Activate the plugin.
 3. Open Dendrila Calendar in WordPress administration.
 4. Add a Dendrila event or enable optional source plugins.
+5. In Calendar synchronization, generate a private subscription link and subscribe to it in your calendar application.
 
 == Frequently Asked Questions ==
 
@@ -40,13 +47,15 @@ No. Imported records are strictly read-only.
 
 = Is it public? =
 
-No. Only users with manage_options can view the private calendar.
+The WordPress administration calendar is restricted to administrators. Private subscription URLs can be accessed by anyone who holds the secret link; these links can be revoked.
 
 == Changelog ==
 
 = 0.0.1 (development; first internal test) =
 * Initial unified calendar with local events and optional, read-only source integrations.
-* Added client-side event search and RFC 5545-style private ICS export with UTF-8 folding and DST-aware all-day dates.
+* Added in-browser event search and RFC 5545 subscription feeds with UTF-8 line folding and DST-aware all-day dates.
 * Added source selection controls, timezone navigation safeguards and isolated adapter regression tests.
-* ICS Calendar feed integration is deferred until a secure, explicit configuration exists.
+* Added revocable, live read-only calendar subscription URLs, per-link source selection, and privacy controls.
+* Removed one-off file export.
+* ICS Calendar can use the URL as a destination; importing ICS Calendar's existing remote feeds still requires a separate safety audit.
 * Not yet released or tested end-to-end on a production-like WordPress installation.
