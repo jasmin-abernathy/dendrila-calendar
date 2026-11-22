@@ -59,3 +59,26 @@ a.dendrila-event:hover,a.dendrila-event:focus {background:#d9e9f8; color:#003d71
 .dendrila-copy-feedback {font-style:italic;}
 .dendrila-subscription-list {display:grid; gap:8px; margin:10px 0;}
 .dendrila-subscription-list li {display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap; margin:0; padding:8px; background:#f6f7f7; border-radius:4px; overflow-wrap:anywhere;}
+
+/* Make the month selector usable on narrow WordPress admin screens. */
+.dendrila-calendar-toolbar .dendrila-month-picker { min-width: 140px; max-width: 190px; }
+@media (max-width: 650px) {
+  .dendrila-calendar-toolbar h2 {flex-basis: 100%; order: 2;}
+  .dendrila-calendar-toolbar label[for=dendrila-month] {order: 3;}
+  .dendrila-calendar-toolbar .dendrila-month-picker {order: 3; flex: 1 0 155px;}
+  .dendrila-calendar-toolbar label[for=dendrila-view], .dendrila-calendar-toolbar #dendrila-view {order: 4;}
+}
+
+/* Discoverable automatic synchronization. */
+.dendrila-calendar-intro-actions { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 18px; }
+.dendrila-subscriptions { padding:18px 20px; }
+.dendrila-subscriptions h2 { margin-top:0; font-size:1.35rem; }
+.dendrila-sync-providers { border:1px solid #dcdcde; border-radius:6px; padding:12px 16px; margin:16px 0; background:#f6f7f7; }
+.dendrila-sync-providers h3 { margin:0 0 12px; }
+.dendrila-sync-providers select { max-width:100%; }
+.dendrila-provider-instructions { padding:12px 0 4px; line-height:1.55; max-width:75ch; }
+#dendrila-subscription-result { scroll-margin-top: 90px; }
+@media(max-width:650px) {
+ .dendrila-subscriptions { padding:14px; }
+ .dendrila-calendar-intro-actions .button { width:100%; text-align:center; }
+}

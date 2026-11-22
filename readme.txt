@@ -59,3 +59,11 @@ The WordPress administration calendar is restricted to administrators. Private s
 * Removed one-off file export.
 * ICS Calendar can use the URL as a destination; importing ICS Calendar's existing remote feeds still requires a separate safety audit.
 * Not yet released or tested end-to-end on a production-like WordPress installation.
+
+= How can I subscribe with Google Calendar? =
+
+Open Dendrila Calendar > Synchronization. Create a private subscription URL for your sources. In Google Calendar on the web (desktop), use Settings > Add calendar > From URL and paste it. The mobile app cannot subscribe from a URL directly. Google refreshes the calendar on its own schedule.
+
+= Is this real-time, bidirectional Google or CalDAV synchronization? =
+
+No. This is automatic read-only iCalendar subscription. Changes to original WordPress bookings are reflected when the calendar application refreshes. Editing or moving an event in another calendar does not edit its source booking.

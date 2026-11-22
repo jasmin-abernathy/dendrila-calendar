@@ -34,22 +34,36 @@ if ( ! isset( $GLOBALS['queued_scripts']['dendrila-calendar-subscriptions'], $GL
 if ( $GLOBALS['queued_scripts']['dendrila-calendar-admin']['deps'] !== array() ) {
     throw new RuntimeException( 'Unexpected calendar JS dependencies' );
 }
-$expected_asset_version = (string) filemtime( dirname( __DIR__ ) . '/assets/calendar.js' );
-if ( $GLOBALS['queued_scripts']['dendrila-calendar-admin']['version'] !== $expected_asset_version ) {
-    throw new RuntimeException( 'Calendar JS must use its actual modification time for cache busting' );
+if ( $GLOBALS['queued_scripts']['dendrila-calendar-admin']['version'] !== (string) filemtime( dirname( __DIR__ ) . '/assets/calendar.js' ) ) {
+    throw new RuntimeException( 'Calendar asset version must reflect its file modification time' );
 }
 if ( Dendrila_Calendar::VERSION !== '0.0.1' ) {
-    throw new RuntimeException( 'Development plugin version mismatch' );
+    throw new RuntimeException( 'Plugin version must stay 0.0.1 during development' );
 }
 ob_start();
 Dendrila_Calendar::render();
 $markup = ob_get_clean();
-foreach ( array( 'id="dendrila-grid"', 'id="dendrila-search"', 'id="dendrila-subscription-form"', 'id="dendrila-source-toggles"' ) as $id ) {
+foreach ( array( 'id="dendrila-grid"', 'id="dendrila-search"', 'id="dendrila-source-toggles"', 'id="dendrila-month"', 'type="month"' ) as $id ) {
     if ( strpos( $markup, $id ) === false ) {
         throw new RuntimeException( 'Missing UI control: ' . $id );
     }
 }
-if ( strpos( $markup, 'Create subscription link' ) === false || strpos( $markup, 'type="search"' ) === false || strpos( $markup, 'Export filtered events' ) !== false ) {
+if ( strpos( $markup, 'Synchronize with Google, Apple, Outlook or another calendar' ) === false || strpos( $markup, 'type="search"' ) === false || strpos( $markup, 'Export filtered events' ) !== false ) {
     throw new RuntimeException( 'Missing functional calendar controls' );
+}
+$GLOBALS['queued_scripts'] = array();
+Dendrila_Calendar::enqueue( 'dendrila-calendar_page_dendrila-calendar-sync' );
+if ( isset( $GLOBALS['queued_scripts']['dendrila-calendar-admin'] ) ||
+     ! isset( $GLOBALS['queued_scripts']['dendrila-calendar-subscriptions'] ) ) {
+    throw new RuntimeException( 'Sync screen must load subscription JS, not the calendar renderer' );
+}
+ob_start();
+Dendrila_Calendar::render_sync_page();
+$sync_markup = ob_get_clean();
+foreach ( array( 'id="dendrila-sync-provider"', 'id="dendrila-subscription-form"', 'id="dendrila-subscription-result"', 'id="dendrila-provider-instructions"' ) as $needle ) {
+    if ( strpos( $sync_markup, $needle ) === false ) { throw new RuntimeException( 'Missing sync UI: ' . $needle ); }
+}
+if ( strpos( $sync_markup, 'Create subscription link' ) === false || strpos( $sync_markup, '<details' ) !== false ) {
+    throw new RuntimeException( 'Synchronization page must be visible, not collapsed' );
 }
 echo "Admin UI and asset loading passed\n";

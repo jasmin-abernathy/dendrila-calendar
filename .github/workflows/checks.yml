@@ -17,9 +17,10 @@ jobs:
         run: |
           php tests/test-sources.php
           php tests/test-integrations.php
-          php tests/test-easy-appointments.php
           php tests/test-translation.php
           php tests/test-calendar-ui.php
+          php tests/test-admin-navigation.php
+          php tests/test-easy-appointments.php
           php tests/test-subscriptions.php
       - name: Package contains all required assets
         run: |

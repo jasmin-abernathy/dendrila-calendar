@@ -185,7 +185,7 @@ final class Dendrila_Calendar_Integrations {
         $rows = self::query(
             "SELECT a.id, a.date, a.start, a.end, a.end_date, a.status, s.name AS service_title
              FROM {$table} a LEFT JOIN {$services} s ON s.id = a.service
-             WHERE a.date <= %s AND COALESCE(a.end_date, a.date) >= %s
+             WHERE a.date <= %s AND COALESCE(NULLIF(a.end_date, '0000-00-00'), a.date) >= %s
              ORDER BY a.date ASC, a.start ASC LIMIT 750",
             array( $local_end->format( 'Y-m-d' ), $local_start->format( 'Y-m-d' ) )
         );

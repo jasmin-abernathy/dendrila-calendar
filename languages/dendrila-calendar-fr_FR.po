@@ -23,6 +23,15 @@ msgstr "Rendez-vous"
 msgid "Approved"
 msgstr "Approuvé"
 
+msgid "Automatic calendar synchronization"
+msgstr "Synchronisation automatique des calendriers"
+
+msgid "Automatic synchronization"
+msgstr "Synchronisation automatique"
+
+msgid "Back to calendar"
+msgstr "Retour au calendrier"
+
 msgid "Booking"
 msgstr "Réservation"
 
@@ -32,20 +41,20 @@ msgstr "Booking Calendar"
 msgid "Bookly"
 msgstr "Bookly"
 
+msgid "Calendar application"
+msgstr "Application de calendrier"
+
 msgid "Calendar event"
 msgstr "Événement du calendrier"
 
-msgid "Calendar events"
-msgstr "Événements du calendrier"
+msgid "Calendar view"
+msgstr "Vue calendrier"
 
-msgid "Calendar synchronization"
-msgstr "Synchronisation du calendrier"
+msgid "Choose month"
+msgstr "Choisir le mois"
 
 msgid "Copy link"
 msgstr "Copier le lien"
-
-msgid "Create a private, revocable subscription link. Add it by URL in your calendar app; updates are pulled automatically when that app refreshes. Changes made in the calendar app will not modify WordPress bookings."
-msgstr "Créez un lien d’abonnement privé et révocable. Ajoutez-le par URL dans votre application de calendrier : les événements seront actualisés lors des rafraîchissements de celle-ci. Les modifications effectuées dans cette application ne changeront pas les réservations WordPress."
 
 msgid "Create subscription link"
 msgstr "Créer un lien d’abonnement"
@@ -80,6 +89,9 @@ msgstr "Event Organiser"
 msgid "Events Manager"
 msgstr "Events Manager"
 
+msgid "Find Subscribe by URL, Internet calendar, or iCalendar subscription in your calendar application. Paste the link rather than importing a one-time ICS file."
+msgstr "Recherchez S’abonner par URL, Agenda Internet ou Abonnement iCalendar dans votre application. Collez le lien au lieu d’importer une seule fois un fichier ICS."
+
 msgid "Find events"
 msgstr "Rechercher des événements"
 
@@ -92,6 +104,12 @@ msgstr "Accès refusé"
 msgid "HTTPS is required for private calendar subscriptions."
 msgstr "Le protocole HTTPS est obligatoire pour les abonnements privés."
 
+msgid "In Nextcloud Calendar, choose New calendar > New subscription from link and paste the private URL. It will appear as a read-only subscribed calendar."
+msgstr "Dans l’application Agenda de Nextcloud, choisissez Nouvel agenda > Nouvel abonnement depuis un lien, puis collez l’URL privée. Cet agenda sera accessible en lecture seule."
+
+msgid "In Outlook on the web, open Calendar > Add calendar > Subscribe from web. Paste the link and save. Updates can take more than 24 hours."
+msgstr "Dans Outlook sur le web : Calendrier > Ajouter un calendrier > S’abonner à partir du web. Collez le lien et enregistrez. Les mises à jour peuvent demander plus de 24 heures."
+
 msgid "Invalid date range"
 msgstr "Période invalide"
 
@@ -103,6 +121,9 @@ msgstr "Liste"
 
 msgid "Loading events…"
 msgstr "Chargement des événements…"
+
+msgid "Local events"
+msgstr "Événements locaux"
 
 msgid "Maximum number of subscriptions reached. Revoke an old link first."
 msgstr "Nombre maximal d’abonnements atteint. Révoquez d’abord un ancien lien."
@@ -119,8 +140,17 @@ msgstr "Suivant"
 msgid "No events for this period."
 msgstr "Aucun événement pour cette période."
 
-msgid "One private calendar for your WordPress events and compatible booking tools. Imported sources are read-only."
-msgstr "Un calendrier privé réunissant vos événements WordPress et les outils de réservation compatibles. Les sources importées sont en lecture seule."
+msgid "On a computer, open Google Calendar settings, choose Add calendar > From URL, paste the private HTTPS link, and add the calendar. Google decides when to refresh it. The mobile app cannot add URL subscriptions directly."
+msgstr "Depuis un ordinateur, ouvrez les paramètres de Google Agenda, puis Ajouter un agenda > À partir de l’URL. Collez le lien HTTPS privé. Google choisit la fréquence d’actualisation ; l’application mobile ne permet pas d’ajouter directement un abonnement par URL."
+
+msgid "On iPhone: Calendar > Calendars > Add Calendar > Add Subscription Calendar. Paste the URL. On Mac: File > New Calendar Subscription. You can also try Open Apple Calendar subscription after creating a link."
+msgstr "Sur iPhone : Calendrier > Calendriers > Ajouter un calendrier > Ajouter un calendrier avec abonnement, puis collez l’URL. Sur Mac : Fichier > Nouvel abonnement à un calendrier. Vous pouvez également essayer le bouton Ouvrir l’abonnement dans Calendrier Apple."
+
+msgid "Open Apple Calendar subscription"
+msgstr "Ouvrir l’abonnement dans Calendrier Apple"
+
+msgid "Open unified calendar"
+msgstr "Ouvrir le calendrier unifié"
 
 msgid "Oryx Bookings"
 msgstr "Oryx Bookings"
@@ -155,6 +185,9 @@ msgstr "Sélectionnez au moins une source de calendrier."
 msgid "Select none"
 msgstr "Tout désélectionner"
 
+msgid "Select your WordPress sources, create a private calendar URL, then subscribe to it in your calendar app. The app refreshes events automatically on its own schedule; this is a read-only subscription, not instant or two-way synchronization."
+msgstr "Sélectionnez les sources WordPress, créez une adresse privée puis abonnez-y votre agenda. Les événements s’actualisent automatiquement selon la fréquence choisie par votre application. Cette synchronisation est en lecture seule, non instantanée et non bidirectionnelle."
+
 msgid "Simply Schedule Appointments"
 msgstr "Simply Schedule Appointments"
 
@@ -166,6 +199,9 @@ msgstr "Sources à synchroniser"
 
 msgid "Start"
 msgstr "Début"
+
+msgid "Subscribe your personal calendar"
+msgstr "Synchroniser votre agenda personnel"
 
 msgid "Subscription created. Copy the URL now; it will not be shown again."
 msgstr "Abonnement créé. Copiez l’URL maintenant : elle ne sera plus affichée."
@@ -179,11 +215,20 @@ msgstr "Abonnement introuvable."
 msgid "Subscription revoked."
 msgstr "Abonnement révoqué."
 
+msgid "Synchronization"
+msgstr "Synchronisation"
+
+msgid "Synchronize with Google, Apple, Outlook or another calendar"
+msgstr "Synchroniser avec Google, Apple, Outlook ou un autre agenda"
+
 msgid "The Events Calendar"
 msgstr "The Events Calendar"
 
 msgid "The full link is displayed only once after creation. If it is lost, revoke it and create a new one."
 msgstr "Le lien complet ne s’affiche qu’une fois après sa création. S’il est perdu, révoquez-le et créez-en un autre."
+
+msgid "This list contains only events created in Dendrila Calendar. Appointments imported from Easy Appointments and other plugins appear in the unified calendar."
+msgstr "Cette liste contient uniquement les événements créés dans Dendrila Calendar. Les rendez-vous importés depuis Easy Appointments et les autres extensions apparaissent dans le calendrier unifié."
 
 msgid "Times use the site timezone: %s. The event is visible only to administrators."
 msgstr "Les horaires utilisent le fuseau horaire du site : %s. L’événement est visible uniquement par les administrateurs."
@@ -212,8 +257,14 @@ msgstr "Vue"
 msgid "Week"
 msgstr "Semaine"
 
+msgid "Where will you use your calendar?"
+msgstr "Dans quel agenda souhaitez-vous afficher vos événements ?"
+
 msgid "You are not allowed to view this calendar."
 msgstr "Vous n’avez pas le droit de consulter ce calendrier."
 
 msgid "You cannot manage calendar subscriptions."
 msgstr "Vous ne pouvez pas gérer les abonnements du calendrier."
+
+msgid "Your appointments from other plugins are shown here. The Local events submenu lists only events created in Dendrila Calendar."
+msgstr "Les rendez-vous des autres extensions s’affichent ici. Le sous-menu « Événements locaux » répertorie uniquement ceux créés dans Dendrila Calendar."

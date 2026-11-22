@@ -314,9 +314,24 @@ final class Dendrila_Calendar_Subscriptions {
 
     public static function render_settings() {
         $sources = Dendrila_Calendar_Sources::available();
-        echo '<details class="dendrila-subscriptions"><summary>' . esc_html__( 'Calendar synchronization', 'dendrila-calendar' ) . '</summary>';
-        echo '<p>' . esc_html__( 'Create a private, revocable subscription link. Add it by URL in your calendar app; updates are pulled automatically when that app refreshes. Changes made in the calendar app will not modify WordPress bookings.', 'dendrila-calendar' ) . '</p>';
+        echo '<section class="dendrila-subscriptions" aria-labelledby="dendrila-sync-heading">';
+        echo '<h2 id="dendrila-sync-heading">' . esc_html__( 'Subscribe your personal calendar', 'dendrila-calendar' ) . '</h2>';
+        echo '<p>' . esc_html__( 'Select your WordPress sources, create a private calendar URL, then subscribe to it in your calendar app. The app refreshes events automatically on its own schedule; this is a read-only subscription, not instant or two-way synchronization.', 'dendrila-calendar' ) . '</p>';
         echo '<p class="description">' . esc_html__( 'Treat the link as a password. Anyone holding it can read the selected event titles and dates. Only HTTPS sites can create links.', 'dendrila-calendar' ) . '</p>';
+        echo '<div class="dendrila-sync-providers"><h3>' . esc_html__( 'Where will you use your calendar?', 'dendrila-calendar' ) . '</h3>';
+        echo '<label for="dendrila-sync-provider">' . esc_html__( 'Calendar application', 'dendrila-calendar' ) . '</label> ';
+        echo '<select id="dendrila-sync-provider">';
+        foreach ( array(
+            'google' => 'Google Calendar',
+            'apple' => 'Apple Calendar (iPhone / Mac)',
+            'outlook' => 'Microsoft Outlook',
+            'nextcloud' => 'Nextcloud Calendar',
+            'other' => 'Other iCalendar / ICS application',
+        ) as $key => $label ) {
+            echo '<option value="' . esc_attr( $key ) . '">' . esc_html( $label ) . '</option>';
+        }
+        echo '</select>';
+        echo '<div id="dendrila-provider-instructions" class="dendrila-provider-instructions" aria-live="polite"></div></div>';
         echo '<form id="dendrila-subscription-form">';
         echo '<p><label for="dendrila-subscription-label">' . esc_html__( 'Subscription name (e.g. personal calendar)', 'dendrila-calendar' ) . '</label> ';
         echo '<input id="dendrila-subscription-label" name="label" type="text" maxlength="60" value="" placeholder="' . esc_attr__( 'My calendar', 'dendrila-calendar' ) . '"></p>';
@@ -338,6 +353,6 @@ final class Dendrila_Calendar_Subscriptions {
             echo '<button type="button" class="button button-small dendrila-subscription-revoke" data-subscription-id="' . esc_attr( $id ) . '">' . esc_html__( 'Revoke link', 'dendrila-calendar' ) . '</button></li>';
         }
         echo '</ul><p class="description">' . esc_html__( 'The full link is displayed only once after creation. If it is lost, revoke it and create a new one.', 'dendrila-calendar' ) . '</p>';
-        echo '</details>';
+        echo '</section>';
     }
 }

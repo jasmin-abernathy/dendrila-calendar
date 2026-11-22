@@ -8,7 +8,7 @@
 
 ## What currently works
 
-- Day-by-day **month, week and list** views; source filters and keyboard-operable controls.
+- Day-by-day **month, week and list** views with a direct month selector; source filters and keyboard-operable controls.
 - **Instant search** across loaded event titles, status and source names, without extra network requests.
 - **Dendrila events**: create/edit your own events using a private WordPress post type (admin only).
 - **Optional event sources:** Event Organiser, Events Manager and The Events Calendar (published single events only, recurrence not yet supported).
@@ -95,4 +95,16 @@ License: GPL-2.0-or-later.
 
 ## Missing events in the administration calendar
 
-After loading, Dendrila Calendar shows how many records each selected source returned for the visible period. If Easy Appointments reports `0`, check the source plugin's appointment dates and that the source checkbox is enabled. If it reports a positive count but an event is not displayed, check the selected month, search query and browser console. These are aggregate counts only; client details remain private. Assets use file modification time for cache busting while the plugin remains at version `0.0.1`.
+On the calendar page, the line below the source selector now reports how many events were returned per selected source (for the current visible period). If Easy Appointments is active but reports `0`, verify the appointment date, end date and status in the source plugin. If it reports `1` but the event is not rendered, check the selected month, search field and browser console. All customer details remain private. Script and style URLs use file modification times to prevent stale assets during the 0.0.1 development series.
+
+## Finding appointments versus local events
+
+- **Dendrila Calendar → Calendar view** (`wp-admin/admin.php?page=dendrila-calendar`) is the main month/week/list calendar and displays bookings from enabled connectors.
+- **Dendrila Calendar → Local events** (`wp-admin/edit.php?post_type=dendrila_event`) only lists posts authored in Dendrila Calendar. It does not contain imported bookings. A notice links back to the main calendar.
+- If an Easy Appointments booking is visible in its source plugin but not on the calendar, check that the source is selected and that the **Easy Appointments: N** counter is nonzero for the selected month. The booking remains read-only, even when `pending`.
+
+## External calendar subscriptions (0.0.1 development)
+
+The **Synchronization** submenu is a dedicated page, linked from the main calendar. It includes source selection, private URL creation and revocation, and instructions for Google Calendar, Apple Calendar, Outlook, Nextcloud Calendar and other iCalendar applications. To receive updates, **subscribe to the URL**, not a one-off file; the receiving application controls update latency. Google URL subscription is configured on desktop/web, not directly in the mobile app. This is a **one-way, pull-based subscription**, not OAuth or CalDAV write-back.
+
+The dashboard and local-events list are separate. Appointments imported from other plugins are not WordPress native calendar posts; the 'Local events (0)' list does not indicate a failed source import.

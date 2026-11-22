@@ -5,7 +5,17 @@
   const form = document.getElementById('dendrila-subscription-form');
   const result = document.getElementById('dendrila-subscription-result');
   const list = document.getElementById('dendrila-subscription-list');
+  const provider = document.getElementById('dendrila-sync-provider');
+  const instructions = document.getElementById('dendrila-provider-instructions');
   if (!config || !form || !result || !list) return;
+
+  function showProvider() {
+    if (!provider || !instructions) return;
+    const steps = config.steps || {};
+    instructions.textContent = steps[provider.value] || steps.other || '';
+  }
+  provider?.addEventListener('change', showProvider);
+  showProvider();
 
   let newId = null;
   const el = (tag, text, className) => {
@@ -65,6 +75,13 @@
       }
     });
     result.replaceChildren(message, field, copy, feedback);
+    // Apple Calendar supports webcal: subscription URLs; HTTPS remains available for other apps.
+    if (provider?.value === 'apple') {
+      const link = el('a', config.appleLink, 'button button-secondary');
+      link.href = item.url.replace(/^https:/, 'webcal:');
+      link.rel = 'noreferrer';
+      result.append(link);
+    }
     field.focus();
   }
 

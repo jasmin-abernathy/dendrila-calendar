@@ -1,5 +1,5 @@
 <?php
-/** Easy Appointments 4.0.5 fixture, shaped like a real pending booking. */
+/** Regression test with the shape of a real Easy Appointments 4.0.5 database record. */
 error_reporting( E_ALL );
 define( 'ABSPATH', '/' );
 define( 'EASY_APPOINTMENTS_VERSION', '4.0.5' );
@@ -10,12 +10,19 @@ function absint( $n ) { return abs( (int) $n ); }
 class Fake_EA_WPDB {
     public $prefix = 'wp_';
     public $last_error = '';
+    public $last_sql = '';
     public $rows = array();
     public function prepare( $sql, $params ) {
         if ( count( $params ) !== 2 ) { throw new Exception( 'Expected two date bounds' ); }
+        $this->last_sql = $sql;
         return $sql;
     }
-    public function get_results( $sql ) { return $this->rows; }
+    public function get_results( $sql ) {
+        if ( strpos( $sql, "NULLIF(a.end_date, '0000-00-00')" ) === false ) {
+            throw new Exception( 'Missing zero end date safeguard in SQL query.' );
+        }
+        return $this->rows;
+    }
 }
 $wpdb = new Fake_EA_WPDB();
 require dirname( __DIR__ ) . '/includes/class-dendrila-calendar-integrations.php';
@@ -28,12 +35,12 @@ $events = Dendrila_Calendar_Integrations::events( 'easy_appointments', '2026-10-
 if ( count( $events ) !== 1 || $events[0]['title'] !== 'Prestation test' ||
     $events[0]['start'] !== '2026-11-27T12:30:00Z' ||
     $events[0]['end'] !== '2026-11-27T13:00:00Z' ||
-    $events[0]['status'] !== 'pending' ) { throw new Exception( 'Pending EA booking must appear.' ); }
+    $events[0]['status'] !== 'pending' ) { throw new Exception( 'EA pending booking must appear in the November calendar.' ); }
 $wpdb->rows[0]->end_date = '0000-00-00';
 $events = Dendrila_Calendar_Integrations::events( 'easy_appointments', '2026-10-25 23:00:00', '2026-12-06 23:00:00' );
-if ( count( $events ) !== 1 ) { throw new Exception( 'Zero end date must fall back to booking day.' ); }
+if ( count( $events ) !== 1 ) { throw new Exception( 'Legacy zero end date must fall back to booking day.' ); }
 $wpdb->rows[0]->date = '2026-04-15';
 $wpdb->rows[0]->end_date = '2026-04-15';
 $events = Dendrila_Calendar_Integrations::events( 'easy_appointments', '2026-10-25 23:00:00', '2026-12-06 23:00:00' );
-if ( $events ) { throw new Exception( 'Events outside requested range must be excluded.' ); }
-echo "Easy Appointments 4.0.5 fixture: OK\n";
+if ( $events ) { throw new Exception( 'Events outside the requested range must not leak.' ); }
+echo "Easy Appointments 4.0.5 live-schema fixtures: OK\n";

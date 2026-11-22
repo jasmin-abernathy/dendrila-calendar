@@ -8,6 +8,7 @@
   const period = document.getElementById('dendrila-period');
   const message = document.getElementById('dendrila-message');
   const viewSelect = document.getElementById('dendrila-view');
+  const monthPicker = document.getElementById('dendrila-month');
   const toggles = document.getElementById('dendrila-source-toggles');
   const search = document.getElementById('dendrila-search');
   if (!root || !period || !message || !viewSelect || !toggles) return;
@@ -17,7 +18,7 @@
   const firstDay = Number(config.weekStartsOn) || 0;
   const sources = config.sources || {};
   const i18n = config.i18n || {};
-  const state = { selected: new Date(), view: 'month', selectedSources: new Set(Object.keys(sources)), request: null, events: [], loaded: false };
+  const state = { selected: today(), view: 'month', selectedSources: new Set(Object.keys(sources)), request: null, events: [], loaded: false };
   const dayFormatter = new Intl.DateTimeFormat('en-GB', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' });
   const monthFormatter = new Intl.DateTimeFormat(locale, { timeZone: 'UTC', month: 'long', year: 'numeric' });
   const weekdayFormatter = new Intl.DateTimeFormat(locale, { timeZone: 'UTC', weekday: 'short' });
@@ -95,6 +96,7 @@
     const { start, days } = range();
     const month = state.view === 'month';
     root.className = `dendrila-grid dendrila-grid--${state.view}`;
+    if (monthPicker) monthPicker.value = key(state.selected).slice(0, 7);
     if (state.view === 'week') {
       period.textContent = `${fullDayFormatter.format(start)} – ${fullDayFormatter.format(addDays(start, 6))}`;
     } else {
@@ -162,7 +164,7 @@
       state.events = payload.data.events;
       state.loaded = true;
       renderFiltered();
-      // Per-source counters distinguish an empty provider from a display/filter problem.
+      // Display per-source counts so a missing event is traceable to a provider or the UI.
       const counts = payload.data.source_counts || {};
       message.textContent = Object.keys(sources)
         .filter(source => state.selectedSources.has(source))
@@ -200,6 +202,15 @@
   document.getElementById('dendrila-next').addEventListener('click', () => navigate(1));
   document.getElementById('dendrila-today').addEventListener('click', () => { state.selected = today(); load(); });
   viewSelect.addEventListener('change', () => { state.view = viewSelect.value; load(); });
+  // A direct month selector prevents users having to click previous/next repeatedly.
+  monthPicker?.addEventListener('change', () => {
+    const value = monthPicker.value;
+    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(value)) return;
+    const [year, month] = value.split('-').map(Number);
+    if (year < 100 || year > 9999) return;
+    state.selected = new Date(Date.UTC(year, month - 1, 1, 12));
+    load();
+  });
   function navigate(delta) {
     if (state.view === 'week') state.selected = addDays(state.selected, 7 * delta);
     else state.selected = new Date(Date.UTC(state.selected.getUTCFullYear(), state.selected.getUTCMonth() + delta, 15, 12));

@@ -21,6 +21,15 @@ msgstr ""
 msgid "Approved"
 msgstr ""
 
+msgid "Automatic calendar synchronization"
+msgstr ""
+
+msgid "Automatic synchronization"
+msgstr ""
+
+msgid "Back to calendar"
+msgstr ""
+
 msgid "Booking"
 msgstr ""
 
@@ -30,19 +39,19 @@ msgstr ""
 msgid "Bookly"
 msgstr ""
 
+msgid "Calendar application"
+msgstr ""
+
 msgid "Calendar event"
 msgstr ""
 
-msgid "Calendar events"
+msgid "Calendar view"
 msgstr ""
 
-msgid "Calendar synchronization"
+msgid "Choose month"
 msgstr ""
 
 msgid "Copy link"
-msgstr ""
-
-msgid "Create a private, revocable subscription link. Add it by URL in your calendar app; updates are pulled automatically when that app refreshes. Changes made in the calendar app will not modify WordPress bookings."
 msgstr ""
 
 msgid "Create subscription link"
@@ -78,6 +87,9 @@ msgstr ""
 msgid "Events Manager"
 msgstr ""
 
+msgid "Find Subscribe by URL, Internet calendar, or iCalendar subscription in your calendar application. Paste the link rather than importing a one-time ICS file."
+msgstr ""
+
 msgid "Find events"
 msgstr ""
 
@@ -90,6 +102,12 @@ msgstr ""
 msgid "HTTPS is required for private calendar subscriptions."
 msgstr ""
 
+msgid "In Nextcloud Calendar, choose New calendar > New subscription from link and paste the private URL. It will appear as a read-only subscribed calendar."
+msgstr ""
+
+msgid "In Outlook on the web, open Calendar > Add calendar > Subscribe from web. Paste the link and save. Updates can take more than 24 hours."
+msgstr ""
+
 msgid "Invalid date range"
 msgstr ""
 
@@ -100,6 +118,9 @@ msgid "List"
 msgstr ""
 
 msgid "Loading events…"
+msgstr ""
+
+msgid "Local events"
 msgstr ""
 
 msgid "Maximum number of subscriptions reached. Revoke an old link first."
@@ -117,7 +138,16 @@ msgstr ""
 msgid "No events for this period."
 msgstr ""
 
-msgid "One private calendar for your WordPress events and compatible booking tools. Imported sources are read-only."
+msgid "On a computer, open Google Calendar settings, choose Add calendar > From URL, paste the private HTTPS link, and add the calendar. Google decides when to refresh it. The mobile app cannot add URL subscriptions directly."
+msgstr ""
+
+msgid "On iPhone: Calendar > Calendars > Add Calendar > Add Subscription Calendar. Paste the URL. On Mac: File > New Calendar Subscription. You can also try Open Apple Calendar subscription after creating a link."
+msgstr ""
+
+msgid "Open Apple Calendar subscription"
+msgstr ""
+
+msgid "Open unified calendar"
 msgstr ""
 
 msgid "Oryx Bookings"
@@ -153,6 +183,9 @@ msgstr ""
 msgid "Select none"
 msgstr ""
 
+msgid "Select your WordPress sources, create a private calendar URL, then subscribe to it in your calendar app. The app refreshes events automatically on its own schedule; this is a read-only subscription, not instant or two-way synchronization."
+msgstr ""
+
 msgid "Simply Schedule Appointments"
 msgstr ""
 
@@ -163,6 +196,9 @@ msgid "Sources to synchronize"
 msgstr ""
 
 msgid "Start"
+msgstr ""
+
+msgid "Subscribe your personal calendar"
 msgstr ""
 
 msgid "Subscription created. Copy the URL now; it will not be shown again."
@@ -177,10 +213,19 @@ msgstr ""
 msgid "Subscription revoked."
 msgstr ""
 
+msgid "Synchronization"
+msgstr ""
+
+msgid "Synchronize with Google, Apple, Outlook or another calendar"
+msgstr ""
+
 msgid "The Events Calendar"
 msgstr ""
 
 msgid "The full link is displayed only once after creation. If it is lost, revoke it and create a new one."
+msgstr ""
+
+msgid "This list contains only events created in Dendrila Calendar. Appointments imported from Easy Appointments and other plugins appear in the unified calendar."
 msgstr ""
 
 msgid "Times use the site timezone: %s. The event is visible only to administrators."
@@ -210,8 +255,14 @@ msgstr ""
 msgid "Week"
 msgstr ""
 
+msgid "Where will you use your calendar?"
+msgstr ""
+
 msgid "You are not allowed to view this calendar."
 msgstr ""
 
 msgid "You cannot manage calendar subscriptions."
+msgstr ""
+
+msgid "Your appointments from other plugins are shown here. The Local events submenu lists only events created in Dendrila Calendar."
 msgstr ""

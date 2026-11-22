@@ -16,6 +16,7 @@ final class Dendrila_Calendar {
         add_action( 'save_post_' . self::POST_TYPE, array( __CLASS__, 'save_event' ) );
         add_action( 'admin_menu', array( __CLASS__, 'admin_menu' ) );
         add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
+        add_action( 'admin_notices', array( __CLASS__, 'local_events_notice' ) );
         add_action( 'wp_ajax_dendrila_calendar_events', array( __CLASS__, 'ajax_events' ) );
     }
 
@@ -23,7 +24,9 @@ final class Dendrila_Calendar {
         load_plugin_textdomain( 'dendrila-calendar', false, 'dendrila-calendar/languages' );
         register_post_type( self::POST_TYPE, array(
             'labels' => array(
-                'name' => __( 'Calendar events', 'dendrila-calendar' ),
+                'name' => __( 'Local events', 'dendrila-calendar' ),
+                'menu_name' => __( 'Local events', 'dendrila-calendar' ),
+                'all_items' => __( 'Local events', 'dendrila-calendar' ),
                 'singular_name' => __( 'Calendar event', 'dendrila-calendar' ),
                 'add_new_item' => __( 'Add calendar event', 'dendrila-calendar' ),
                 'edit_item' => __( 'Edit calendar event', 'dendrila-calendar' ),
@@ -63,6 +66,40 @@ final class Dendrila_Calendar {
             'dashicons-calendar-alt',
             27
         );
+        // Explicitly name the first submenu so the source-specific post list is not
+        // mistaken for the unified calendar's month/week/list views.
+        add_submenu_page(
+            'dendrila-calendar',
+            __( 'Unified calendar', 'dendrila-calendar' ),
+            __( 'Calendar view', 'dendrila-calendar' ),
+            'manage_options',
+            'dendrila-calendar',
+            array( __CLASS__, 'render' )
+        );
+        add_submenu_page(
+            'dendrila-calendar',
+            __( 'Automatic synchronization', 'dendrila-calendar' ),
+            __( 'Synchronization', 'dendrila-calendar' ),
+            'manage_options',
+            'dendrila-calendar-sync',
+            array( __CLASS__, 'render_sync_page' )
+        );
+    }
+
+    public static function local_events_notice() {
+        if ( ! current_user_can( 'manage_options' ) || ! function_exists( 'get_current_screen' ) ) {
+            return;
+        }
+        $screen = get_current_screen();
+        if ( ! $screen || 'edit-' . self::POST_TYPE !== $screen->id ) {
+            return;
+        }
+        echo '<div class="notice notice-info"><p>' . esc_html__(
+            'This list contains only events created in Dendrila Calendar. Appointments imported from Easy Appointments and other plugins appear in the unified calendar.',
+            'dendrila-calendar'
+        ) . '</p><p><a class="button button-primary" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar' ) ) . '">' . esc_html__(
+            'Open unified calendar', 'dendrila-calendar'
+        ) . '</a></p></div>';
     }
 
     public static function add_event_box() {
@@ -133,17 +170,21 @@ final class Dendrila_Calendar {
     }
 
     public static function enqueue( $hook ) {
-        if ( 'toplevel_page_dendrila-calendar' !== $hook ) {
+        $calendar_screen = 'toplevel_page_dendrila-calendar' === $hook;
+        $sync_screen = 'dendrila-calendar_page_dendrila-calendar-sync' === $hook;
+        if ( ! $calendar_screen && ! $sync_screen ) {
             return;
         }
         $url = plugin_dir_url( dirname( __DIR__ ) . '/dendrila-calendar.php' );
-        // Keep the plugin version 0.0.1 while busting stale asset caches on every build.
+        // The plugin stays at 0.0.1 during internal testing, but assets must refresh on every change.
         $asset_version = static function ( $file ) {
             $path = dirname( __DIR__ ) . '/assets/' . $file;
             return is_file( $path ) ? (string) filemtime( $path ) : self::VERSION;
         };
         wp_enqueue_style( 'dendrila-calendar-admin', $url . 'assets/calendar.css', array(), $asset_version( 'calendar.css' ) );
-        wp_enqueue_script( 'dendrila-calendar-admin', $url . 'assets/calendar.js', array(), $asset_version( 'calendar.js' ), true );
+        if ( $calendar_screen ) {
+            wp_enqueue_script( 'dendrila-calendar-admin', $url . 'assets/calendar.js', array(), $asset_version( 'calendar.js' ), true );
+        }
         wp_enqueue_script( 'dendrila-calendar-subscriptions', $url . 'assets/calendar-subscriptions.js', array(), $asset_version( 'calendar-subscriptions.js' ), true );
         wp_localize_script( 'dendrila-calendar-subscriptions', 'dendrilaCalendarSubscriptions', array(
             'ajaxUrl' => admin_url( 'admin-ajax.php' ),
@@ -156,8 +197,17 @@ final class Dendrila_Calendar {
             'revoked' => __( 'Subscription revoked.', 'dendrila-calendar' ),
             'failed' => __( 'Unable to update the subscription.', 'dendrila-calendar' ),
             'revoke' => __( 'Revoke link', 'dendrila-calendar' ),
+            'appleLink' => __( 'Open Apple Calendar subscription', 'dendrila-calendar' ),
+            'steps' => array(
+                'google' => __( 'On a computer, open Google Calendar settings, choose Add calendar > From URL, paste the private HTTPS link, and add the calendar. Google decides when to refresh it. The mobile app cannot add URL subscriptions directly.', 'dendrila-calendar' ),
+                'apple' => __( 'On iPhone: Calendar > Calendars > Add Calendar > Add Subscription Calendar. Paste the URL. On Mac: File > New Calendar Subscription. You can also try Open Apple Calendar subscription after creating a link.', 'dendrila-calendar' ),
+                'outlook' => __( 'In Outlook on the web, open Calendar > Add calendar > Subscribe from web. Paste the link and save. Updates can take more than 24 hours.', 'dendrila-calendar' ),
+                'nextcloud' => __( 'In Nextcloud Calendar, choose New calendar > New subscription from link and paste the private URL. It will appear as a read-only subscribed calendar.', 'dendrila-calendar' ),
+                'other' => __( 'Find Subscribe by URL, Internet calendar, or iCalendar subscription in your calendar application. Paste the link rather than importing a one-time ICS file.', 'dendrila-calendar' ),
+            ),
         ) );
-        wp_localize_script( 'dendrila-calendar-admin', 'dendrilaCalendar', array(
+        if ( $calendar_screen ) {
+            wp_localize_script( 'dendrila-calendar-admin', 'dendrilaCalendar', array(
             'ajaxUrl' => admin_url( 'admin-ajax.php' ),
             'nonce' => wp_create_nonce( 'dendrila_calendar_events' ),
             'locale' => get_user_locale(),
@@ -178,6 +228,17 @@ final class Dendrila_Calendar {
                 'sources' => __( 'Sources', 'dendrila-calendar' ),
             ),
         ) );
+        }
+    }
+
+    public static function render_sync_page() {
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_die( esc_html__( 'You are not allowed to view this calendar.', 'dendrila-calendar' ) );
+        }
+        echo '<div class="wrap dendrila-calendar-wrap"><h1>' . esc_html__( 'Automatic calendar synchronization', 'dendrila-calendar' ) . '</h1>';
+        echo '<p><a href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar' ) ) . '" class="button">' . esc_html__( 'Back to calendar', 'dendrila-calendar' ) . '</a></p>';
+        Dendrila_Calendar_Subscriptions::render_settings();
+        echo '</div>';
     }
 
     public static function render() {
@@ -185,13 +246,18 @@ final class Dendrila_Calendar {
             wp_die( esc_html__( 'You are not allowed to view this calendar.', 'dendrila-calendar' ) );
         }
         echo '<div class="wrap dendrila-calendar-wrap"><h1>' . esc_html__( 'Dendrila Calendar', 'dendrila-calendar' ) . '</h1>';
-        echo '<p>' . esc_html__( 'One private calendar for your WordPress events and compatible booking tools. Imported sources are read-only.', 'dendrila-calendar' ) . '</p>';
-        echo '<p><a class="button button-primary" href="' . esc_url( admin_url( 'post-new.php?post_type=' . self::POST_TYPE ) ) . '">' . esc_html__( 'Add an event', 'dendrila-calendar' ) . '</a></p>';
+        echo '<p>' . esc_html__( 'Your appointments from other plugins are shown here. The Local events submenu lists only events created in Dendrila Calendar.', 'dendrila-calendar' ) . '</p>';
+        echo '<div class="dendrila-calendar-intro-actions">';
+        echo '<a class="button button-primary" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-sync' ) ) . '">' . esc_html__( 'Synchronize with Google, Apple, Outlook or another calendar', 'dendrila-calendar' ) . '</a> ';
+        echo '<a class="button" href="' . esc_url( admin_url( 'post-new.php?post_type=' . self::POST_TYPE ) ) . '">' . esc_html__( 'Add an event', 'dendrila-calendar' ) . '</a>';
+        echo '</div>';
         echo '<div class="dendrila-calendar-toolbar">';
         echo '<button type="button" class="button" id="dendrila-prev">' . esc_html__( 'Previous', 'dendrila-calendar' ) . '</button>';
         echo '<button type="button" class="button" id="dendrila-today">' . esc_html__( 'Today', 'dendrila-calendar' ) . '</button>';
         echo '<button type="button" class="button" id="dendrila-next">' . esc_html__( 'Next', 'dendrila-calendar' ) . '</button>';
         echo '<h2 id="dendrila-period" aria-live="polite"></h2>';
+        echo '<label for="dendrila-month">' . esc_html__( 'Choose month', 'dendrila-calendar' ) . '</label> ';
+        echo '<input type="month" id="dendrila-month" class="dendrila-month-picker" autocomplete="off">';
         echo '<label for="dendrila-view">' . esc_html__( 'View', 'dendrila-calendar' ) . '</label> <select id="dendrila-view">';
         echo '<option value="month">' . esc_html__( 'Month', 'dendrila-calendar' ) . '</option><option value="week">' . esc_html__( 'Week', 'dendrila-calendar' ) . '</option><option value="list">' . esc_html__( 'List', 'dendrila-calendar' ) . '</option></select></div>';
         echo '<fieldset class="dendrila-calendar-sources"><legend>' . esc_html__( 'Sources', 'dendrila-calendar' ) . '</legend>';
@@ -202,7 +268,6 @@ final class Dendrila_Calendar {
         echo '<label for="dendrila-search">' . esc_html__( 'Find events', 'dendrila-calendar' ) . '</label> ';
         echo '<input id="dendrila-search" type="search" placeholder="' . esc_attr__( 'Search title or status', 'dendrila-calendar' ) . '">';
         echo '</div>';
-        Dendrila_Calendar_Subscriptions::render_settings();
         echo '<div id="dendrila-message" role="status" aria-live="polite"></div><div id="dendrila-grid" aria-label="' . esc_attr__( 'Unified calendar', 'dendrila-calendar' ) . '"></div></div>';
     }
 
@@ -232,7 +297,7 @@ final class Dendrila_Calendar {
         $start_utc = $start_date->setTimezone( new DateTimeZone( 'UTC' ) )->format( 'Y-m-d H:i:s' );
         $end_utc = $end_date->setTimezone( new DateTimeZone( 'UTC' ) )->format( 'Y-m-d H:i:s' );
         $events = Dendrila_Calendar_Sources::events( $start_utc, $end_utc, $requested );
-        // Administrator-only aggregate source counts for non-sensitive diagnostics.
+        // Aggregated source counts help diagnose missing bookings without exposing personal data.
         $source_counts = array_fill_keys( $requested, 0 );
         foreach ( $events as $event ) {
             if ( isset( $event['source'], $source_counts[ $event['source'] ] ) ) {
