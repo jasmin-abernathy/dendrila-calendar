@@ -39,3 +39,5 @@ a.dendrila-event:hover,a.dendrila-event:focus {background:#d9e9f8; color:#003d71
  .dendrila-grid--month .dendrila-day-date {font-size:1rem;}
 }
 @media(prefers-reduced-motion:reduce) { .dendrila-calendar-wrap * {scroll-behavior:auto; transition:none!important;} }
+
+.dendrila-source-actions { display: flex; gap: 8px; margin: 8px 0 12px; flex-wrap: wrap; }

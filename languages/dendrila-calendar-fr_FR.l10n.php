@@ -1,25 +1,33 @@
 <?php
 /** French translations for Dendrila Calendar (WordPress 6.5+). */
-if ( ! defined( 'ABSPATH' ) ) {
-    exit;
-}
+if ( ! defined( 'ABSPATH' ) ) { exit; }
 return array(
-    'project-id-version' => 'Dendrila Calendar 0.1.0',
+    'project-id-version' => 'Dendrila Calendar 0.2.0-dev',
     'language' => 'fr_FR',
     'plural-forms' => 'nplurals=2; plural=n>1;',
     'messages' => array(
         'Add an event' => 'Ajouter un événement',
         'Add calendar event' => 'Ajouter un événement au calendrier',
         'All day' => 'Toute la journée',
+        'Amelia' => 'Amelia',
+        'Appointment' => 'Rendez-vous',
+        'Approved' => 'Approuvé',
         'Booking' => 'Réservation',
+        'Booking Calendar' => 'Booking Calendar',
+        'Bookly' => 'Bookly',
         'Calendar event' => 'Événement du calendrier',
         'Calendar events' => 'Événements du calendrier',
         'Date and time' => 'Date et heure',
         'Date range is too large' => 'La période demandée est trop longue',
         'Dendrila Calendar' => 'Dendrila Calendar',
         'Dendrila events' => 'Événements Dendrila',
+        'Easy Appointments' => 'Easy Appointments',
         'Edit calendar event' => 'Modifier l’événement',
         'End' => 'Fin',
+        'Event' => 'Événement',
+        'Event Organiser' => 'Event Organiser',
+        'Events Manager' => 'Events Manager',
+        'FluentBooking' => 'FluentBooking',
         'Forbidden' => 'Accès refusé',
         'Invalid date range' => 'Période invalide',
         'List' => 'Liste',
@@ -29,7 +37,12 @@ return array(
         'No events for this period.' => 'Aucun événement pour cette période.',
         'One private calendar for your WordPress events and compatible booking tools. Imported sources are read-only.' => 'Un calendrier privé réunissant vos événements WordPress et les outils de réservation compatibles. Les sources importées sont en lecture seule.',
         'Oryx Bookings' => 'Oryx Bookings',
+        'Pending' => 'En attente',
         'Previous' => 'Précédent',
+        'Reserved day' => 'Journée réservée',
+        'Select all' => 'Tout sélectionner',
+        'Select none' => 'Tout désélectionner',
+        'Simply Schedule Appointments' => 'Simply Schedule Appointments',
         'Sources' => 'Sources',
         'Start' => 'Début',
         'The Events Calendar' => 'The Events Calendar',

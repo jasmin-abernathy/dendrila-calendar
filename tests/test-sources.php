@@ -31,6 +31,7 @@ namespace {
     }
     function get_the_title($post) { return 'General assembly'; }
     function get_edit_post_link($id, $context) { return 'https://example.org/wp-admin/post.php?post=' . $id . '&action=edit'; }
+    require dirname(__DIR__) . '/includes/class-dendrila-calendar-integrations.php';
     require dirname(__DIR__) . '/includes/class-dendrila-calendar-sources.php';
     $sources = \Dendrila_Calendar_Sources::available();
     if (count($sources) !== 3) throw new \RuntimeException('Missing sources');

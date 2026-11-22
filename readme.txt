@@ -4,11 +4,11 @@ Tags: calendar, events, bookings, administration
 Requires at least: 6.5
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 0.1.0
+Stable tag: 0.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-A private unified calendar for local events, Oryx Bookings and The Events Calendar.
+A private unified WordPress calendar for events and optional booking plugins.
 
 == Description ==
 
@@ -21,6 +21,7 @@ Dendrila Calendar gives WordPress administrators one calendar for multiple sourc
 * Dendrila events: manually created private WordPress events.
 * Oryx Bookings: existing bookings shown with service, status and dates.
 * The Events Calendar: published, non-recurring events from UTC metadata.
+* Event Organiser, Events Manager, Easy Appointments, FluentBooking, Simply Schedule Appointments, Bookly, Amelia and Booking Calendar: optional read-only integrations.
 
 No external CDN, custom booking tables or mandatory dependency.
 
@@ -42,6 +43,11 @@ No. Imported records are strictly read-only.
 No. Only users with manage_options can view the private calendar.
 
 == Changelog ==
+
+= 0.2.0 (development) =
+* Added eight additional optional read-only source adapters; reviewed respective source archives.
+* Added select-all/select-none source toggles, timezone calendar navigation fixes, and isolated regression tests.
+* ICS Calendar feed integration is deferred until a safe consent-based local configuration exists.
 
 = 0.1.0 =
 * Initial development version with local events, Oryx bookings and The Events Calendar adapters.

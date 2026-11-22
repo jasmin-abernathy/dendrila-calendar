@@ -13,6 +13,7 @@ final class Dendrila_Calendar_Sources {
         if ( post_type_exists( 'tribe_events' ) ) {
             $sources['tec'] = __( 'The Events Calendar', 'dendrila-calendar' );
         }
+        $sources = array_merge( $sources, Dendrila_Calendar_Integrations::available() );
         /**
          * Register additional sources by their unique, safe identifier and display name.
          * Handlers are installed with the dendrila_calendar_source_events_{id} filter.
@@ -48,6 +49,8 @@ final class Dendrila_Calendar_Sources {
                     $items = self::oryx_events( $start_utc, $end_utc );
                 } elseif ( 'tec' === $source ) {
                     $items = self::tec_events( $start_utc, $end_utc );
+                } elseif ( array_key_exists( $source, Dendrila_Calendar_Integrations::available() ) ) {
+                    $items = Dendrila_Calendar_Integrations::events( $source, $start_utc, $end_utc );
                 } else {
                     $items = apply_filters( 'dendrila_calendar_source_events_' . $source, array(), $start_utc, $end_utc );
                 }
@@ -58,6 +61,11 @@ final class Dendrila_Calendar_Sources {
                     if ( ! is_array( $item ) || ! isset( $item['title'], $item['start'], $item['end'] ) ) {
                         continue;
                     }
+                    if ( ! preg_match( '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/D', (string) $item['start'] ) ||
+                         ! preg_match( '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/D', (string) $item['end'] ) ||
+                         strcmp( (string) $item['end'], (string) $item['start'] ) <= 0 ) {
+                        continue;
+                    }
                     $events[] = array(
                         'id' => sanitize_text_field( (string) ( $item['id'] ?? '' ) ),
                         'source' => $source,
@@ -65,6 +73,7 @@ final class Dendrila_Calendar_Sources {
                         'start' => sanitize_text_field( (string) $item['start'] ),
                         'end' => sanitize_text_field( (string) $item['end'] ),
                         'status' => sanitize_text_field( (string) ( $item['status'] ?? '' ) ),
+                        'all_day' => ! empty( $item['all_day'] ),
                         'url' => isset( $item['url'] ) ? esc_url_raw( (string) $item['url'] ) : '',
                     );
                 }

@@ -12,14 +12,18 @@ jobs:
       - name: JavaScript syntax
         run: node --check assets/calendar.js
       - name: Adapter smoke tests
-        run: php tests/test-sources.php
-      - name: French translation coverage
-        run: php tests/test-translation.php
+        run: |
+          php tests/test-sources.php
+          php tests/test-integrations.php
       - name: Package contains all required assets
         run: |
           test -f dendrila-calendar.php
           test -f includes/class-dendrila-calendar.php
           test -f includes/class-dendrila-calendar-sources.php
+          test -f includes/class-dendrila-calendar-integrations.php
+          test -s languages/dendrila-calendar-fr_FR.po
+          test -s languages/dendrila-calendar-fr_FR.l10n.php
+          test -s docs/INTEGRATIONS.md
           test -s assets/calendar.js
           test -s assets/calendar.css
           test -s languages/dendrila-calendar.pot

@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Dendrila Calendar 0.1.0\n"
+"Project-Id-Version: Dendrila Calendar 0.2.0-dev\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fr_FR\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
@@ -14,8 +14,23 @@ msgstr "Ajouter un événement au calendrier"
 msgid "All day"
 msgstr "Toute la journée"
 
+msgid "Amelia"
+msgstr "Amelia"
+
+msgid "Appointment"
+msgstr "Rendez-vous"
+
+msgid "Approved"
+msgstr "Approuvé"
+
 msgid "Booking"
 msgstr "Réservation"
+
+msgid "Booking Calendar"
+msgstr "Booking Calendar"
+
+msgid "Bookly"
+msgstr "Bookly"
 
 msgid "Calendar event"
 msgstr "Événement du calendrier"
@@ -35,11 +50,26 @@ msgstr "Dendrila Calendar"
 msgid "Dendrila events"
 msgstr "Événements Dendrila"
 
+msgid "Easy Appointments"
+msgstr "Easy Appointments"
+
 msgid "Edit calendar event"
 msgstr "Modifier l’événement"
 
 msgid "End"
 msgstr "Fin"
+
+msgid "Event"
+msgstr "Événement"
+
+msgid "Event Organiser"
+msgstr "Event Organiser"
+
+msgid "Events Manager"
+msgstr "Events Manager"
+
+msgid "FluentBooking"
+msgstr "FluentBooking"
 
 msgid "Forbidden"
 msgstr "Accès refusé"
@@ -68,8 +98,23 @@ msgstr "Un calendrier privé réunissant vos événements WordPress et les outil
 msgid "Oryx Bookings"
 msgstr "Oryx Bookings"
 
+msgid "Pending"
+msgstr "En attente"
+
 msgid "Previous"
 msgstr "Précédent"
+
+msgid "Reserved day"
+msgstr "Journée réservée"
+
+msgid "Select all"
+msgstr "Tout sélectionner"
+
+msgid "Select none"
+msgstr "Tout désélectionner"
+
+msgid "Simply Schedule Appointments"
+msgstr "Simply Schedule Appointments"
 
 msgid "Sources"
 msgstr "Sources"
@@ -100,4 +145,3 @@ msgstr "Semaine"
 
 msgid "You are not allowed to view this calendar."
 msgstr "Vous n’avez pas le droit de consulter ce calendrier."
-

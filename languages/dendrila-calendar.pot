@@ -1,147 +1,145 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Dendrila Calendar 0.1.0\n"
-"Report-Msgid-Bugs-To: https://github.com/jasmin-abernathy/dendrila-calendar/issues\n"
-"POT-Creation-Date: 2026-11-22 17:00+0100\n"
+"Project-Id-Version: Dendrila Calendar 0.2.0-dev\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Dendrila Calendar extraction\n"
 
-#: includes/class-dendrila-calendar.php:170
 msgid "Add an event"
 msgstr ""
 
-#: includes/class-dendrila-calendar.php:27
 msgid "Add calendar event"
 msgstr ""
 
-#: includes/class-dendrila-calendar.php:158
 msgid "All day"
 msgstr ""
 
-#: includes/class-dendrila-calendar-sources.php:125
+msgid "Amelia"
+msgstr ""
+
+msgid "Appointment"
+msgstr ""
+
+msgid "Approved"
+msgstr ""
+
 msgid "Booking"
 msgstr ""
 
-#: includes/class-dendrila-calendar.php:26
+msgid "Booking Calendar"
+msgstr ""
+
+msgid "Bookly"
+msgstr ""
+
 msgid "Calendar event"
 msgstr ""
 
-#: includes/class-dendrila-calendar.php:25
 msgid "Calendar events"
 msgstr ""
 
-#: includes/class-dendrila-calendar.php:70
 msgid "Date and time"
 msgstr ""
 
-#: includes/class-dendrila-calendar.php:199
 msgid "Date range is too large"
 msgstr ""
 
-#: includes/class-dendrila-calendar.php:57
-#: includes/class-dendrila-calendar.php:58
-#: includes/class-dendrila-calendar.php:168
 msgid "Dendrila Calendar"
 msgstr ""
 
-#: includes/class-dendrila-calendar-sources.php:9
 msgid "Dendrila events"
 msgstr ""
 
-#: includes/class-dendrila-calendar.php:28
+msgid "Easy Appointments"
+msgstr ""
+
 msgid "Edit calendar event"
 msgstr ""
 
-#: includes/class-dendrila-calendar.php:96
 msgid "End"
 msgstr ""
 
-#: includes/class-dendrila-calendar.php:184
+msgid "Event"
+msgstr ""
+
+msgid "Event Organiser"
+msgstr ""
+
+msgid "Events Manager"
+msgstr ""
+
+msgid "FluentBooking"
+msgstr ""
+
 msgid "Forbidden"
 msgstr ""
 
-#: includes/class-dendrila-calendar.php:190
-#: includes/class-dendrila-calendar.php:196
 msgid "Invalid date range"
 msgstr ""
 
-#: includes/class-dendrila-calendar.php:152
-#: includes/class-dendrila-calendar.php:177
 msgid "List"
 msgstr ""
 
-#: includes/class-dendrila-calendar.php:155
 msgid "Loading events…"
 msgstr ""
 
-#: includes/class-dendrila-calendar.php:150
-#: includes/class-dendrila-calendar.php:177
 msgid "Month"
 msgstr ""
 
-#: includes/class-dendrila-calendar.php:154
-#: includes/class-dendrila-calendar.php:174
 msgid "Next"
 msgstr ""
 
-#: includes/class-dendrila-calendar.php:156
 msgid "No events for this period."
 msgstr ""
 
-#: includes/class-dendrila-calendar.php:169
 msgid "One private calendar for your WordPress events and compatible booking tools. Imported sources are read-only."
 msgstr ""
 
-#: includes/class-dendrila-calendar-sources.php:11
 msgid "Oryx Bookings"
 msgstr ""
 
-#: includes/class-dendrila-calendar.php:153
-#: includes/class-dendrila-calendar.php:172
+msgid "Pending"
+msgstr ""
+
 msgid "Previous"
 msgstr ""
 
-#: includes/class-dendrila-calendar.php:159
-#: includes/class-dendrila-calendar.php:178
+msgid "Reserved day"
+msgstr ""
+
+msgid "Select all"
+msgstr ""
+
+msgid "Select none"
+msgstr ""
+
+msgid "Simply Schedule Appointments"
+msgstr ""
+
 msgid "Sources"
 msgstr ""
 
-#: includes/class-dendrila-calendar.php:94
 msgid "Start"
 msgstr ""
 
-#: includes/class-dendrila-calendar-sources.php:14
 msgid "The Events Calendar"
 msgstr ""
 
-#: includes/class-dendrila-calendar.php:100
 msgid "Times use the site timezone: %s. The event is visible only to administrators."
 msgstr ""
 
-#: includes/class-dendrila-calendar.php:149
-#: includes/class-dendrila-calendar.php:173
 msgid "Today"
 msgstr ""
 
-#: includes/class-dendrila-calendar.php:157
 msgid "Unable to load events. Please try again."
 msgstr ""
 
-#: includes/class-dendrila-calendar.php:179
 msgid "Unified calendar"
 msgstr ""
 
-#: includes/class-dendrila-calendar.php:176
 msgid "View"
 msgstr ""
 
-#: includes/class-dendrila-calendar.php:151
-#: includes/class-dendrila-calendar.php:177
 msgid "Week"
 msgstr ""
 
-#: includes/class-dendrila-calendar.php:166
 msgid "You are not allowed to view this calendar."
 msgstr ""
-

@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class Dendrila_Calendar {
-    const VERSION = '0.1.0';
+    const VERSION = '0.2.0-dev';
     const POST_TYPE = 'dendrila_event';
     const START_KEY = '_dendrila_calendar_start_utc';
     const END_KEY = '_dendrila_calendar_end_utc';
@@ -20,6 +20,7 @@ final class Dendrila_Calendar {
     }
 
     public static function register_events() {
+        load_plugin_textdomain( 'dendrila-calendar', false, 'dendrila-calendar/languages' );
         register_post_type( self::POST_TYPE, array(
             'labels' => array(
                 'name' => __( 'Calendar events', 'dendrila-calendar' ),
@@ -175,7 +176,10 @@ final class Dendrila_Calendar {
         echo '<h2 id="dendrila-period" aria-live="polite"></h2>';
         echo '<label for="dendrila-view">' . esc_html__( 'View', 'dendrila-calendar' ) . '</label> <select id="dendrila-view">';
         echo '<option value="month">' . esc_html__( 'Month', 'dendrila-calendar' ) . '</option><option value="week">' . esc_html__( 'Week', 'dendrila-calendar' ) . '</option><option value="list">' . esc_html__( 'List', 'dendrila-calendar' ) . '</option></select></div>';
-        echo '<fieldset class="dendrila-calendar-sources"><legend>' . esc_html__( 'Sources', 'dendrila-calendar' ) . '</legend><div id="dendrila-source-toggles"></div></fieldset>';
+        echo '<fieldset class="dendrila-calendar-sources"><legend>' . esc_html__( 'Sources', 'dendrila-calendar' ) . '</legend>';
+        echo '<div class="dendrila-source-actions"><button type="button" class="button button-small" id="dendrila-sources-all">' . esc_html__( 'Select all', 'dendrila-calendar' ) . '</button> ';
+        echo '<button type="button" class="button button-small" id="dendrila-sources-none">' . esc_html__( 'Select none', 'dendrila-calendar' ) . '</button></div>';
+        echo '<div id="dendrila-source-toggles"></div></fieldset>';
         echo '<div id="dendrila-message" role="status" aria-live="polite"></div><div id="dendrila-grid" aria-label="' . esc_attr__( 'Unified calendar', 'dendrila-calendar' ) . '"></div></div>';
     }
 
