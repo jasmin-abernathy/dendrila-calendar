@@ -94,7 +94,12 @@ final class Dendrila_Calendar_Subscriptions {
             'created' => $created,
             'user_id' => get_current_user_id(),
         );
-        self::save( $subscriptions );
+        if ( ! self::save( $subscriptions ) ) {
+            wp_send_json_error( array( 'message' => __( 'The subscription could not be saved. Try again.', 'dendrila-calendar' ) ), 500 );
+        }
+        if ( class_exists( 'Dendrila_Calendar_Setup' ) ) {
+            Dendrila_Calendar_Setup::destination_connected();
+        }
         wp_send_json_success( array(
             'id' => $id,
             'name' => $label,
@@ -319,7 +324,7 @@ final class Dendrila_Calendar_Subscriptions {
         echo '<p>' . esc_html__( 'Select your WordPress sources, create a private calendar URL, then subscribe to it in your calendar app. The app refreshes events automatically on its own schedule; this is a read-only subscription, not instant or two-way synchronization.', 'dendrila-calendar' ) . '</p>';
         echo '<p class="description">' . esc_html__( 'Treat the link as a password. Anyone holding it can read the selected event titles and dates. Only HTTPS sites can create links.', 'dendrila-calendar' ) . '</p>';
         echo '<div class="dendrila-sync-providers"><h3>' . esc_html__( 'Where will you use your calendar?', 'dendrila-calendar' ) . '</h3>';
-        echo '<label for="dendrila-sync-provider">' . esc_html__( 'Calendar application', 'dendrila-calendar' ) . '</label> ';
+        echo '<label for="dendrila-sync-provider">' . esc_html__( 'Show instructions for this application (not a connection)', 'dendrila-calendar' ) . '</label> ';
         echo '<select id="dendrila-sync-provider">';
         foreach ( array(
             'google' => 'Google Calendar',
@@ -331,6 +336,7 @@ final class Dendrila_Calendar_Subscriptions {
             echo '<option value="' . esc_attr( $key ) . '">' . esc_html( $label ) . '</option>';
         }
         echo '</select>';
+        echo '<p class="description">' . esc_html__( 'Choosing an app only changes the instructions. Create an actual private link below and add it in that app.', 'dendrila-calendar' ) . '</p>';
         echo '<div id="dendrila-provider-instructions" class="dendrila-provider-instructions" aria-live="polite"></div></div>';
         echo '<form id="dendrila-subscription-form">';
         echo '<p><label for="dendrila-subscription-label">' . esc_html__( 'Subscription name (e.g. personal calendar)', 'dendrila-calendar' ) . '</label> ';

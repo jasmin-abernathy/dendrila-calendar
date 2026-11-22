@@ -30,9 +30,35 @@ final class Dendrila_Calendar_Setup {
         }
     }
 
+    /** A saved destination choice is not an established calendar connection. */
+    public static function destination_ready( $settings ) {
+        if ( ! is_array( $settings ) || empty( $settings['sources'] ) ) {
+            return false;
+        }
+        $mode = isset( $settings['mode'] ) ? $settings['mode'] : '';
+        if ( 'local' === $mode ) {
+            return true;
+        }
+        // The destination must actually contain every source chosen in setup.
+        if ( 'caldav' === $mode && class_exists( 'Dendrila_Calendar_Bridge' ) ) {
+            $connections = Dendrila_Calendar_Bridge::connections();
+        } elseif ( 'subscription' === $mode && class_exists( 'Dendrila_Calendar_Subscriptions' ) ) {
+            $connections = Dendrila_Calendar_Subscriptions::subscriptions();
+        } else {
+            return false;
+        }
+        foreach ( $connections as $connection ) {
+            if ( is_array( $connection ) && ! empty( $connection['sources'] ) &&
+                 ! array_diff( $settings['sources'], $connection['sources'] ) ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static function complete() {
         $settings = self::settings();
-        return ! empty( $settings['completed'] );
+        return ! empty( $settings['completed'] ) && self::destination_ready( $settings );
     }
 
     /** Null means no source selection has been saved yet; empty means all were disabled. */
@@ -69,16 +95,14 @@ final class Dendrila_Calendar_Setup {
             return;
         }
         $pending = (bool) get_option( self::REDIRECT_OPTION, false );
-        $plugin_screen = 0 === strpos( $page, 'dendrila-calendar' );
-        // Connecting a CalDAV destination is the second and final step of setup.
-        $settings = self::settings();
-        if ( 'dendrila-calendar-sync' === $page && 'caldav' === ( $settings['mode'] ?? '' ) && ! empty( $settings['sources'] ) ) {
-            return;
-        }
-        if ( ( $pending || ( $plugin_screen && ! self::complete() ) ) && ! self::complete() ) {
+        // Offer the wizard on first activation only. Do not hide the calendar or
+        // synchronization pages if a remote service has not been configured.
+        if ( $pending ) {
             delete_option( self::REDIRECT_OPTION );
-            wp_safe_redirect( admin_url( 'admin.php?page=dendrila-calendar-setup' ) );
-            exit;
+            if ( ! self::complete() && 0 !== strpos( $page, 'dendrila-calendar' ) ) {
+                wp_safe_redirect( admin_url( 'admin.php?page=dendrila-calendar-setup' ) );
+                exit;
+            }
         }
     }
 
@@ -193,18 +217,15 @@ final class Dendrila_Calendar_Setup {
             wp_safe_redirect( admin_url( 'admin.php?page=dendrila-calendar-setup&setup_status=destination_invalid' ) );
             exit;
         }
-        $has_caldav = class_exists( 'Dendrila_Calendar_Bridge' ) && (bool) Dendrila_Calendar_Bridge::connections();
-        $complete = 'caldav' !== $destination || $has_caldav;
-        update_option( self::OPTION, array(
-            'completed' => $complete,
-            'sources' => $selected,
-            'mode' => $destination,
-        ), false );
+        $settings = array( 'completed' => false, 'sources' => $selected, 'mode' => $destination );
+        $complete = self::destination_ready( $settings );
+        $settings['completed'] = $complete;
+        update_option( self::OPTION, $settings, false );
         $report = self::report_unusable( $detected );
         // The wizard intentionally never reveals the support email destination.
         $params = array(
-            'page' => 'caldav' === $destination && ! $has_caldav ? 'dendrila-calendar-sync' : 'dendrila-calendar-setup',
-            'setup_status' => $complete ? 'saved' : 'connect_caldav',
+            'page' => $complete ? 'dendrila-calendar' : 'dendrila-calendar-sync',
+            'setup_status' => $complete ? 'saved' : 'connect_destination',
             'reports_sent' => (int) $report['sent'],
             'reports_failed' => (int) $report['failed'],
         );
@@ -212,10 +233,10 @@ final class Dendrila_Calendar_Setup {
         exit;
     }
 
-    /** Connection is genuinely confirmed by the CalDAV bridge, not an unchecked wizard checkbox. */
+    /** Called by the actual destination connector after successful creation. */
     public static function destination_connected() {
         $settings = self::settings();
-        if ( 'caldav' === ( $settings['mode'] ?? '' ) && ! empty( $settings['sources'] ) ) {
+        if ( self::destination_ready( $settings ) ) {
             $settings['completed'] = true;
             update_option( self::OPTION, $settings, false );
         }
@@ -232,7 +253,8 @@ final class Dendrila_Calendar_Setup {
         $mode = ! empty( $saved['mode'] ) ? $saved['mode'] : 'caldav';
         $status = isset( $_GET['setup_status'] ) ? sanitize_key( wp_unslash( $_GET['setup_status'] ) ) : '';
         echo '<div class="wrap dendrila-calendar-setup"><h1>' . esc_html__( 'Configure Dendrila Calendar', 'dendrila-calendar' ) . '</h1>';
-        echo '<p>' . esc_html__( 'This assistant is required before using Dendrila Calendar. It automatically detects your active appointment plugins and helps you choose where bookings go.', 'dendrila-calendar' ) . '</p>';
+        echo '<p>' . esc_html__( 'This assistant detects active appointment plugins and guides external synchronization. You can view the local calendar before connecting an external destination.', 'dendrila-calendar' ) . '</p>';
+        echo '<p><a class="button" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-view' ) ) . '">' . esc_html__( 'Open calendar view', 'dendrila-calendar' ) . '</a></p>';
         if ( 'saved' === $status ) {
             echo '<div class="notice notice-success inline"><p>' . esc_html__( 'Configuration saved.', 'dendrila-calendar' ) . '</p></div>';
         } elseif ( in_array( $status, array( 'source_required', 'destination_invalid' ), true ) ) {
@@ -278,13 +300,14 @@ final class Dendrila_Calendar_Setup {
         foreach ( $choices as $id => $label ) {
             echo '<p><label><input type="radio" name="destination" value="' . esc_attr( $id ) . '" ' . checked( $mode, $id, false ) . '> ' . esc_html( $label ) . '</label></p>';
         }
-        echo '<p class="description">' . esc_html__( 'Direct Google Calendar and Outlook authorization is not implemented yet; these services currently support URL subscriptions only.', 'dendrila-calendar' ) . '</p>';
+        echo '<p class="description">' . esc_html__( 'Selecting a destination does not connect it. After saving, you must enter CalDAV credentials and test the connection, or create a private calendar subscription link and add it to your calendar application. Google and Outlook direct OAuth connection is not implemented.', 'dendrila-calendar' ) . '</p>';
         echo '<h2>' . esc_html__( 'Step 3 — Confirm the setup', 'dendrila-calendar' ) . '</h2>';
         echo '<p class="description">' . esc_html__( 'If an active booking plugin is detected but its connector is unusable, saving sends a technical compatibility request for review. This includes only the plugin name, entrypoint, version, reason, WordPress/PHP versions and site URL — never appointments, customer data or passwords. Duplicate requests are suppressed.', 'dendrila-calendar' ) . '</p>';
         submit_button( __( 'Save settings and continue', 'dendrila-calendar' ) );
         echo '</form>';
-        if ( self::complete() ) {
-            echo '<p><a href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar' ) ) . '" class="button">' . esc_html__( 'Open unified calendar', 'dendrila-calendar' ) . '</a></p>';
+        if ( ! self::complete() && ! empty( $saved['mode'] ) && 'local' !== $saved['mode'] ) {
+            echo '<p class="notice notice-warning inline">' . esc_html__( 'No external destination connected yet. Complete the connection on the Synchronization page.', 'dendrila-calendar' ) . '</p>';
+            echo '<p><a href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-sync' ) ) . '" class="button button-primary">' . esc_html__( 'Finish connecting my calendar', 'dendrila-calendar' ) . '</a></p>';
         }
         echo '</div>';
     }

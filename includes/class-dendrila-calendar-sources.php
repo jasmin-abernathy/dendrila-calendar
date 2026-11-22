@@ -5,6 +5,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class Dendrila_Calendar_Sources {
+    private static $diagnostics = array();
+
+    public static function diagnostics() {
+        return self::$diagnostics;
+    }
+
     public static function available() {
         $sources = array( 'native' => __( 'Dendrila events', 'dendrila-calendar' ) );
         $detected = Dendrila_Calendar_Detector::discover();
@@ -47,6 +53,7 @@ final class Dendrila_Calendar_Sources {
 
     public static function events( $start_utc, $end_utc, $requested ) {
         $events = array();
+        self::$diagnostics = array();
         foreach ( $requested as $source ) {
             try {
                 if ( 'native' === $source ) {
@@ -61,7 +68,14 @@ final class Dendrila_Calendar_Sources {
                     $items = apply_filters( 'dendrila_calendar_source_events_' . $source, array(), $start_utc, $end_utc );
                 }
                 if ( ! is_array( $items ) ) {
+                    self::$diagnostics[ $source ] = 'Adapter returned a non-list result.';
                     continue;
+                }
+                if ( class_exists( 'Dendrila_Calendar_Integrations' ) && method_exists( 'Dendrila_Calendar_Integrations', 'last_error' ) ) {
+                    $error = Dendrila_Calendar_Integrations::last_error();
+                    if ( $error ) {
+                        self::$diagnostics[ $source ] = $error;
+                    }
                 }
                 foreach ( array_slice( $items, 0, 1000 ) as $item ) {
                     if ( ! is_array( $item ) || ! isset( $item['title'], $item['start'], $item['end'] ) ) {
@@ -84,7 +98,9 @@ final class Dendrila_Calendar_Sources {
                     );
                 }
             } catch ( Throwable $e ) {
-                // A broken optional source must not take down the entire calendar.
+                // Do not expose SQL queries, filesystem paths or secrets to the browser.
+                self::$diagnostics[ $source ] = 'Connector raised ' . get_class( $e ) . '. Check the WordPress PHP error log.';
+                error_log( '[Dendrila Calendar] ' . $source . ': ' . $e->getMessage() );
                 continue;
             }
         }

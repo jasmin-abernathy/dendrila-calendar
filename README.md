@@ -128,3 +128,13 @@ The plugin redirects a WordPress administrator to **Dendrila Calendar → Config
 - Successful reports are deduplicated per plugin version and reason; failed submissions are throttled for 24 hours. `wp_mail()` reporting success only indicates that the transport accepted the message, **not** proof of inbox delivery. Inactive plugins generate no report.
 
 These source adapters still require real WordPress/booking plugin tests, and direct CalDAV still needs real destination end-to-end verification. The plugin remains at version `0.0.1` without a WordPress.org release.
+
+## Troubleshooting the WordPress calendar screen
+
+- **Calendar view** is the separate admin submenu, with month/week/list views and a direct month selector. **Local events** is a WordPress post list and does **not** list imported bookings.
+- The calendar remains available even if the external sync wizard is incomplete. Imported events also appear in a server-rendered **Upcoming appointments** table (next 60 days) below the interactive calendar. This separates broken JavaScript/AJAX from adapter problems.
+- The admin AJAX response contains aggregate source counts and sanitized connector warnings, never customer records. A failing source no longer fails silently.
+- **Selecting a destination is not connecting it**. A CalDAV collection needs an HTTPS URL, username, application password and a successful connection test. An iCalendar subscription needs an actually created private link, then a subscription in the chosen calendar app. A setup is complete only when a connection/link covers the chosen sources.
+- **Google and Outlook are not direct OAuth destinations yet.** The dropdown on the iCalendar section shows setup instructions only and cannot create or authorize a Google/Outlook account connection.
+
+The plugin stays at development version `0.0.1`; do not publish to WordPress.org or claim cross-provider compatibility based on fixtures alone.

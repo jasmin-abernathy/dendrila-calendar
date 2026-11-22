@@ -24,7 +24,7 @@ if ( $GLOBALS['post_type_args']['labels']['menu_name'] !== 'Local events' ||
 Dendrila_Calendar::admin_menu();
 if ( $GLOBALS['menu_slug'] !== 'dendrila-calendar' ||
     $GLOBALS['submenus'][0]['menu'] !== 'Calendar view' ||
-    $GLOBALS['submenus'][0]['slug'] !== 'dendrila-calendar' ||
+    $GLOBALS['submenus'][0]['slug'] !== 'dendrila-calendar-view' ||
     $GLOBALS['submenus'][1]['menu'] !== 'Synchronization' ||
     $GLOBALS['submenus'][1]['slug'] !== 'dendrila-calendar-sync' ) {
     throw new RuntimeException( 'Unified calendar must have its own explicit submenu.' );

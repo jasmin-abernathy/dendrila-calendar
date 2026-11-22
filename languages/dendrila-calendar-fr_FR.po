@@ -53,9 +53,6 @@ msgstr "Adresse du calendrier CalDAV (HTTPS)"
 msgid "CalDAV username"
 msgstr "Identifiant CalDAV"
 
-msgid "Calendar application"
-msgstr "Application de calendrier"
-
 msgid "Calendar connected. Automatic direct synchronization is enabled."
 msgstr "Agenda connecté. La synchronisation directe est activée."
 
@@ -82,6 +79,9 @@ msgstr "Choisissez comment les rendez-vous rejoindront votre agenda habituel."
 
 msgid "Choose month"
 msgstr "Choisir le mois"
+
+msgid "Choosing an app only changes the instructions. Create an actual private link below and add it in that app."
+msgstr "Choisir une application ne change que les instructions. Créez un véritable lien privé ci-dessous et ajoutez-le dans cette application."
 
 msgid "Compatible active plugins are preselected. You may deselect them. Inactive or unsupported plugins cannot be synchronized."
 msgstr "Les extensions actives compatibles sont présélectionnées. Vous pouvez les décocher. Les extensions inactives ou non prises en charge ne peuvent pas être synchronisées."
@@ -137,9 +137,6 @@ msgstr "Événements locaux Dendrila"
 msgid "Direct CalDAV connection (Nextcloud and compatible calendars)"
 msgstr "Connexion CalDAV directe (Nextcloud et agendas compatibles)"
 
-msgid "Direct Google Calendar and Outlook authorization is not implemented yet; these services currently support URL subscriptions only."
-msgstr "La connexion directe à Google Agenda et Outlook n’est pas encore disponible : ces services proposent actuellement uniquement l’abonnement par URL."
-
 msgid "Direct synchronization into an existing calendar"
 msgstr "Synchronisation directe avec un agenda existant"
 
@@ -160,6 +157,9 @@ msgstr "Recherchez S’abonner par URL, Agenda Internet ou Abonnement iCalendar 
 
 msgid "Find events"
 msgstr "Rechercher des événements"
+
+msgid "Finish connecting my calendar"
+msgstr "Terminer la connexion de mon agenda"
 
 msgid "Finish the Dendrila Calendar setup to enable your chosen appointment sources and destination."
 msgstr "Terminez la configuration de Dendrila Calendar pour activer les sources et la destination souhaitées."
@@ -218,6 +218,12 @@ msgstr "Suivant"
 msgid "No events for this period."
 msgstr "Aucun événement pour cette période."
 
+msgid "No events returned by the active source connectors for the next 60 days. Check the source diagnostics below."
+msgstr "Aucun événement renvoyé par les connecteurs actifs dans les 60 prochains jours. Consultez le diagnostic des sources ci-dessous."
+
+msgid "No external destination connected yet. Complete the connection on the Synchronization page."
+msgstr "Aucune destination externe n’est encore connectée. Terminez la connexion depuis la page Synchronisation."
+
 msgid "No supported appointment plugin was detected. You can start with local events and return to setup later."
 msgstr "Aucune extension de réservation compatible n’a été détectée. Vous pouvez commencer avec les événements locaux et revenir ensuite dans l’assistant."
 
@@ -229,6 +235,9 @@ msgstr "Sur iPhone : Calendrier > Calendriers > Ajouter un calendrier > Ajouter 
 
 msgid "Open Apple Calendar subscription"
 msgstr "Ouvrir l’abonnement dans Calendrier Apple"
+
+msgid "Open calendar view"
+msgstr "Ouvrir la vue calendrier"
 
 msgid "Open configuration assistant"
 msgstr "Ouvrir l’assistant de configuration"
@@ -278,6 +287,15 @@ msgstr "Tout désélectionner"
 msgid "Select your WordPress sources, create a private calendar URL, then subscribe to it in your calendar app. The app refreshes events automatically on its own schedule; this is a read-only subscription, not instant or two-way synchronization."
 msgstr "Sélectionnez les sources WordPress, créez une adresse privée puis abonnez-y votre agenda. Les événements s’actualisent automatiquement selon la fréquence choisie par votre application. Cette synchronisation est en lecture seule, non instantanée et non bidirectionnelle."
 
+msgid "Selecting a destination does not connect it. After saving, you must enter CalDAV credentials and test the connection, or create a private calendar subscription link and add it to your calendar application. Google and Outlook direct OAuth connection is not implemented."
+msgstr "Choisir une destination ne la connecte pas. Après l’enregistrement, saisissez les identifiants CalDAV et testez la connexion, ou créez un lien privé d’abonnement à ajouter à votre application de calendrier. La connexion directe OAuth à Google et Outlook n’est pas encore disponible."
+
+msgid "Show instructions for this application (not a connection)"
+msgstr "Afficher les instructions pour cette application (sans connexion)"
+
+msgid "Source"
+msgstr "Source"
+
 msgid "Sources"
 msgstr "Sources"
 
@@ -286,6 +304,9 @@ msgstr "Sources à synchroniser"
 
 msgid "Start"
 msgstr "Début"
+
+msgid "Status"
+msgstr "Statut"
 
 msgid "Step 1 — Detected appointment sources"
 msgstr "Étape 1 — Sources de rendez-vous détectées"
@@ -329,11 +350,17 @@ msgstr "Le lien complet ne s’affiche qu’une fois après sa création. S’il
 msgid "The server cannot securely protect the calendar password."
 msgstr "Le serveur ne peut pas protéger de manière sûre le mot de passe du calendrier."
 
-msgid "This assistant is required before using Dendrila Calendar. It automatically detects your active appointment plugins and helps you choose where bookings go."
-msgstr "Cet assistant est obligatoire avant de pouvoir utiliser Dendrila Calendar. Il détecte les extensions de réservation actives et vous aide à choisir la destination des rendez-vous."
+msgid "The subscription could not be saved. Try again."
+msgstr "L’abonnement n’a pas pu être enregistré. Réessayez."
+
+msgid "This assistant detects active appointment plugins and guides external synchronization. You can view the local calendar before connecting an external destination."
+msgstr "Cet assistant détecte les extensions de réservation actives et vous guide pour synchroniser un agenda externe. Vous pouvez consulter le calendrier local avant de connecter une destination."
 
 msgid "This list contains only events created in Dendrila Calendar. Appointments imported from Easy Appointments and other plugins appear in the unified calendar."
 msgstr "Cette liste contient uniquement les événements créés dans Dendrila Calendar. Les rendez-vous importés depuis Easy Appointments et les autres extensions apparaissent dans le calendrier unifié."
+
+msgid "This list is loaded directly by WordPress and remains visible when the interactive calendar is unavailable."
+msgstr "Cette liste est chargée directement par WordPress et reste visible si le calendrier interactif est indisponible."
 
 msgid "Times use the site timezone: %s. The event is visible only to administrators."
 msgstr "Les horaires utilisent le fuseau horaire du site : %s. L’événement est visible uniquement par les administrateurs."
@@ -359,6 +386,9 @@ msgstr "Impossible de mettre à jour l’abonnement."
 msgid "Unified calendar"
 msgstr "Calendrier unifié"
 
+msgid "Upcoming appointments (server view)"
+msgstr "Rendez-vous à venir (vue serveur)"
+
 msgid "View"
 msgstr "Vue"
 
@@ -382,3 +412,6 @@ msgstr "Vous ne pouvez pas gérer les abonnements du calendrier."
 
 msgid "Your appointments from other plugins are shown here. The Local events submenu lists only events created in Dendrila Calendar."
 msgstr "Les rendez-vous des autres extensions s’affichent ici. Le sous-menu « Événements locaux » répertorie uniquement ceux créés dans Dendrila Calendar."
+
+msgid "Your external calendar is not connected. Selecting an application in the list below is not enough; complete a CalDAV connection or create and subscribe to a private URL."
+msgstr "Votre agenda externe n’est pas connecté. Sélectionner une application dans la liste ne suffit pas : terminez une connexion CalDAV ou créez un lien privé et abonnez-vous à ce lien."

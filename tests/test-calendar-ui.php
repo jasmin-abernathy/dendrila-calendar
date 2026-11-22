@@ -1,6 +1,7 @@
 <?php
 /** Check the WordPress admin UI wires search and secure subscription management. */
 define( 'ABSPATH', __DIR__ );
+define( 'DAY_IN_SECONDS', 86400 );
 $GLOBALS['queued_scripts'] = array();
 $GLOBALS['localized_scripts'] = array();
 function __( $s, $domain = null ) { return $s; }
@@ -18,17 +19,20 @@ function wp_enqueue_script( $handle, $url, $deps, $version ) { $GLOBALS['queued_
 function wp_localize_script( $handle, $name, $data ) { $GLOBALS['localized_scripts'][ $handle ] = $data; }
 function wp_create_nonce( $name ) { return 'testnonce'; }
 function wp_timezone_string() { return 'Europe/Paris'; }
+function wp_timezone() { return new DateTimeZone( 'Europe/Paris' ); }
 function get_user_locale() { return 'fr_FR'; }
 function get_option( $name, $default ) { return $default; }
 class Dendrila_Calendar_Sources {
-    public static function available() { return array( 'native' => 'Local events' ); }
+    public static function available() { return array( 'native' => 'Local events', 'easy_appointments' => 'Easy Appointments' ); }
+    public static function events( $start, $end, $sources ) { return array( array( 'source' => 'easy_appointments', 'id' => 'ea-1', 'title' => 'Prestation test', 'start' => gmdate( 'Y-m-d\TH:i:s\Z', time() + DAY_IN_SECONDS ), 'end' => gmdate( 'Y-m-d\TH:i:s\Z', time() + DAY_IN_SECONDS + 1800 ), 'status' => 'pending' ) ); }
+    public static function diagnostics() { return array(); }
 }
 class Dendrila_Calendar_Bridge { public static function render_settings() { echo '<h2>Direct synchronization into an existing calendar</h2>'; } }
 require dirname( __DIR__ ) . '/includes/class-dendrila-calendar.php';
 require dirname( __DIR__ ) . '/includes/class-dendrila-calendar-subscriptions.php';
 Dendrila_Calendar::enqueue( 'not-the-calendar' );
 if ( ! empty( $GLOBALS['queued_scripts'] ) ) { throw new RuntimeException( 'Calendar assets loaded on unrelated admin screen' ); }
-Dendrila_Calendar::enqueue( 'toplevel_page_dendrila-calendar' );
+Dendrila_Calendar::enqueue( 'dendrila-calendar_page_dendrila-calendar-view' );
 if ( ! isset( $GLOBALS['queued_scripts']['dendrila-calendar-subscriptions'], $GLOBALS['queued_scripts']['dendrila-calendar-admin'] ) ) {
     throw new RuntimeException( 'Subscription or calendar UI asset not enqueued' );
 }
@@ -49,7 +53,7 @@ foreach ( array( 'id="dendrila-grid"', 'id="dendrila-search"', 'id="dendrila-sou
         throw new RuntimeException( 'Missing UI control: ' . $id );
     }
 }
-if ( strpos( $markup, 'Synchronize appointments with your external calendar' ) === false || strpos( $markup, 'type="search"' ) === false || strpos( $markup, 'Export filtered events' ) !== false ) {
+if ( strpos( $markup, 'Prestation test' ) === false || strpos( $markup, 'Upcoming appointments (server view)' ) === false || strpos( $markup, 'Synchronize appointments with your external calendar' ) === false || strpos( $markup, 'type="search"' ) === false || strpos( $markup, 'Export filtered events' ) !== false ) {
     throw new RuntimeException( 'Missing functional calendar controls' );
 }
 $GLOBALS['queued_scripts'] = array();

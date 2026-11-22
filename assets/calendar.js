@@ -14,7 +14,10 @@
   if (!root || !period || !message || !viewSelect || !toggles) return;
 
   const locale = (config.locale || 'en').replace(/_/g, '-');
-  const timeZone = config.timezone || 'UTC';
+  const configuredTimeZone = config.timezone || 'UTC';
+  let timeZone = configuredTimeZone;
+  try { new Intl.DateTimeFormat('en', { timeZone }).format(); }
+  catch (_) { timeZone = 'UTC'; }
   const firstDay = Number(config.weekStartsOn) || 0;
   const sources = config.sources || {};
   const i18n = config.i18n || {};
@@ -166,15 +169,16 @@
       renderFiltered();
       // Display per-source counts so a missing event is traceable to a provider or the UI.
       const counts = payload.data.source_counts || {};
-      message.textContent = Object.keys(sources)
+      const warnings = payload.data.source_warnings || {};
+      const stats = Object.keys(sources)
         .filter(source => state.selectedSources.has(source))
-        .map(source => `${sources[source]}: ${Number(counts[source] || 0)}`)
-        .join(' · ');
+        .map(source => `${sources[source]}: ${Number(counts[source] || 0)}${warnings[source] ? ` ⚠ ${warnings[source]}` : ''}`);
+      message.textContent = stats.join(' · ');
     } catch (error) {
       if (error.name === 'AbortError' || state.request !== controller) return;
       root.replaceChildren();
       state.loaded = false;
-        message.textContent = i18n.failed || 'Unable to load events.';
+      message.textContent = `${i18n.failed || 'Unable to load events.'} (${error.message || 'Request failed'})`;
     }
   }
   Object.entries(sources).forEach(([slug, title]) => {

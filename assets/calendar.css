@@ -82,3 +82,8 @@ a.dendrila-event:hover,a.dendrila-event:focus {background:#d9e9f8; color:#003d71
  .dendrila-subscriptions { padding:14px; }
  .dendrila-calendar-intro-actions .button { width:100%; text-align:center; }
 }
+
+/* Server-rendered fallback makes an inaccessible/failed calendar diagnosable. */
+.dendrila-upcoming {margin-top:22px;border:1px solid #c3c4c7;background:#fff;border-radius:6px;padding:14px 18px}
+.dendrila-upcoming table {margin:10px 0;max-width:100%;}
+.dendrila-upcoming .notice {padding:8px 12px;}

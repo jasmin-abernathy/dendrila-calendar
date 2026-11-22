@@ -73,7 +73,7 @@ final class Dendrila_Calendar {
             __( 'Unified calendar', 'dendrila-calendar' ),
             __( 'Calendar view', 'dendrila-calendar' ),
             'manage_options',
-            'dendrila-calendar',
+            'dendrila-calendar-view',
             array( __CLASS__, 'render' )
         );
         add_submenu_page(
@@ -170,7 +170,7 @@ final class Dendrila_Calendar {
     }
 
     public static function enqueue( $hook ) {
-        $calendar_screen = 'toplevel_page_dendrila-calendar' === $hook;
+        $calendar_screen = in_array( $hook, array( 'toplevel_page_dendrila-calendar', 'dendrila-calendar_page_dendrila-calendar-view' ), true );
         $sync_screen = 'dendrila-calendar_page_dendrila-calendar-sync' === $hook;
         if ( ! $calendar_screen && ! $sync_screen ) {
             return;
@@ -236,7 +236,10 @@ final class Dendrila_Calendar {
             wp_die( esc_html__( 'You are not allowed to view this calendar.', 'dendrila-calendar' ) );
         }
         echo '<div class="wrap dendrila-calendar-wrap"><h1>' . esc_html__( 'Automatic calendar synchronization', 'dendrila-calendar' ) . '</h1>';
-        echo '<p><a href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar' ) ) . '" class="button">' . esc_html__( 'Back to calendar', 'dendrila-calendar' ) . '</a></p>';
+        echo '<p><a href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-view' ) ) . '" class="button">' . esc_html__( 'Back to calendar', 'dendrila-calendar' ) . '</a></p>';
+        if ( class_exists( 'Dendrila_Calendar_Setup' ) && ! Dendrila_Calendar_Setup::complete() ) {
+            echo '<div class="notice notice-warning inline"><p>' . esc_html__( 'Your external calendar is not connected. Selecting an application in the list below is not enough; complete a CalDAV connection or create and subscribe to a private URL.', 'dendrila-calendar' ) . '</p></div>';
+        }
         Dendrila_Calendar_Bridge::render_settings();
         echo '<hr>';
         echo '<p><a class="button" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-setup' ) ) . '">' . esc_html__( 'Change source and destination settings', 'dendrila-calendar' ) . '</a></p>';
@@ -272,7 +275,41 @@ final class Dendrila_Calendar {
         echo '<label for="dendrila-search">' . esc_html__( 'Find events', 'dendrila-calendar' ) . '</label> ';
         echo '<input id="dendrila-search" type="search" placeholder="' . esc_attr__( 'Search title or status', 'dendrila-calendar' ) . '">';
         echo '</div>';
-        echo '<div id="dendrila-message" role="status" aria-live="polite"></div><div id="dendrila-grid" aria-label="' . esc_attr__( 'Unified calendar', 'dendrila-calendar' ) . '"></div></div>';
+        echo '<div id="dendrila-message" role="status" aria-live="polite"></div><div id="dendrila-grid" aria-label="' . esc_attr__( 'Unified calendar', 'dendrila-calendar' ) . '"></div>';
+        self::render_upcoming();
+        echo '</div>';
+    }
+
+    /** Server-side list stays visible even if browser JavaScript or AJAX fails. */
+    public static function render_upcoming() {
+        if ( ! current_user_can( 'manage_options' ) ) {
+            return;
+        }
+        $now = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
+        $start = $now->modify( '-1 day' )->format( 'Y-m-d H:i:s' );
+        $end = $now->modify( '+60 days' )->format( 'Y-m-d H:i:s' );
+        $available = Dendrila_Calendar_Sources::available();
+        $events = Dendrila_Calendar_Sources::events( $start, $end, array_keys( $available ) );
+        echo '<section class="dendrila-upcoming" aria-labelledby="dendrila-upcoming-heading">';
+        echo '<h2 id="dendrila-upcoming-heading">' . esc_html__( 'Upcoming appointments (server view)', 'dendrila-calendar' ) . '</h2>';
+        echo '<p class="description">' . esc_html__( 'This list is loaded directly by WordPress and remains visible when the interactive calendar is unavailable.', 'dendrila-calendar' ) . '</p>';
+        if ( ! $events ) {
+            echo '<p class="notice notice-warning inline">' . esc_html__( 'No events returned by the active source connectors for the next 60 days. Check the source diagnostics below.', 'dendrila-calendar' ) . '</p>';
+        } else {
+            echo '<table class="widefat striped"><thead><tr><th>' . esc_html__( 'Date and time', 'dendrila-calendar' ) . '</th><th>' . esc_html__( 'Source', 'dendrila-calendar' ) . '</th><th>' . esc_html__( 'Event', 'dendrila-calendar' ) . '</th><th>' . esc_html__( 'Status', 'dendrila-calendar' ) . '</th></tr></thead><tbody>';
+            foreach ( array_slice( $events, 0, 35 ) as $event ) {
+                $start_date = new DateTimeImmutable( $event['start'] );
+                $date = $start_date->setTimezone( wp_timezone() )->format( 'd/m/Y H:i' );
+                $source = isset( $available[ $event['source'] ] ) ? $available[ $event['source'] ] : $event['source'];
+                echo '<tr><td>' . esc_html( $date ) . '</td><td>' . esc_html( $source ) . '</td><td>' . esc_html( $event['title'] ) . '</td><td>' . esc_html( $event['status'] ) . '</td></tr>';
+            }
+            echo '</tbody></table>';
+        }
+        $diagnostics = Dendrila_Calendar_Sources::diagnostics();
+        foreach ( $diagnostics as $source => $reason ) {
+            echo '<p class="notice notice-warning inline">' . esc_html( $source . ': ' . $reason ) . '</p>';
+        }
+        echo '</section>';
     }
 
     public static function ajax_events() {
@@ -308,6 +345,6 @@ final class Dendrila_Calendar {
                 ++$source_counts[ $event['source'] ];
             }
         }
-        wp_send_json_success( array( 'events' => $events, 'source_counts' => $source_counts ) );
+        wp_send_json_success( array( 'events' => $events, 'source_counts' => $source_counts, 'source_warnings' => Dendrila_Calendar_Sources::diagnostics() ) );
     }
 }

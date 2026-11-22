@@ -27,7 +27,8 @@ function submit_button( $label ) { echo '<button type="submit">' . htmlspecialch
 function absint( $value ) { return abs( (int) $value ); }
 function wp_mail() { ++$GLOBALS['sent']; return true; }
 class Dendrila_Calendar_Bridge {
-    public static function connections() { return array(); }
+    public static $connections = array();
+    public static function connections() { return self::$connections; }
 }
 require dirname( __DIR__ ) . '/includes/class-dendrila-calendar-detector.php';
 require dirname( __DIR__ ) . '/includes/class-dendrila-calendar-setup.php';
@@ -49,8 +50,15 @@ if ( $GLOBALS['sent'] ) {
     throw new RuntimeException( 'Viewing setup without confirmation must not send a support email.' );
 }
 $GLOBALS['config'][ Dendrila_Calendar_Setup::OPTION ] = array( 'sources' => array( 'easy_appointments' ), 'mode' => 'caldav', 'completed' => false );
+if ( Dendrila_Calendar_Setup::complete() ) { throw new RuntimeException( 'Choosing CalDAV cannot finish setup without a connection' ); }
+Dendrila_Calendar_Bridge::$connections = array( 'test' => array( 'label' => 'Test destination', 'sources' => array( 'easy_appointments' ) ) );
 Dendrila_Calendar_Setup::destination_connected();
 if ( ! Dendrila_Calendar_Setup::complete() || Dendrila_Calendar_Setup::selected_sources() !== array( 'easy_appointments' ) ) {
     throw new RuntimeException( 'A validated CalDAV connection must complete setup without altering selected sources.' );
 }
-echo "First-run assistant: mandatory configuration, auto-preselection and no mailbox leak passed\n";
+$GLOBALS['config'][ Dendrila_Calendar_Setup::OPTION ] = array( 'sources' => array( 'easy_appointments' ), 'mode' => 'subscription', 'completed' => true );
+if ( Dendrila_Calendar_Setup::complete() ) { throw new RuntimeException( 'Choosing an app must not count as a real subscription' ); }
+class Dendrila_Calendar_Subscriptions { public static $items = array(); public static function subscriptions() { return self::$items; } }
+Dendrila_Calendar_Subscriptions::$items = array( 'test' => array( 'sources' => array( 'easy_appointments' ) ) );
+if ( ! Dendrila_Calendar_Setup::complete() ) { throw new RuntimeException( 'Saved subscription must count as a configured feed' ); }
+echo "First-run assistant: verified destinations, auto-preselection and no mailbox leak passed\n";

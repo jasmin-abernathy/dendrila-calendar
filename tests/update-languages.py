@@ -10,6 +10,20 @@ old_po = (language_dir / 'dendrila-calendar-fr_FR.po').read_text(encoding='utf-8
 entries = dict(re.findall(r'^msgid "([^"\\]*(?:\\.[^"\\]*)*)"\nmsgstr "([^"\\]*(?:\\.[^"\\]*)*)"$', old_po, re.M))
 entries = {json.loads('"'+k+'"'):json.loads('"'+v+'"') for k,v in entries.items() if k}
 entries.update({
+    'Upcoming appointments (server view)': 'Rendez-vous à venir (vue serveur)',
+    'This list is loaded directly by WordPress and remains visible when the interactive calendar is unavailable.': 'Cette liste est chargée directement par WordPress et reste visible si le calendrier interactif est indisponible.',
+    'No events returned by the active source connectors for the next 60 days. Check the source diagnostics below.': 'Aucun événement renvoyé par les connecteurs actifs dans les 60 prochains jours. Consultez le diagnostic des sources ci-dessous.',
+    'Source': 'Source',
+    'Status': 'Statut',
+    'This assistant detects active appointment plugins and guides external synchronization. You can view the local calendar before connecting an external destination.': 'Cet assistant détecte les extensions de réservation actives et vous guide pour synchroniser un agenda externe. Vous pouvez consulter le calendrier local avant de connecter une destination.',
+    'Open calendar view': 'Ouvrir la vue calendrier',
+    'Selecting a destination does not connect it. After saving, you must enter CalDAV credentials and test the connection, or create a private calendar subscription link and add it to your calendar application. Google and Outlook direct OAuth connection is not implemented.': 'Choisir une destination ne la connecte pas. Après l’enregistrement, saisissez les identifiants CalDAV et testez la connexion, ou créez un lien privé d’abonnement à ajouter à votre application de calendrier. La connexion directe OAuth à Google et Outlook n’est pas encore disponible.',
+    'No external destination connected yet. Complete the connection on the Synchronization page.': 'Aucune destination externe n’est encore connectée. Terminez la connexion depuis la page Synchronisation.',
+    'Finish connecting my calendar': 'Terminer la connexion de mon agenda',
+    'Your external calendar is not connected. Selecting an application in the list below is not enough; complete a CalDAV connection or create and subscribe to a private URL.': 'Votre agenda externe n’est pas connecté. Sélectionner une application dans la liste ne suffit pas : terminez une connexion CalDAV ou créez un lien privé et abonnez-vous à ce lien.',
+    'Show instructions for this application (not a connection)': 'Afficher les instructions pour cette application (sans connexion)',
+    'Choosing an app only changes the instructions. Create an actual private link below and add it in that app.': 'Choisir une application ne change que les instructions. Créez un véritable lien privé ci-dessous et ajoutez-le dans cette application.',
+    'The subscription could not be saved. Try again.': 'L’abonnement n’a pas pu être enregistré. Réessayez.',
     'Complete setup by connecting and validating a CalDAV destination below.': 'Terminez la configuration en connectant et en validant un agenda CalDAV ci-dessous.',
 
     'Configure sources and destination': 'Configurer les sources et la destination',

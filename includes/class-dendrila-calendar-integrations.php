@@ -8,6 +8,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class Dendrila_Calendar_Integrations {
+    private static $last_error = '';
+
+    public static function last_error() { return self::$last_error; }
+
     /** Distinct source identifiers are part of the stable public filter contract. */
     public static function available() {
         $sources = array();
@@ -20,6 +24,7 @@ final class Dendrila_Calendar_Integrations {
     }
 
     public static function events( $source, $start_utc, $end_utc ) {
+        self::$last_error = '';
         if ( ! array_key_exists( $source, self::available() ) ) {
             return array();
         }
@@ -79,9 +84,14 @@ final class Dendrila_Calendar_Integrations {
     /** Never select customers, IP addresses, notes, email addresses or phone numbers. */
     private static function query( $sql, $params ) {
         global $wpdb;
+        self::$last_error = '';
         $prepared = $wpdb->prepare( $sql, $params );
         $rows = $wpdb->get_results( $prepared );
-        return is_array( $rows ) && empty( $wpdb->last_error ) ? $rows : array();
+        if ( ! empty( $wpdb->last_error ) ) {
+            self::$last_error = 'Database query failed for this source. Check the WordPress PHP log.';
+            error_log( '[Dendrila Calendar] Source database query failed (details excluded from UI): ' . $wpdb->last_error );
+        }
+        return is_array( $rows ) && ! self::$last_error ? $rows : array();
     }
 
     private static function collect( $rows, $build ) {

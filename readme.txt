@@ -69,3 +69,7 @@ Open Dendrila Calendar > Synchronization. Create a private subscription URL for 
 = Is this real-time, bidirectional Google or CalDAV synchronization? =
 
 No. Direct CalDAV pushes bookings into the existing external calendar on a schedule, while read-only URL subscriptions are refreshed by the target application. Neither method writes modifications back to a WordPress booking. Direct Google/Outlook OAuth synchronization has not been implemented yet.
+
+== Troubleshooting ==
+
+Use Dendrila Calendar > Calendar view, not Local events, to find imported appointments. An independent list of the next 60 days appears under the calendar for diagnosis. Completing the setup requires a working CalDAV connection or a created calendar subscription URL; choosing an application is not a connection. Google and Outlook direct account authorization are not yet available.
