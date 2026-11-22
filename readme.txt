@@ -8,20 +8,20 @@ Stable tag: 0.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-A private unified WordPress calendar for events and optional booking plugins.
+A free unified WordPress calendar for events and bookings from optional plugins.
 
 == Description ==
 
 Development version. Do not publish to WordPress.org before integration testing.
 
-Dendrila Calendar gives WordPress administrators one calendar for multiple sources. Imported records are read-only and remain managed by the original plugins. Customer details are never included in the calendar event payload.
+Dendrila Calendar is an independent WordPress administration calendar that brings together native events and compatible event and booking plugins. All third-party integrations are optional and read-only. The original plugins remain responsible for reservations, payments and their data. Customer details are not included in the calendar event payload.
 
 = Sources =
 
 * Dendrila events: manually created private WordPress events.
-* Oryx Bookings: existing bookings shown with service, status and dates.
-* The Events Calendar: published, non-recurring events from UTC metadata.
-* Event Organiser, Events Manager, Easy Appointments, FluentBooking, Simply Schedule Appointments, Bookly, Amelia and Booking Calendar: optional read-only integrations.
+* Event sources: Event Organiser, Events Manager and The Events Calendar (published, non-recurring events).
+* Booking sources: Amelia, Booking Calendar, Bookly, Easy Appointments, FluentBooking, Oryx Bookings and Simply Schedule Appointments.
+* Ten external sources in total, all optional and read-only.
 
 No external CDN, custom booking tables or mandatory dependency.
 

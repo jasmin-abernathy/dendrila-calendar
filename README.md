@@ -2,15 +2,17 @@
 
 **Status:** first internal test `0.0.1` — development only; not a beta or WordPress.org release.
 
-A **private, unified admin calendar** for WordPress. It collects existing data without creating duplicate booking records or replacing booking/payment engines. The calendar is intentionally read-only for imported sources.
+**Dendrila Calendar is an independent, private calendar hub for WordPress.** It brings together events and bookings from compatible plugins in one administrator interface. Every integration is optional, including Oryx Bookings. Imported items remain read-only and their original plugins retain control of bookings and payments.
+
+**Project repository:** https://github.com/jasmin-abernathy/dendrila-calendar
 
 ## What currently works
 
 - Day-by-day **month, week and list** views; source filters and keyboard-operable controls.
 - **Dendrila events**: create/edit your own events using a private WordPress post type (admin only).
-- **Oryx Bookings 1.1.3**: read bookings through its existing `BookingRepository::get_by_date_range()`; displays service and status, **not customer names, email addresses, phone numbers or private notes**.
-- **The Events Calendar**: display published single events from the plugin's UTC event metadata. **Recurring occurrences are not yet included.**
-- **Eight additional read-only integrations**: Event Organiser, Events Manager, Easy Appointments, FluentBooking, Simply Schedule Appointments, Bookly, Amelia and Booking Calendar. Source-specific versions and caveats are in [the integration audit](docs/INTEGRATIONS.md).
+- **Optional event sources**: Event Organiser, Events Manager and The Events Calendar (single published events only; recurring occurrences are not yet included).
+- **Optional booking sources**: Amelia, Booking Calendar, Bookly, Easy Appointments, FluentBooking, Oryx Bookings and Simply Schedule Appointments.
+- **Ten external integrations in total**, all read-only. Provider versions, supported interfaces and caveats are in [the integration audit](docs/INTEGRATIONS.md). No customer contact information or private notes are included in calendar event payloads.
 - **Optional adapter API**: register sources through WordPress filters without patching other plugins.
 - No vendor scripts, CDN, tracking, third-party API calls, custom tables, or mandatory WooCommerce dependency.
 

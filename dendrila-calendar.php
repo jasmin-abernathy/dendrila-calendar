@@ -1,7 +1,8 @@
 <?php
 /**
  * Plugin Name: Dendrila Calendar
- * Description: Private unified calendar for WordPress events and compatible booking plugins.
+ * Plugin URI: https://github.com/jasmin-abernathy/dendrila-calendar
+ * Description: Unified private calendar for WordPress events and bookings from optional, read-only integrations.
  * Version: 0.0.1
  * Requires at least: 6.5
  * Requires PHP: 7.4
