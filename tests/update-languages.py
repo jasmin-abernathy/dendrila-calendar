@@ -36,12 +36,12 @@ if missing:
     raise RuntimeError('Untranslated strings: ' + ', '.join(missing))
 
 header = ('msgid ""\nmsgstr ""\n'
-          '"Project-Id-Version: Dendrila Calendar 0.2.0-dev\\n"\n'
+          '"Project-Id-Version: Dendrila Calendar 0.0.1\\n"\n'
           '"Content-Type: text/plain; charset=UTF-8\\n"\n'
           '"Language: fr_FR\\n"\n'
           '"Plural-Forms: nplurals=2; plural=n>1;\\n"\n')
 pot = ('msgid ""\nmsgstr ""\n'
-       '"Project-Id-Version: Dendrila Calendar 0.2.0-dev\\n"\n'
+       '"Project-Id-Version: Dendrila Calendar 0.0.1\\n"\n'
        '"Content-Type: text/plain; charset=UTF-8\\n"\n')
 for string in sorted(strings):
     key = json.dumps(string, ensure_ascii=False)
@@ -57,7 +57,7 @@ lines = [
     '/** French translations for Dendrila Calendar (WordPress 6.5+). */',
     "if ( ! defined( 'ABSPATH' ) ) { exit; }",
     'return array(',
-    "    'project-id-version' => 'Dendrila Calendar 0.2.0-dev',",
+    "    'project-id-version' => 'Dendrila Calendar 0.0.1',",
     "    'language' => 'fr_FR',",
     "    'plural-forms' => 'nplurals=2; plural=n>1;',",
     "    'messages' => array(",

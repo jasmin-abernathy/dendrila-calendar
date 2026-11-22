@@ -3,7 +3,7 @@
 define( 'ABSPATH', __DIR__ );
 $data = include dirname( __DIR__ ) . '/languages/dendrila-calendar-fr_FR.l10n.php';
 $messages = $data['messages'] ?? array();
-if ( count( $messages ) !== 32 || ! isset( $messages['Date and time'], $messages['Sources'] ) ) {
+if ( count( $messages ) !== 47 || ! isset( $messages['Date and time'], $messages['Sources'] ) ) {
     throw new RuntimeException( 'French translation file is missing messages' );
 }
 foreach ( $messages as $en => $fr ) {

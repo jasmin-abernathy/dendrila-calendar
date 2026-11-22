@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class Dendrila_Calendar {
-    const VERSION = '0.2.0-dev';
+    const VERSION = '0.0.1';
     const POST_TYPE = 'dendrila_event';
     const START_KEY = '_dendrila_calendar_start_utc';
     const END_KEY = '_dendrila_calendar_end_utc';

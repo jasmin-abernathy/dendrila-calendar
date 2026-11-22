@@ -15,6 +15,7 @@ jobs:
         run: |
           php tests/test-sources.php
           php tests/test-integrations.php
+          php tests/test-translation.php
       - name: Package contains all required assets
         run: |
           test -f dendrila-calendar.php

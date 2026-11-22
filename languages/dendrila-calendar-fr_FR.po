@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Dendrila Calendar 0.2.0-dev\n"
+"Project-Id-Version: Dendrila Calendar 0.0.1\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fr_FR\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"

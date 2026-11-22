@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Dendrila Calendar
  * Description: Private unified calendar for WordPress events and compatible booking plugins.
- * Version: 0.2.0-dev
+ * Version: 0.0.1
  * Requires at least: 6.5
  * Requires PHP: 7.4
  * Author: Le Verger du Numérique

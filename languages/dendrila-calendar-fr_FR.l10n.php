@@ -2,7 +2,7 @@
 /** French translations for Dendrila Calendar (WordPress 6.5+). */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 return array(
-    'project-id-version' => 'Dendrila Calendar 0.2.0-dev',
+    'project-id-version' => 'Dendrila Calendar 0.0.1',
     'language' => 'fr_FR',
     'plural-forms' => 'nplurals=2; plural=n>1;',
     'messages' => array(

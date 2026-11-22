@@ -4,7 +4,7 @@ Tags: calendar, events, bookings, administration
 Requires at least: 6.5
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 0.2.0
+Stable tag: 0.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -44,10 +44,8 @@ No. Only users with manage_options can view the private calendar.
 
 == Changelog ==
 
-= 0.2.0 (development) =
-* Added eight additional optional read-only source adapters; reviewed respective source archives.
-* Added select-all/select-none source toggles, timezone calendar navigation fixes, and isolated regression tests.
-* ICS Calendar feed integration is deferred until a safe consent-based local configuration exists.
-
-= 0.1.0 =
-* Initial development version with local events, Oryx bookings and The Events Calendar adapters.
+= 0.0.1 (development; first internal test) =
+* Initial unified calendar with local events and optional, read-only source integrations.
+* Added source selection controls, timezone navigation safeguards and isolated adapter regression tests.
+* ICS Calendar feed integration is deferred until a secure, explicit configuration exists.
+* Not yet released or tested end-to-end on a production-like WordPress installation.

@@ -1,6 +1,6 @@
 # Dendrila Calendar 🌱
 
-**Status:** development preview `0.2.0-dev`. Not yet a WordPress.org release.
+**Status:** first internal test `0.0.1` — development only; not a beta or WordPress.org release.
 
 A **private, unified admin calendar** for WordPress. It collects existing data without creating duplicate booking records or replacing booking/payment engines. The calendar is intentionally read-only for imported sources.
 
