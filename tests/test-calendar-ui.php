@@ -34,8 +34,12 @@ if ( ! isset( $GLOBALS['queued_scripts']['dendrila-calendar-subscriptions'], $GL
 if ( $GLOBALS['queued_scripts']['dendrila-calendar-admin']['deps'] !== array() ) {
     throw new RuntimeException( 'Unexpected calendar JS dependencies' );
 }
-if ( $GLOBALS['queued_scripts']['dendrila-calendar-admin']['version'] !== '0.0.1' ) {
-    throw new RuntimeException( 'Development version mismatch' );
+$expected_asset_version = (string) filemtime( dirname( __DIR__ ) . '/assets/calendar.js' );
+if ( $GLOBALS['queued_scripts']['dendrila-calendar-admin']['version'] !== $expected_asset_version ) {
+    throw new RuntimeException( 'Calendar JS must use its actual modification time for cache busting' );
+}
+if ( Dendrila_Calendar::VERSION !== '0.0.1' ) {
+    throw new RuntimeException( 'Development plugin version mismatch' );
 }
 ob_start();
 Dendrila_Calendar::render();
