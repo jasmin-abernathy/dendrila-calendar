@@ -237,6 +237,9 @@ final class Dendrila_Calendar {
         }
         echo '<div class="wrap dendrila-calendar-wrap"><h1>' . esc_html__( 'Automatic calendar synchronization', 'dendrila-calendar' ) . '</h1>';
         echo '<p><a href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar' ) ) . '" class="button">' . esc_html__( 'Back to calendar', 'dendrila-calendar' ) . '</a></p>';
+        Dendrila_Calendar_Bridge::render_settings();
+        echo '<hr>';
+        echo '<p><a class="button" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-setup' ) ) . '">' . esc_html__( 'Change source and destination settings', 'dendrila-calendar' ) . '</a></p>';
         Dendrila_Calendar_Subscriptions::render_settings();
         echo '</div>';
     }
@@ -248,8 +251,9 @@ final class Dendrila_Calendar {
         echo '<div class="wrap dendrila-calendar-wrap"><h1>' . esc_html__( 'Dendrila Calendar', 'dendrila-calendar' ) . '</h1>';
         echo '<p>' . esc_html__( 'Your appointments from other plugins are shown here. The Local events submenu lists only events created in Dendrila Calendar.', 'dendrila-calendar' ) . '</p>';
         echo '<div class="dendrila-calendar-intro-actions">';
-        echo '<a class="button button-primary" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-sync' ) ) . '">' . esc_html__( 'Synchronize with Google, Apple, Outlook or another calendar', 'dendrila-calendar' ) . '</a> ';
-        echo '<a class="button" href="' . esc_url( admin_url( 'post-new.php?post_type=' . self::POST_TYPE ) ) . '">' . esc_html__( 'Add an event', 'dendrila-calendar' ) . '</a>';
+        echo '<a class="button button-primary" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-sync' ) ) . '">' . esc_html__( 'Synchronize appointments with your external calendar', 'dendrila-calendar' ) . '</a> ';
+        echo '<a class="button" href="' . esc_url( admin_url( 'post-new.php?post_type=' . self::POST_TYPE ) ) . '">' . esc_html__( 'Add an event', 'dendrila-calendar' ) . '</a> ';
+        echo '<a class="button" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-setup' ) ) . '">' . esc_html__( 'Configure sources and destination', 'dendrila-calendar' ) . '</a>';
         echo '</div>';
         echo '<div class="dendrila-calendar-toolbar">';
         echo '<button type="button" class="button" id="dendrila-prev">' . esc_html__( 'Previous', 'dendrila-calendar' ) . '</button>';

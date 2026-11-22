@@ -22,6 +22,10 @@ jobs:
           php tests/test-admin-navigation.php
           php tests/test-easy-appointments.php
           php tests/test-subscriptions.php
+          php tests/test-direct-sync.php
+          php tests/test-setup-detection.php
+          php tests/test-setup-wizard.php
+          php tests/test-connector-report.php
       - name: Package contains all required assets
         run: |
           test -f dendrila-calendar.php
@@ -34,6 +38,9 @@ jobs:
           test -s assets/calendar.js
           test -s assets/calendar-subscriptions.js
           test -f includes/class-dendrila-calendar-subscriptions.php
+          test -f includes/class-dendrila-calendar-bridge.php
+          test -f includes/class-dendrila-calendar-detector.php
+          test -f includes/class-dendrila-calendar-setup.php
           test -s assets/calendar.css
           test -s languages/dendrila-calendar.pot
           ! grep -R -E 'https?://(unpkg|cdnjs|cdn\.jsdelivr)' assets includes dendrila-calendar.php

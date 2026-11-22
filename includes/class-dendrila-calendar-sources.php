@@ -7,11 +7,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class Dendrila_Calendar_Sources {
     public static function available() {
         $sources = array( 'native' => __( 'Dendrila events', 'dendrila-calendar' ) );
-        if ( class_exists( '\\OryxBookings\\Repositories\\BookingRepository' ) ) {
-            $sources['oryx'] = __( 'Oryx Bookings', 'dendrila-calendar' );
-        }
-        if ( post_type_exists( 'tribe_events' ) ) {
-            $sources['tec'] = __( 'The Events Calendar', 'dendrila-calendar' );
+        $detected = Dendrila_Calendar_Detector::discover();
+        foreach ( array( 'oryx', 'tec' ) as $id ) {
+            if ( isset( $detected[ $id ] ) && $detected[ $id ]['ready'] ) {
+                $sources[ $id ] = __( $detected[ $id ]['label'], 'dendrila-calendar' );
+            }
         }
         $sources = array_merge( $sources, Dendrila_Calendar_Integrations::available() );
         /**
@@ -26,6 +26,12 @@ final class Dendrila_Calendar_Sources {
         foreach ( $sources as $key => $label ) {
             if ( is_string( $key ) && preg_match( '/^[a-z][a-z0-9_-]{0,31}$/D', $key ) && is_string( $label ) ) {
                 $clean[ $key ] = sanitize_text_field( $label );
+            }
+        }
+        if ( class_exists( 'Dendrila_Calendar_Setup' ) ) {
+            $selected = Dendrila_Calendar_Setup::selected_sources();
+            if ( null !== $selected ) {
+                $clean = array_intersect_key( $clean, array_flip( $selected ) );
             }
         }
         return $clean;

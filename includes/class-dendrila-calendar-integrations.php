@@ -11,29 +11,10 @@ final class Dendrila_Calendar_Integrations {
     /** Distinct source identifiers are part of the stable public filter contract. */
     public static function available() {
         $sources = array();
-        if ( function_exists( 'eo_get_events' ) && function_exists( 'eo_get_the_start' ) && function_exists( 'eo_get_the_end' ) ) {
-            $sources['event_organiser'] = __( 'Event Organiser', 'dendrila-calendar' );
-        }
-        if ( class_exists( 'EM_Events' ) ) {
-            $sources['events_manager'] = __( 'Events Manager', 'dendrila-calendar' );
-        }
-        if ( defined( 'EASY_APPOINTMENTS_VERSION' ) ) {
-            $sources['easy_appointments'] = __( 'Easy Appointments', 'dendrila-calendar' );
-        }
-        if ( defined( 'FLUENT_BOOKING_VERSION' ) ) {
-            $sources['fluent_booking'] = __( 'FluentBooking', 'dendrila-calendar' );
-        }
-        if ( function_exists( 'ssa' ) && class_exists( 'SSA_Appointment_Model' ) ) {
-            $sources['simply_schedule'] = __( 'Simply Schedule Appointments', 'dendrila-calendar' );
-        }
-        if ( class_exists( '\\Bookly\\Lib\\Entities\\Appointment' ) ) {
-            $sources['bookly'] = __( 'Bookly', 'dendrila-calendar' );
-        }
-        if ( defined( 'AMELIA_VERSION' ) ) {
-            $sources['amelia'] = __( 'Amelia', 'dendrila-calendar' );
-        }
-        if ( function_exists( 'wpbc_is_table_exists' ) ) {
-            $sources['booking_calendar'] = __( 'Booking Calendar', 'dendrila-calendar' );
+        foreach ( Dendrila_Calendar_Detector::discover() as $id => $details ) {
+            if ( $details['ready'] && ! in_array( $id, array( 'oryx', 'tec', 'ics_calendar' ), true ) ) {
+                $sources[ $id ] = __( $details['label'], 'dendrila-calendar' );
+            }
         }
         return $sources;
     }

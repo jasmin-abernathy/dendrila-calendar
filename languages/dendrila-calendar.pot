@@ -3,6 +3,15 @@ msgstr ""
 "Project-Id-Version: Dendrila Calendar 0.0.1\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 
+msgid "%d created, %d updated, %d cancelled, %d failed"
+msgstr ""
+
+msgid "A compatibility request could not be submitted. Check your WordPress email delivery settings."
+msgstr ""
+
+msgid "A connector compatibility request was submitted for review."
+msgstr ""
+
 msgid "Add an event"
 msgstr ""
 
@@ -12,10 +21,10 @@ msgstr ""
 msgid "All day"
 msgstr ""
 
-msgid "Amelia"
+msgid "Appointment"
 msgstr ""
 
-msgid "Appointment"
+msgid "Appointment sources"
 msgstr ""
 
 msgid "Approved"
@@ -33,13 +42,22 @@ msgstr ""
 msgid "Booking"
 msgstr ""
 
-msgid "Booking Calendar"
+msgid "CalDAV app password"
 msgstr ""
 
-msgid "Bookly"
+msgid "CalDAV calendar collection URL (HTTPS)"
+msgstr ""
+
+msgid "CalDAV username"
 msgstr ""
 
 msgid "Calendar application"
+msgstr ""
+
+msgid "Calendar connected. Automatic direct synchronization is enabled."
+msgstr ""
+
+msgid "Calendar disconnected. Previously created external events were not deleted."
 msgstr ""
 
 msgid "Calendar event"
@@ -48,7 +66,46 @@ msgstr ""
 msgid "Calendar view"
 msgstr ""
 
+msgid "Cannot connect to that CalDAV calendar. Verify its calendar URL and application password."
+msgstr ""
+
+msgid "Change source and destination settings"
+msgstr ""
+
+msgid "Check the calendar address, credentials and selected sources."
+msgstr ""
+
+msgid "Choose how appointments reach the calendar you already use."
+msgstr ""
+
 msgid "Choose month"
+msgstr ""
+
+msgid "Compatible active plugins are preselected. You may deselect them. Inactive or unsupported plugins cannot be synchronized."
+msgstr ""
+
+msgid "Complete setup by connecting and validating a CalDAV destination below."
+msgstr ""
+
+msgid "Configuration"
+msgstr ""
+
+msgid "Configuration saved."
+msgstr ""
+
+msgid "Configure Dendrila Calendar"
+msgstr ""
+
+msgid "Configure sources and destination"
+msgstr ""
+
+msgid "Connect a CalDAV calendar such as Nextcloud. New and changed WordPress bookings are pushed automatically approximately every five minutes while WordPress cron runs. This is one-way; the destination is never polled for changes."
+msgstr ""
+
+msgid "Connect this calendar"
+msgstr ""
+
+msgid "Connection name"
 msgstr ""
 
 msgid "Copy link"
@@ -66,10 +123,25 @@ msgstr ""
 msgid "Dendrila Calendar"
 msgstr ""
 
+msgid "Dendrila Calendar setup"
+msgstr ""
+
 msgid "Dendrila events"
 msgstr ""
 
-msgid "Easy Appointments"
+msgid "Dendrila local events"
+msgstr ""
+
+msgid "Direct CalDAV connection (Nextcloud and compatible calendars)"
+msgstr ""
+
+msgid "Direct Google Calendar and Outlook authorization is not implemented yet; these services currently support URL subscriptions only."
+msgstr ""
+
+msgid "Direct synchronization into an existing calendar"
+msgstr ""
+
+msgid "Disconnect"
 msgstr ""
 
 msgid "Edit calendar event"
@@ -81,25 +153,25 @@ msgstr ""
 msgid "Event"
 msgstr ""
 
-msgid "Event Organiser"
-msgstr ""
-
-msgid "Events Manager"
-msgstr ""
-
 msgid "Find Subscribe by URL, Internet calendar, or iCalendar subscription in your calendar application. Paste the link rather than importing a one-time ICS file."
 msgstr ""
 
 msgid "Find events"
 msgstr ""
 
-msgid "FluentBooking"
+msgid "Finish the Dendrila Calendar setup to enable your chosen appointment sources and destination."
 msgstr ""
 
 msgid "Forbidden"
 msgstr ""
 
+msgid "Google Calendar and Outlook need OAuth account authorization and are not connected by this CalDAV form. Existing URL subscriptions remain available separately."
+msgstr ""
+
 msgid "HTTPS is required for private calendar subscriptions."
+msgstr ""
+
+msgid "If an active booking plugin is detected but its connector is unusable, saving sends a technical compatibility request for review. This includes only the plugin name, entrypoint, version, reason, WordPress/PHP versions and site URL — never appointments, customer data or passwords. Duplicate requests are suppressed."
 msgstr ""
 
 msgid "In Nextcloud Calendar, choose New calendar > New subscription from link and paste the private URL. It will appear as a read-only subscribed calendar."
@@ -120,6 +192,9 @@ msgstr ""
 msgid "Loading events…"
 msgstr ""
 
+msgid "Local calendar only for now"
+msgstr ""
+
 msgid "Local events"
 msgstr ""
 
@@ -132,10 +207,16 @@ msgstr ""
 msgid "My calendar"
 msgstr ""
 
+msgid "Never synchronized"
+msgstr ""
+
 msgid "Next"
 msgstr ""
 
 msgid "No events for this period."
+msgstr ""
+
+msgid "No supported appointment plugin was detected. You can start with local events and return to setup later."
 msgstr ""
 
 msgid "On a computer, open Google Calendar settings, choose Add calendar > From URL, paste the private HTTPS link, and add the calendar. Google decides when to refresh it. The mobile app cannot add URL subscriptions directly."
@@ -147,16 +228,19 @@ msgstr ""
 msgid "Open Apple Calendar subscription"
 msgstr ""
 
-msgid "Open unified calendar"
+msgid "Open configuration assistant"
 msgstr ""
 
-msgid "Oryx Bookings"
+msgid "Open unified calendar"
 msgstr ""
 
 msgid "Pending"
 msgstr ""
 
 msgid "Previous"
+msgstr ""
+
+msgid "Read-only calendar URL subscription (Google, Apple, Outlook and compatible apps)"
 msgstr ""
 
 msgid "Reserved day"
@@ -168,6 +252,9 @@ msgstr ""
 msgid "Revoke this subscription? Connected calendars will stop updating."
 msgstr ""
 
+msgid "Save settings and continue"
+msgstr ""
+
 msgid "Search title or status"
 msgstr ""
 
@@ -175,6 +262,9 @@ msgid "Select all"
 msgstr ""
 
 msgid "Select and copy the link manually."
+msgstr ""
+
+msgid "Select at least one available source and a valid destination."
 msgstr ""
 
 msgid "Select at least one calendar source."
@@ -186,9 +276,6 @@ msgstr ""
 msgid "Select your WordPress sources, create a private calendar URL, then subscribe to it in your calendar app. The app refreshes events automatically on its own schedule; this is a read-only subscription, not instant or two-way synchronization."
 msgstr ""
 
-msgid "Simply Schedule Appointments"
-msgstr ""
-
 msgid "Sources"
 msgstr ""
 
@@ -196,6 +283,15 @@ msgid "Sources to synchronize"
 msgstr ""
 
 msgid "Start"
+msgstr ""
+
+msgid "Step 1 — Detected appointment sources"
+msgstr ""
+
+msgid "Step 2 — Your destination calendar"
+msgstr ""
+
+msgid "Step 3 — Confirm the setup"
 msgstr ""
 
 msgid "Subscribe your personal calendar"
@@ -216,13 +312,22 @@ msgstr ""
 msgid "Synchronization"
 msgstr ""
 
-msgid "Synchronize with Google, Apple, Outlook or another calendar"
+msgid "Synchronization attempt finished. Review the status below."
 msgstr ""
 
-msgid "The Events Calendar"
+msgid "Synchronize appointments with your external calendar"
+msgstr ""
+
+msgid "Synchronize now"
 msgstr ""
 
 msgid "The full link is displayed only once after creation. If it is lost, revoke it and create a new one."
+msgstr ""
+
+msgid "The server cannot securely protect the calendar password."
+msgstr ""
+
+msgid "This assistant is required before using Dendrila Calendar. It automatically detects your active appointment plugins and helps you choose where bookings go."
 msgstr ""
 
 msgid "This list contains only events created in Dendrila Calendar. Appointments imported from Easy Appointments and other plugins appear in the unified calendar."
@@ -232,6 +337,9 @@ msgid "Times use the site timezone: %s. The event is visible only to administrat
 msgstr ""
 
 msgid "Today"
+msgstr ""
+
+msgid "Too many connected calendars."
 msgstr ""
 
 msgid "Treat the link as a password. Anyone holding it can read the selected event titles and dates. Only HTTPS sites can create links."
@@ -256,6 +364,12 @@ msgid "Week"
 msgstr ""
 
 msgid "Where will you use your calendar?"
+msgstr ""
+
+msgid "You are not allowed to configure Dendrila Calendar."
+msgstr ""
+
+msgid "You are not allowed to manage calendar connections."
 msgstr ""
 
 msgid "You are not allowed to view this calendar."

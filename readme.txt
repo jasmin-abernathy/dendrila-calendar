@@ -12,7 +12,7 @@ A free unified WordPress calendar for events and bookings from optional plugins.
 
 == Description ==
 
-Development version. Do not publish to WordPress.org before integration testing.
+Development version. Do not publish to WordPress.org before integration testing. Optional experimental CalDAV direct push now exists; Google and Outlook direct OAuth connections are not yet available.
 
 Dendrila Calendar is an independent WordPress administration calendar that brings together native events and compatible event and booking plugins. All third-party integrations are optional and read-only. The original plugins remain responsible for reservations, payments and their data. Customer details are not included in the calendar event payload.
 
@@ -23,7 +23,7 @@ Dendrila Calendar is an independent WordPress administration calendar that bring
 * Booking sources: Amelia, Booking Calendar, Bookly, Easy Appointments, FluentBooking, Oryx Bookings and Simply Schedule Appointments.
 * Ten external sources in total, all optional and read-only.
 
-Search loaded calendar events locally. Subscribe to a revocable private feed for continuously refreshed events. No external CDN, custom booking tables or mandatory dependency.
+Search loaded events locally. On first activation, the required setup assistant detects active booking plugins and lets you choose your sources and destination. No external CDN, custom booking tables or mandatory dependency.
 
 = Calendar subscriptions =
 
@@ -33,11 +33,12 @@ ICS Calendar can subscribe to the URL as a destination. Importing remote feeds t
 
 == Installation ==
 
-1. Install the Dendrila Calendar plugin directory.
-2. Activate the plugin.
-3. Open Dendrila Calendar in WordPress administration.
-4. Add a Dendrila event or enable optional source plugins.
-5. In Calendar synchronization, generate a private subscription link and subscribe to it in your calendar application.
+1. Install the Dendrila Calendar plugin directory and activate it.
+2. Follow the required Configuration assistant. Supported active plugins are detected and preselected automatically.
+3. Choose the appointment sources to synchronize.
+4. Select direct CalDAV synchronization, an iCalendar URL subscription or local-only mode.
+5. For CalDAV, enter the collection URL and an application password. The setup completes when the connection succeeds.
+6. If an active booking plugin has no usable adapter, validation sends a limited, deduplicated technical compatibility report to the maintainer using WordPress email. The address is not displayed; no customer or booking data is sent.
 
 == Frequently Asked Questions ==
 
@@ -58,6 +59,7 @@ The WordPress administration calendar is restricted to administrators. Private s
 * Added revocable, live read-only calendar subscription URLs, per-link source selection, and privacy controls.
 * Removed one-off file export.
 * ICS Calendar can use the URL as a destination; importing ICS Calendar's existing remote feeds still requires a separate safety audit.
+* Added the required setup assistant, automatic source detection, CalDAV direct push and limited technical compatibility requests.
 * Not yet released or tested end-to-end on a production-like WordPress installation.
 
 = How can I subscribe with Google Calendar? =
@@ -66,4 +68,4 @@ Open Dendrila Calendar > Synchronization. Create a private subscription URL for 
 
 = Is this real-time, bidirectional Google or CalDAV synchronization? =
 
-No. This is automatic read-only iCalendar subscription. Changes to original WordPress bookings are reflected when the calendar application refreshes. Editing or moving an event in another calendar does not edit its source booking.
+No. Direct CalDAV pushes bookings into the existing external calendar on a schedule, while read-only URL subscriptions are refreshed by the target application. Neither method writes modifications back to a WordPress booking. Direct Google/Outlook OAuth synchronization has not been implemented yet.

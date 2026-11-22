@@ -25,7 +25,8 @@ class Fake_EA_WPDB {
     }
 }
 $wpdb = new Fake_EA_WPDB();
-require dirname( __DIR__ ) . '/includes/class-dendrila-calendar-integrations.php';
+require dirname( __DIR__ ) . '/includes/class-dendrila-calendar-detector.php';
+    require dirname( __DIR__ ) . '/includes/class-dendrila-calendar-integrations.php';
 $wpdb->rows = array( (object) array(
     'id' => '1', 'date' => '2026-11-27', 'start' => '13:30:00',
     'end' => '14:00:00', 'end_date' => '2026-11-27',

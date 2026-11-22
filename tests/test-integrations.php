@@ -75,6 +75,7 @@ namespace {
         }
     }
     $wpdb = new Test_Dendrila_DB();
+    require dirname( __DIR__ ) . '/includes/class-dendrila-calendar-detector.php';
     require dirname( __DIR__ ) . '/includes/class-dendrila-calendar-integrations.php';
     $sources = \Dendrila_Calendar_Integrations::available();
     if ( count( $sources ) !== 8 ) throw new \Exception( 'Expected eight optional integrations, got ' . count( $sources ) );
@@ -117,7 +118,7 @@ namespace {
     if ( \Dendrila_Calendar_Integrations::events( 'unknown', $range_start, $range_end ) ) {
         throw new \Exception( 'Unknown provider accepted' );
     }
-    // All-day reservations must span 23/25 actual hours over Paris DST transitions.
+    // A local all-day reservation must last 23/25 actual hours during Paris DST switches.
     $method = new \ReflectionMethod( \Dendrila_Calendar_Integrations::class, 'site_date' );
     foreach ( array( array('2027-03-28', '2027-03-29', 23), array('2027-10-31', '2027-11-01', 25) ) as $span ) {
         $day_start = $method->invoke( null, $span[0] . ' 00:00:00' );

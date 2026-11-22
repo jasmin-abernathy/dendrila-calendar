@@ -23,6 +23,7 @@ function get_option( $name, $default ) { return $default; }
 class Dendrila_Calendar_Sources {
     public static function available() { return array( 'native' => 'Local events' ); }
 }
+class Dendrila_Calendar_Bridge { public static function render_settings() { echo '<h2>Direct synchronization into an existing calendar</h2>'; } }
 require dirname( __DIR__ ) . '/includes/class-dendrila-calendar.php';
 require dirname( __DIR__ ) . '/includes/class-dendrila-calendar-subscriptions.php';
 Dendrila_Calendar::enqueue( 'not-the-calendar' );
@@ -48,22 +49,23 @@ foreach ( array( 'id="dendrila-grid"', 'id="dendrila-search"', 'id="dendrila-sou
         throw new RuntimeException( 'Missing UI control: ' . $id );
     }
 }
-if ( strpos( $markup, 'Synchronize with Google, Apple, Outlook or another calendar' ) === false || strpos( $markup, 'type="search"' ) === false || strpos( $markup, 'Export filtered events' ) !== false ) {
+if ( strpos( $markup, 'Synchronize appointments with your external calendar' ) === false || strpos( $markup, 'type="search"' ) === false || strpos( $markup, 'Export filtered events' ) !== false ) {
     throw new RuntimeException( 'Missing functional calendar controls' );
 }
 $GLOBALS['queued_scripts'] = array();
 Dendrila_Calendar::enqueue( 'dendrila-calendar_page_dendrila-calendar-sync' );
 if ( isset( $GLOBALS['queued_scripts']['dendrila-calendar-admin'] ) ||
      ! isset( $GLOBALS['queued_scripts']['dendrila-calendar-subscriptions'] ) ) {
-    throw new RuntimeException( 'Sync screen must load subscription JS, not the calendar renderer' );
+    throw new RuntimeException( 'Sync page must load only subscription-specific JS' );
 }
 ob_start();
 Dendrila_Calendar::render_sync_page();
 $sync_markup = ob_get_clean();
-foreach ( array( 'id="dendrila-sync-provider"', 'id="dendrila-subscription-form"', 'id="dendrila-subscription-result"', 'id="dendrila-provider-instructions"' ) as $needle ) {
-    if ( strpos( $sync_markup, $needle ) === false ) { throw new RuntimeException( 'Missing sync UI: ' . $needle ); }
+foreach ( array( 'id="dendrila-sync-provider"', 'id="dendrila-subscription-form"', 'id="dendrila-subscription-result"', 'id="dendrila-provider-instructions"', 'Direct synchronization into an existing calendar' ) as $needle ) {
+    if ( strpos( $sync_markup, $needle ) === false ) { throw new RuntimeException( 'Missing synchronization UI: ' . $needle ); }
 }
-if ( strpos( $sync_markup, 'Create subscription link' ) === false || strpos( $sync_markup, '<details' ) !== false ) {
-    throw new RuntimeException( 'Synchronization page must be visible, not collapsed' );
+if ( strpos( $sync_markup, 'Create subscription link' ) === false ||
+     strpos( $sync_markup, '<details' ) !== false ) {
+    throw new RuntimeException( 'Synchronization UI should be expanded and discoverable' );
 }
 echo "Admin UI and asset loading passed\n";

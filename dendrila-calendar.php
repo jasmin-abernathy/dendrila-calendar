@@ -16,10 +16,17 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+require_once __DIR__ . '/includes/class-dendrila-calendar-detector.php';
 require_once __DIR__ . '/includes/class-dendrila-calendar-integrations.php';
 require_once __DIR__ . '/includes/class-dendrila-calendar-sources.php';
 require_once __DIR__ . '/includes/class-dendrila-calendar.php';
 require_once __DIR__ . '/includes/class-dendrila-calendar-subscriptions.php';
+require_once __DIR__ . '/includes/class-dendrila-calendar-bridge.php';
+require_once __DIR__ . '/includes/class-dendrila-calendar-setup.php';
 
 add_action( 'plugins_loaded', array( 'Dendrila_Calendar', 'boot' ) );
 add_action( 'plugins_loaded', array( 'Dendrila_Calendar_Subscriptions', 'boot' ) );
+add_action( 'plugins_loaded', array( 'Dendrila_Calendar_Bridge', 'boot' ) );
+
+register_activation_hook( __FILE__, array( 'Dendrila_Calendar_Setup', 'activate' ) );
+add_action( 'plugins_loaded', array( 'Dendrila_Calendar_Setup', 'boot' ) );
