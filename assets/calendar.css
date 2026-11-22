@@ -41,3 +41,8 @@ a.dendrila-event:hover,a.dendrila-event:focus {background:#d9e9f8; color:#003d71
 @media(prefers-reduced-motion:reduce) { .dendrila-calendar-wrap * {scroll-behavior:auto; transition:none!important;} }
 
 .dendrila-source-actions { display: flex; gap: 8px; margin: 8px 0 12px; flex-wrap: wrap; }
+
+.dendrila-calendar-tools {display:flex; align-items:center; flex-wrap:wrap; gap:10px; margin:0 0 14px;}
+.dendrila-calendar-tools input[type=search] {flex:1 1 210px; max-width:420px;}
+.dendrila-calendar-tools button {margin-left:auto;}
+@media(max-width:650px) {.dendrila-calendar-tools button {margin-left:0; width:100%;}}

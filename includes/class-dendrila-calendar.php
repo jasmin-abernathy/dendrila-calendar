@@ -138,7 +138,8 @@ final class Dendrila_Calendar {
         }
         $url = plugin_dir_url( dirname( __DIR__ ) . '/dendrila-calendar.php' );
         wp_enqueue_style( 'dendrila-calendar-admin', $url . 'assets/calendar.css', array(), self::VERSION );
-        wp_enqueue_script( 'dendrila-calendar-admin', $url . 'assets/calendar.js', array(), self::VERSION, true );
+        wp_enqueue_script( 'dendrila-calendar-ics', $url . 'assets/calendar-ics.js', array(), self::VERSION, true );
+        wp_enqueue_script( 'dendrila-calendar-admin', $url . 'assets/calendar.js', array( 'dendrila-calendar-ics' ), self::VERSION, true );
         wp_localize_script( 'dendrila-calendar-admin', 'dendrilaCalendar', array(
             'ajaxUrl' => admin_url( 'admin-ajax.php' ),
             'nonce' => wp_create_nonce( 'dendrila_calendar_events' ),
@@ -158,6 +159,7 @@ final class Dendrila_Calendar {
                 'failed' => __( 'Unable to load events. Please try again.', 'dendrila-calendar' ),
                 'allDay' => __( 'All day', 'dendrila-calendar' ),
                 'sources' => __( 'Sources', 'dendrila-calendar' ),
+                'export' => __( 'Export filtered events (ICS)', 'dendrila-calendar' ),
             ),
         ) );
     }
@@ -180,6 +182,11 @@ final class Dendrila_Calendar {
         echo '<div class="dendrila-source-actions"><button type="button" class="button button-small" id="dendrila-sources-all">' . esc_html__( 'Select all', 'dendrila-calendar' ) . '</button> ';
         echo '<button type="button" class="button button-small" id="dendrila-sources-none">' . esc_html__( 'Select none', 'dendrila-calendar' ) . '</button></div>';
         echo '<div id="dendrila-source-toggles"></div></fieldset>';
+        echo '<div class="dendrila-calendar-tools">';
+        echo '<label for="dendrila-search">' . esc_html__( 'Find events', 'dendrila-calendar' ) . '</label> ';
+        echo '<input id="dendrila-search" type="search" placeholder="' . esc_attr__( 'Search title or status', 'dendrila-calendar' ) . '">';
+        echo '<button type="button" class="button button-secondary" id="dendrila-export" disabled>' . esc_html__( 'Export filtered events (ICS)', 'dendrila-calendar' ) . '</button>';
+        echo '</div>';
         echo '<div id="dendrila-message" role="status" aria-live="polite"></div><div id="dendrila-grid" aria-label="' . esc_attr__( 'Unified calendar', 'dendrila-calendar' ) . '"></div></div>';
     }
 

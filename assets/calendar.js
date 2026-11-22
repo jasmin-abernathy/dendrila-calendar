@@ -9,14 +9,16 @@
   const message = document.getElementById('dendrila-message');
   const viewSelect = document.getElementById('dendrila-view');
   const toggles = document.getElementById('dendrila-source-toggles');
-  if (!root || !period || !message || !viewSelect || !toggles) return;
+  const search = document.getElementById('dendrila-search');
+  const exportButton = document.getElementById('dendrila-export');
+  if (!root || !period || !message || !viewSelect || !toggles || !search || !exportButton) return;
 
   const locale = (config.locale || 'en').replace(/_/g, '-');
   const timeZone = config.timezone || 'UTC';
   const firstDay = Number(config.weekStartsOn) || 0;
   const sources = config.sources || {};
   const i18n = config.i18n || {};
-  const state = { selected: new Date(), view: 'month', selectedSources: new Set(Object.keys(sources)), request: null };
+  const state = { selected: new Date(), view: 'month', selectedSources: new Set(Object.keys(sources)), request: null, events: [], loaded: false };
   const dayFormatter = new Intl.DateTimeFormat('en-GB', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' });
   const monthFormatter = new Intl.DateTimeFormat(locale, { timeZone: 'UTC', month: 'long', year: 'numeric' });
   const weekdayFormatter = new Intl.DateTimeFormat(locale, { timeZone: 'UTC', weekday: 'short' });
@@ -79,6 +81,17 @@
     if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end <= start) return false;
     return siteKey(start) <= dateKey && siteKey(new Date(end.getTime() - 1)) >= dateKey;
   }
+  function filteredEvents() {
+    const query = search.value.trim().toLocaleLowerCase(locale);
+    if (!query) return state.events;
+    return state.events.filter(event => [event.title, event.status, sources[event.source] || '']
+      .some(value => String(value || '').toLocaleLowerCase(locale).includes(query)));
+  }
+  function renderFiltered() {
+    const events = filteredEvents();
+    display(events);
+    exportButton.disabled = !state.loaded || events.length === 0 || !window.DendrilaCalendarIcs;
+  }
   function display(events) {
     root.replaceChildren();
     const { start, days } = range();
@@ -128,10 +141,15 @@
     const r = range();
     if (state.selectedSources.size === 0) {
       message.textContent = '';
-      display([]);
+      state.events = [];
+      state.loaded = true;
+      renderFiltered();
       return;
     }
     message.textContent = i18n.loading || 'Loading…';
+    state.events = [];
+    state.loaded = false;
+    exportButton.disabled = true;
     const url = new URL(config.ajaxUrl);
     url.searchParams.set('action', 'dendrila_calendar_events');
     url.searchParams.set('nonce', config.nonce);
@@ -144,11 +162,15 @@
       const payload = await response.json();
       if (!payload.success || !Array.isArray(payload.data?.events)) throw new Error('Invalid events payload');
       if (state.request !== controller) return;
-      display(payload.data.events);
+      state.events = payload.data.events;
+      state.loaded = true;
+      renderFiltered();
       message.textContent = '';
     } catch (error) {
       if (error.name === 'AbortError' || state.request !== controller) return;
       root.replaceChildren();
+      state.loaded = false;
+      exportButton.disabled = true;
       message.textContent = i18n.failed || 'Unable to load events.';
     }
   }
@@ -164,6 +186,22 @@
     });
     label.append(checkbox, document.createTextNode(' ' + title));
     toggles.append(label);
+  });
+  search.addEventListener('input', () => { if (state.loaded) renderFiltered(); });
+  exportButton.addEventListener('click', () => {
+    if (!state.loaded || !window.DendrilaCalendarIcs || exportButton.disabled) return;
+    const events = filteredEvents();
+    if (!events.length) return;
+    const content = window.DendrilaCalendarIcs.generate(events, siteKey, new Date(), window.location.hostname);
+    const blobUrl = URL.createObjectURL(new Blob([content], { type: 'text/calendar;charset=utf-8' }));
+    const link = el('a');
+    link.href = blobUrl;
+    const dates = range();
+    link.download = 'dendrila-calendar-' + key(dates.start) + '-' + key(addDays(dates.end, -1)) + '.ics';
+    document.body.append(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
   });
   const setAllSources = selected => {
     toggles.querySelectorAll('input[type=checkbox]').forEach(box => { box.checked = selected; });
