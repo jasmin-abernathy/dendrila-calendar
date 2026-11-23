@@ -139,10 +139,10 @@ namespace {
     }
     foreach ( $wpdb->sql as $statement ) {
         if ( preg_match( '/FROM\\s+wp_|JOIN\\s+wp_/i', $statement ) ) {
-            throw new \\Exception( 'A table name was not escaped as an identifier' );
+            throw new \Exception( 'A table name was not escaped as an identifier' );
         }
         if ( strpos( $statement, '%i' ) !== false || strpos( $statement, '%s' ) !== false ) {
-            throw new \\Exception( 'An SQL placeholder was not bound' );
+            throw new \Exception( 'An SQL placeholder was not bound' );
         }
     }
     echo 'Eight integration providers passed, ' . count( $events ) . ' fixture events (no PII/no writes)'.PHP_EOL;
