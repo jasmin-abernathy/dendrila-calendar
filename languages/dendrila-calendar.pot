@@ -6,10 +6,25 @@ msgstr ""
 msgid "%d created, %d updated, %d cancelled, %d failed"
 msgstr ""
 
+msgid "1. Choose your calendar service"
+msgstr ""
+
+msgid "2. Connect your account"
+msgstr ""
+
+msgid "3. Choose where to add appointments"
+msgstr ""
+
 msgid "A compatibility request could not be submitted. Check your WordPress email delivery settings."
 msgstr ""
 
 msgid "A connector compatibility request was submitted for review."
+msgstr ""
+
+msgid "Account connection is not yet available for this service. You can use a calendar subscription instead."
+msgstr ""
+
+msgid "Account username or email"
 msgstr ""
 
 msgid "Add an event"
@@ -21,10 +36,19 @@ msgstr ""
 msgid "All day"
 msgstr ""
 
+msgid "Another calendar service"
+msgstr ""
+
+msgid "Apple iCloud (app-specific password)"
+msgstr ""
+
+msgid "Application password"
+msgstr ""
+
 msgid "Appointment"
 msgstr ""
 
-msgid "Appointment sources"
+msgid "Appointments to send"
 msgstr ""
 
 msgid "Approved"
@@ -42,13 +66,7 @@ msgstr ""
 msgid "Booking"
 msgstr ""
 
-msgid "CalDAV app password"
-msgstr ""
-
-msgid "CalDAV calendar collection URL (HTTPS)"
-msgstr ""
-
-msgid "CalDAV username"
+msgid "Calendar"
 msgstr ""
 
 msgid "Calendar connected. Automatic direct synchronization is enabled."
@@ -57,7 +75,13 @@ msgstr ""
 msgid "Calendar disconnected. Previously created external events were not deleted."
 msgstr ""
 
+msgid "Calendar discovery was redirected to another service."
+msgstr ""
+
 msgid "Calendar event"
+msgstr ""
+
+msgid "Calendar service"
 msgstr ""
 
 msgid "Calendar view"
@@ -70,6 +94,9 @@ msgid "Change source and destination settings"
 msgstr ""
 
 msgid "Check the calendar address, credentials and selected sources."
+msgstr ""
+
+msgid "Choose a calendar below, then confirm the connection."
 msgstr ""
 
 msgid "Choose how appointments reach the calendar you already use."
@@ -102,7 +129,16 @@ msgstr ""
 msgid "Connect a CalDAV calendar such as Nextcloud. New and changed WordPress bookings are pushed automatically approximately every five minutes while WordPress cron runs. This is one-way; the destination is never polled for changes."
 msgstr ""
 
+msgid "Connect an existing calendar"
+msgstr ""
+
 msgid "Connect this calendar"
+msgstr ""
+
+msgid "Connect your account"
+msgstr ""
+
+msgid "Connection method"
 msgstr ""
 
 msgid "Connection name"
@@ -132,7 +168,7 @@ msgstr ""
 msgid "Dendrila local events"
 msgstr ""
 
-msgid "Direct CalDAV connection (Nextcloud and compatible calendars)"
+msgid "Direct account authorization is not available yet for this service. Dendrila cannot connect to your account just by selecting its name."
 msgstr ""
 
 msgid "Direct synchronization into an existing calendar"
@@ -147,6 +183,18 @@ msgstr ""
 msgid "End"
 msgstr ""
 
+msgid "Enter a valid HTTPS address for your calendar service."
+msgstr ""
+
+msgid "Enter the web address of your Nextcloud, then your login details."
+msgstr ""
+
+msgid "Enter your calendar account and application password."
+msgstr ""
+
+msgid "Enter your calendar service address and account details."
+msgstr ""
+
 msgid "Event"
 msgstr ""
 
@@ -154,6 +202,9 @@ msgid "Find Subscribe by URL, Internet calendar, or iCalendar subscription in yo
 msgstr ""
 
 msgid "Find events"
+msgstr ""
+
+msgid "Find my calendars"
 msgstr ""
 
 msgid "Finish connecting my calendar"
@@ -165,7 +216,13 @@ msgstr ""
 msgid "Forbidden"
 msgstr ""
 
+msgid "Google Calendar (read-only subscription for now)"
+msgstr ""
+
 msgid "Google Calendar and Outlook need OAuth account authorization and are not connected by this CalDAV form. Existing URL subscriptions remain available separately."
+msgstr ""
+
+msgid "Google and Outlook do not have one-click access yet. They use an optional read-only subscription until direct authorization is ready."
 msgstr ""
 
 msgid "HTTPS is required for private calendar subscriptions."
@@ -183,6 +240,9 @@ msgstr ""
 msgid "Invalid date range"
 msgstr ""
 
+msgid "Keep my appointments inside WordPress only"
+msgstr ""
+
 msgid "Link copied."
 msgstr ""
 
@@ -192,10 +252,10 @@ msgstr ""
 msgid "Loading events…"
 msgstr ""
 
-msgid "Local calendar only for now"
+msgid "Local events"
 msgstr ""
 
-msgid "Local events"
+msgid "Looking for your calendars…"
 msgstr ""
 
 msgid "Maximum number of subscriptions reached. Revoke an old link first."
@@ -213,6 +273,12 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
+msgid "Nextcloud (direct connection)"
+msgstr ""
+
+msgid "No calendar was found in this account."
+msgstr ""
+
 msgid "No events for this period."
 msgstr ""
 
@@ -223,6 +289,9 @@ msgid "No external destination connected yet. Complete the connection on the Syn
 msgstr ""
 
 msgid "No supported appointment plugin was detected. You can start with local events and return to setup later."
+msgstr ""
+
+msgid "Not authorized."
 msgstr ""
 
 msgid "On a computer, open Google Calendar settings, choose Add calendar > From URL, paste the private HTTPS link, and add the calendar. Google decides when to refresh it. The mobile app cannot add URL subscriptions directly."
@@ -243,13 +312,19 @@ msgstr ""
 msgid "Open unified calendar"
 msgstr ""
 
+msgid "Other CalDAV service"
+msgstr ""
+
+msgid "Outlook / Microsoft 365 (read-only subscription for now)"
+msgstr ""
+
 msgid "Pending"
 msgstr ""
 
 msgid "Previous"
 msgstr ""
 
-msgid "Read-only calendar URL subscription (Google, Apple, Outlook and compatible apps)"
+msgid "Read-only subscription"
 msgstr ""
 
 msgid "Reserved day"
@@ -283,9 +358,6 @@ msgid "Select none"
 msgstr ""
 
 msgid "Select your WordPress sources, create a private calendar URL, then subscribe to it in your calendar app. The app refreshes events automatically on its own schedule; this is a read-only subscription, not instant or two-way synchronization."
-msgstr ""
-
-msgid "Selecting a destination does not connect it. After saving, you must enter CalDAV credentials and test the connection, or create a private calendar subscription link and add it to your calendar application. Google and Outlook direct OAuth connection is not implemented."
 msgstr ""
 
 msgid "Show instructions for this application (not a connection)"
@@ -342,6 +414,15 @@ msgstr ""
 msgid "Synchronize now"
 msgstr ""
 
+msgid "The calendar server redirected to an unsafe address."
+msgstr ""
+
+msgid "The calendar service did not accept the connection ("
+msgstr ""
+
+msgid "The calendar service returned an unreadable response. PHP DOM/XML may be unavailable."
+msgstr ""
+
 msgid "The full link is displayed only once after creation. If it is lost, revoke it and create a new one."
 msgstr ""
 
@@ -349,6 +430,9 @@ msgid "The server cannot securely protect the calendar password."
 msgstr ""
 
 msgid "The subscription could not be saved. Try again."
+msgstr ""
+
+msgid "This account did not expose a calendar collection."
 msgstr ""
 
 msgid "This assistant detects active appointment plugins and guides external synchronization. You can view the local calendar before connecting an external destination."
@@ -360,16 +444,28 @@ msgstr ""
 msgid "This list is loaded directly by WordPress and remains visible when the interactive calendar is unavailable."
 msgstr ""
 
+msgid "This server did not provide a calendar account. Check your service address."
+msgstr ""
+
 msgid "Times use the site timezone: %s. The event is visible only to administrators."
 msgstr ""
 
 msgid "Today"
 msgstr ""
 
+msgid "Too many calendar redirects."
+msgstr ""
+
 msgid "Too many connected calendars."
 msgstr ""
 
+msgid "Too many connection attempts. Please try again later."
+msgstr ""
+
 msgid "Treat the link as a password. Anyone holding it can read the selected event titles and dates. Only HTTPS sites can create links."
+msgstr ""
+
+msgid "Unable to find calendars. Check your account details and try again."
 msgstr ""
 
 msgid "Unable to generate a private link."
@@ -378,19 +474,40 @@ msgstr ""
 msgid "Unable to load events. Please try again."
 msgstr ""
 
+msgid "Unable to prepare calendar selection."
+msgstr ""
+
 msgid "Unable to update the subscription."
 msgstr ""
 
 msgid "Unified calendar"
 msgstr ""
 
+msgid "Unsupported calendar service."
+msgstr ""
+
 msgid "Upcoming appointments (server view)"
+msgstr ""
+
+msgid "Use a read-only calendar subscription instead"
+msgstr ""
+
+msgid "Use an application-specific password if your service requires one. Your password is encrypted before it is saved."
+msgstr ""
+
+msgid "Use your Apple Account email and an app-specific password. Connection may not work on every iCloud account yet."
 msgstr ""
 
 msgid "View"
 msgstr ""
 
+msgid "We will guide you through the connection. You do not need an API key or a technical calendar address."
+msgstr ""
+
 msgid "Week"
+msgstr ""
+
+msgid "Where should your appointments appear?"
 msgstr ""
 
 msgid "Where will you use your calendar?"
@@ -409,6 +526,9 @@ msgid "You cannot manage calendar subscriptions."
 msgstr ""
 
 msgid "Your appointments from other plugins are shown here. The Local events submenu lists only events created in Dendrila Calendar."
+msgstr ""
+
+msgid "Your cloud address"
 msgstr ""
 
 msgid "Your external calendar is not connected. Selecting an application in the list below is not enough; complete a CalDAV connection or create and subscribe to a private URL."

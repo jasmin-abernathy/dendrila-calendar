@@ -87,3 +87,17 @@ a.dendrila-event:hover,a.dendrila-event:focus {background:#d9e9f8; color:#003d71
 .dendrila-upcoming {margin-top:22px;border:1px solid #c3c4c7;background:#fff;border-radius:6px;padding:14px 18px}
 .dendrila-upcoming table {margin:10px 0;max-width:100%;}
 .dendrila-upcoming .notice {padding:8px 12px;}
+
+/* Guided connections are intentionally one workflow at a time. */
+.dendrila-connection-methods {display:flex; flex-wrap:wrap; gap:10px; margin:18px 0;}
+.dendrila-calendar-direct-sync {max-width:820px;}
+.dendrila-connect-card {background:#fff; border:1px solid #c3c4c7; border-radius:8px; padding:18px 20px; margin:14px 0;}
+.dendrila-connect-card[hidden] {display:none!important;}
+.dendrila-connect-card h3 {font-size:1.12rem; margin:0 0 12px;}
+.dendrila-connect-card p {max-width:72ch; line-height:1.5;}
+.dendrila-connect-card input:not([type=checkbox]), .dendrila-connect-card select {display:block; width:100%; max-width:480px; min-height:40px; margin:6px 0 0;}
+.dendrila-connect-card label {font-weight:600;}
+.dendrila-connect-card fieldset {display:flex;flex-wrap:wrap;gap:10px 18px;border:1px solid #ddd;padding:14px;border-radius:6px;}
+.dendrila-connect-card fieldset label {font-weight:400;}
+#dendrila-discovery-feedback:not(:empty) {border-left:3px solid #2271b1; background:#f0f5fa; padding:12px; margin:12px 0;}
+@media(max-width:600px){.dendrila-connect-card{padding:14px 12px;} .dendrila-connection-methods .button {flex:1 1 100%;text-align:center;}}

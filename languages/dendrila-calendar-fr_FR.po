@@ -8,11 +8,26 @@ msgstr ""
 msgid "%d created, %d updated, %d cancelled, %d failed"
 msgstr "%d créés, %d modifiés, %d annulés, %d échecs"
 
+msgid "1. Choose your calendar service"
+msgstr "1. Choisissez votre service d’agenda"
+
+msgid "2. Connect your account"
+msgstr "2. Connectez votre compte"
+
+msgid "3. Choose where to add appointments"
+msgstr "3. Choisissez où enregistrer les rendez-vous"
+
 msgid "A compatibility request could not be submitted. Check your WordPress email delivery settings."
 msgstr "Impossible de transmettre une demande de compatibilité. Vérifiez l’envoi des e-mails WordPress."
 
 msgid "A connector compatibility request was submitted for review."
 msgstr "Une demande de compatibilité de connecteur a été transmise pour examen."
+
+msgid "Account connection is not yet available for this service. You can use a calendar subscription instead."
+msgstr "La connexion directe n’est pas encore disponible pour ce service. Vous pouvez utiliser un abonnement."
+
+msgid "Account username or email"
+msgstr "Identifiant ou adresse e-mail"
 
 msgid "Add an event"
 msgstr "Ajouter un événement"
@@ -23,11 +38,20 @@ msgstr "Ajouter un événement au calendrier"
 msgid "All day"
 msgstr "Toute la journée"
 
+msgid "Another calendar service"
+msgstr "Un autre service d’agenda"
+
+msgid "Apple iCloud (app-specific password)"
+msgstr "Apple iCloud (mot de passe d’application)"
+
+msgid "Application password"
+msgstr "Mot de passe d’application"
+
 msgid "Appointment"
 msgstr "Rendez-vous"
 
-msgid "Appointment sources"
-msgstr "Sources de rendez-vous"
+msgid "Appointments to send"
+msgstr "Rendez-vous à transmettre"
 
 msgid "Approved"
 msgstr "Approuvé"
@@ -44,14 +68,8 @@ msgstr "Retour au calendrier"
 msgid "Booking"
 msgstr "Réservation"
 
-msgid "CalDAV app password"
-msgstr "Mot de passe d’application CalDAV"
-
-msgid "CalDAV calendar collection URL (HTTPS)"
-msgstr "Adresse du calendrier CalDAV (HTTPS)"
-
-msgid "CalDAV username"
-msgstr "Identifiant CalDAV"
+msgid "Calendar"
+msgstr "Agenda"
 
 msgid "Calendar connected. Automatic direct synchronization is enabled."
 msgstr "Agenda connecté. La synchronisation directe est activée."
@@ -59,8 +77,14 @@ msgstr "Agenda connecté. La synchronisation directe est activée."
 msgid "Calendar disconnected. Previously created external events were not deleted."
 msgstr "Agenda déconnecté. Les événements déjà créés à l’extérieur sont conservés."
 
+msgid "Calendar discovery was redirected to another service."
+msgstr "La connexion a été redirigée vers un autre service."
+
 msgid "Calendar event"
 msgstr "Événement du calendrier"
+
+msgid "Calendar service"
+msgstr "Service d’agenda"
 
 msgid "Calendar view"
 msgstr "Vue calendrier"
@@ -73,6 +97,9 @@ msgstr "Modifier les sources et la destination"
 
 msgid "Check the calendar address, credentials and selected sources."
 msgstr "Vérifiez l’adresse du calendrier, les identifiants et les sources sélectionnées."
+
+msgid "Choose a calendar below, then confirm the connection."
+msgstr "Choisissez un agenda ci-dessous, puis confirmez la connexion."
 
 msgid "Choose how appointments reach the calendar you already use."
 msgstr "Choisissez comment les rendez-vous rejoindront votre agenda habituel."
@@ -104,8 +131,17 @@ msgstr "Configurer les sources et la destination"
 msgid "Connect a CalDAV calendar such as Nextcloud. New and changed WordPress bookings are pushed automatically approximately every five minutes while WordPress cron runs. This is one-way; the destination is never polled for changes."
 msgstr "Connectez un agenda CalDAV, par exemple Nextcloud. Les nouveaux rendez-vous et leurs modifications sont envoyés environ toutes les cinq minutes lorsque les tâches programmées WordPress fonctionnent. La synchronisation est unidirectionnelle."
 
+msgid "Connect an existing calendar"
+msgstr "Connecter un agenda existant"
+
 msgid "Connect this calendar"
 msgstr "Connecter cet agenda"
+
+msgid "Connect your account"
+msgstr "Connecter votre compte"
+
+msgid "Connection method"
+msgstr "Méthode de connexion"
 
 msgid "Connection name"
 msgstr "Nom de la connexion"
@@ -134,8 +170,8 @@ msgstr "Événements Dendrila"
 msgid "Dendrila local events"
 msgstr "Événements locaux Dendrila"
 
-msgid "Direct CalDAV connection (Nextcloud and compatible calendars)"
-msgstr "Connexion CalDAV directe (Nextcloud et agendas compatibles)"
+msgid "Direct account authorization is not available yet for this service. Dendrila cannot connect to your account just by selecting its name."
+msgstr "La connexion directe à ce service n’est pas encore disponible. Sélectionner son nom ne suffit pas pour établir une connexion."
 
 msgid "Direct synchronization into an existing calendar"
 msgstr "Synchronisation directe avec un agenda existant"
@@ -149,6 +185,18 @@ msgstr "Modifier l’événement"
 msgid "End"
 msgstr "Fin"
 
+msgid "Enter a valid HTTPS address for your calendar service."
+msgstr "Saisissez une adresse HTTPS valide pour votre agenda."
+
+msgid "Enter the web address of your Nextcloud, then your login details."
+msgstr "Saisissez l’adresse de votre Nextcloud, puis vos identifiants."
+
+msgid "Enter your calendar account and application password."
+msgstr "Saisissez votre identifiant et votre mot de passe d’application."
+
+msgid "Enter your calendar service address and account details."
+msgstr "Saisissez l’adresse de votre service d’agenda, puis vos identifiants."
+
 msgid "Event"
 msgstr "Événement"
 
@@ -157,6 +205,9 @@ msgstr "Recherchez S’abonner par URL, Agenda Internet ou Abonnement iCalendar 
 
 msgid "Find events"
 msgstr "Rechercher des événements"
+
+msgid "Find my calendars"
+msgstr "Trouver mes calendriers"
 
 msgid "Finish connecting my calendar"
 msgstr "Terminer la connexion de mon agenda"
@@ -167,8 +218,14 @@ msgstr "Terminez la configuration de Dendrila Calendar pour activer les sources 
 msgid "Forbidden"
 msgstr "Accès refusé"
 
+msgid "Google Calendar (read-only subscription for now)"
+msgstr "Google Agenda (abonnement en lecture seule pour le moment)"
+
 msgid "Google Calendar and Outlook need OAuth account authorization and are not connected by this CalDAV form. Existing URL subscriptions remain available separately."
 msgstr "Google Agenda et Outlook nécessitent une connexion OAuth, indisponible avec ce formulaire CalDAV. Les abonnements par URL restent disponibles séparément."
+
+msgid "Google and Outlook do not have one-click access yet. They use an optional read-only subscription until direct authorization is ready."
+msgstr "La connexion directe à Google et Outlook n’est pas encore disponible. Vous pouvez provisoirement choisir un abonnement en lecture seule."
 
 msgid "HTTPS is required for private calendar subscriptions."
 msgstr "Le protocole HTTPS est obligatoire pour les abonnements privés."
@@ -185,6 +242,9 @@ msgstr "Dans Outlook sur le web : Calendrier > Ajouter un calendrier > S’abonn
 msgid "Invalid date range"
 msgstr "Période invalide"
 
+msgid "Keep my appointments inside WordPress only"
+msgstr "Garder mes rendez-vous uniquement dans WordPress"
+
 msgid "Link copied."
 msgstr "Lien copié."
 
@@ -194,11 +254,11 @@ msgstr "Liste"
 msgid "Loading events…"
 msgstr "Chargement des événements…"
 
-msgid "Local calendar only for now"
-msgstr "Calendrier local uniquement pour le moment"
-
 msgid "Local events"
 msgstr "Événements locaux"
+
+msgid "Looking for your calendars…"
+msgstr "Recherche de vos agendas…"
 
 msgid "Maximum number of subscriptions reached. Revoke an old link first."
 msgstr "Nombre maximal d’abonnements atteint. Révoquez d’abord un ancien lien."
@@ -215,6 +275,12 @@ msgstr "Jamais synchronisé"
 msgid "Next"
 msgstr "Suivant"
 
+msgid "Nextcloud (direct connection)"
+msgstr "Nextcloud (connexion directe)"
+
+msgid "No calendar was found in this account."
+msgstr "Aucun calendrier trouvé dans ce compte."
+
 msgid "No events for this period."
 msgstr "Aucun événement pour cette période."
 
@@ -226,6 +292,9 @@ msgstr "Aucune destination externe n’est encore connectée. Terminez la connex
 
 msgid "No supported appointment plugin was detected. You can start with local events and return to setup later."
 msgstr "Aucune extension de réservation compatible n’a été détectée. Vous pouvez commencer avec les événements locaux et revenir ensuite dans l’assistant."
+
+msgid "Not authorized."
+msgstr "Accès refusé."
 
 msgid "On a computer, open Google Calendar settings, choose Add calendar > From URL, paste the private HTTPS link, and add the calendar. Google decides when to refresh it. The mobile app cannot add URL subscriptions directly."
 msgstr "Depuis un ordinateur, ouvrez les paramètres de Google Agenda, puis Ajouter un agenda > À partir de l’URL. Collez le lien HTTPS privé. Google choisit la fréquence d’actualisation ; l’application mobile ne permet pas d’ajouter directement un abonnement par URL."
@@ -245,14 +314,20 @@ msgstr "Ouvrir l’assistant de configuration"
 msgid "Open unified calendar"
 msgstr "Ouvrir le calendrier unifié"
 
+msgid "Other CalDAV service"
+msgstr "Autre service CalDAV"
+
+msgid "Outlook / Microsoft 365 (read-only subscription for now)"
+msgstr "Outlook / Microsoft 365 (abonnement en lecture seule pour le moment)"
+
 msgid "Pending"
 msgstr "En attente"
 
 msgid "Previous"
 msgstr "Précédent"
 
-msgid "Read-only calendar URL subscription (Google, Apple, Outlook and compatible apps)"
-msgstr "Abonnement par URL en lecture seule (Google, Apple, Outlook et applications compatibles)"
+msgid "Read-only subscription"
+msgstr "Abonnement en lecture seule"
 
 msgid "Reserved day"
 msgstr "Journée réservée"
@@ -286,9 +361,6 @@ msgstr "Tout désélectionner"
 
 msgid "Select your WordPress sources, create a private calendar URL, then subscribe to it in your calendar app. The app refreshes events automatically on its own schedule; this is a read-only subscription, not instant or two-way synchronization."
 msgstr "Sélectionnez les sources WordPress, créez une adresse privée puis abonnez-y votre agenda. Les événements s’actualisent automatiquement selon la fréquence choisie par votre application. Cette synchronisation est en lecture seule, non instantanée et non bidirectionnelle."
-
-msgid "Selecting a destination does not connect it. After saving, you must enter CalDAV credentials and test the connection, or create a private calendar subscription link and add it to your calendar application. Google and Outlook direct OAuth connection is not implemented."
-msgstr "Choisir une destination ne la connecte pas. Après l’enregistrement, saisissez les identifiants CalDAV et testez la connexion, ou créez un lien privé d’abonnement à ajouter à votre application de calendrier. La connexion directe OAuth à Google et Outlook n’est pas encore disponible."
 
 msgid "Show instructions for this application (not a connection)"
 msgstr "Afficher les instructions pour cette application (sans connexion)"
@@ -344,6 +416,15 @@ msgstr "Synchroniser les rendez-vous avec votre agenda externe"
 msgid "Synchronize now"
 msgstr "Synchroniser maintenant"
 
+msgid "The calendar server redirected to an unsafe address."
+msgstr "La connexion a été redirigée vers une adresse non autorisée."
+
+msgid "The calendar service did not accept the connection ("
+msgstr "Le service d’agenda a refusé la connexion ("
+
+msgid "The calendar service returned an unreadable response. PHP DOM/XML may be unavailable."
+msgstr "Réponse illisible du service. Le module XML de PHP peut être manquant."
+
 msgid "The full link is displayed only once after creation. If it is lost, revoke it and create a new one."
 msgstr "Le lien complet ne s’affiche qu’une fois après sa création. S’il est perdu, révoquez-le et créez-en un autre."
 
@@ -352,6 +433,9 @@ msgstr "Le serveur ne peut pas protéger de manière sûre le mot de passe du ca
 
 msgid "The subscription could not be saved. Try again."
 msgstr "L’abonnement n’a pas pu être enregistré. Réessayez."
+
+msgid "This account did not expose a calendar collection."
+msgstr "Aucun calendrier accessible trouvé pour ce compte."
 
 msgid "This assistant detects active appointment plugins and guides external synchronization. You can view the local calendar before connecting an external destination."
 msgstr "Cet assistant détecte les extensions de réservation actives et vous guide pour synchroniser un agenda externe. Vous pouvez consulter le calendrier local avant de connecter une destination."
@@ -362,17 +446,29 @@ msgstr "Cette liste contient uniquement les événements créés dans Dendrila C
 msgid "This list is loaded directly by WordPress and remains visible when the interactive calendar is unavailable."
 msgstr "Cette liste est chargée directement par WordPress et reste visible si le calendrier interactif est indisponible."
 
+msgid "This server did not provide a calendar account. Check your service address."
+msgstr "Le service n’a pas fourni de compte de calendrier. Vérifiez son adresse."
+
 msgid "Times use the site timezone: %s. The event is visible only to administrators."
 msgstr "Les horaires utilisent le fuseau horaire du site : %s. L’événement est visible uniquement par les administrateurs."
 
 msgid "Today"
 msgstr "Aujourd’hui"
 
+msgid "Too many calendar redirects."
+msgstr "Trop de redirections pendant la connexion."
+
 msgid "Too many connected calendars."
 msgstr "Nombre maximal d’agendas connectés atteint."
 
+msgid "Too many connection attempts. Please try again later."
+msgstr "Trop de tentatives de connexion. Réessayez plus tard."
+
 msgid "Treat the link as a password. Anyone holding it can read the selected event titles and dates. Only HTTPS sites can create links."
 msgstr "Traitez ce lien comme un mot de passe. Toute personne qui le possède peut consulter les titres et dates des événements sélectionnés. Un site HTTPS est nécessaire pour créer des liens."
+
+msgid "Unable to find calendars. Check your account details and try again."
+msgstr "Impossible de trouver les agendas. Vérifiez votre compte puis réessayez."
 
 msgid "Unable to generate a private link."
 msgstr "Impossible de générer un lien privé."
@@ -380,20 +476,41 @@ msgstr "Impossible de générer un lien privé."
 msgid "Unable to load events. Please try again."
 msgstr "Impossible de charger les événements. Réessayez."
 
+msgid "Unable to prepare calendar selection."
+msgstr "Impossible de préparer le choix du calendrier."
+
 msgid "Unable to update the subscription."
 msgstr "Impossible de mettre à jour l’abonnement."
 
 msgid "Unified calendar"
 msgstr "Calendrier unifié"
 
+msgid "Unsupported calendar service."
+msgstr "Service d’agenda non pris en charge."
+
 msgid "Upcoming appointments (server view)"
 msgstr "Rendez-vous à venir (vue serveur)"
+
+msgid "Use a read-only calendar subscription instead"
+msgstr "Utiliser plutôt un abonnement de calendrier en lecture seule"
+
+msgid "Use an application-specific password if your service requires one. Your password is encrypted before it is saved."
+msgstr "Utilisez un mot de passe spécifique à l’application si le service le demande. Votre mot de passe sera chiffré avant son enregistrement."
+
+msgid "Use your Apple Account email and an app-specific password. Connection may not work on every iCloud account yet."
+msgstr "Utilisez votre adresse de compte Apple et un mot de passe spécifique à l’application. La connexion n’est pas encore validée sur tous les comptes iCloud."
 
 msgid "View"
 msgstr "Vue"
 
+msgid "We will guide you through the connection. You do not need an API key or a technical calendar address."
+msgstr "La connexion est guidée. Aucune clé API ni adresse technique de calendrier n’est nécessaire."
+
 msgid "Week"
 msgstr "Semaine"
+
+msgid "Where should your appointments appear?"
+msgstr "Où souhaitez-vous voir vos rendez-vous ?"
 
 msgid "Where will you use your calendar?"
 msgstr "Dans quel agenda souhaitez-vous afficher vos événements ?"
@@ -412,6 +529,9 @@ msgstr "Vous ne pouvez pas gérer les abonnements du calendrier."
 
 msgid "Your appointments from other plugins are shown here. The Local events submenu lists only events created in Dendrila Calendar."
 msgstr "Les rendez-vous des autres extensions s’affichent ici. Le sous-menu « Événements locaux » répertorie uniquement ceux créés dans Dendrila Calendar."
+
+msgid "Your cloud address"
+msgstr "Adresse de votre cloud"
 
 msgid "Your external calendar is not connected. Selecting an application in the list below is not enough; complete a CalDAV connection or create and subscribe to a private URL."
 msgstr "Votre agenda externe n’est pas connecté. Sélectionner une application dans la liste ne suffit pas : terminez une connexion CalDAV ou créez un lien privé et abonnez-vous à ce lien."

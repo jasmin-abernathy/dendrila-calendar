@@ -13,6 +13,7 @@ jobs:
         run: |
           node --check assets/calendar.js
           node --check assets/calendar-subscriptions.js
+          node --check assets/calendar-connect.js
       - name: Adapter smoke tests
         run: |
           php tests/test-sources.php
@@ -23,6 +24,7 @@ jobs:
           php tests/test-easy-appointments.php
           php tests/test-subscriptions.php
           php tests/test-direct-sync.php
+          php tests/test-discovery.php
           php tests/test-setup-detection.php
           php tests/test-setup-wizard.php
           php tests/test-connector-report.php
@@ -39,6 +41,8 @@ jobs:
           test -s assets/calendar-subscriptions.js
           test -f includes/class-dendrila-calendar-subscriptions.php
           test -s includes/class-dendrila-calendar-bridge.php
+          test -s includes/class-dendrila-calendar-discovery.php
+          test -s assets/calendar-connect.js
           test -s includes/class-dendrila-calendar-detector.php
           test -s includes/class-dendrila-calendar-setup.php
           test -s assets/calendar.css

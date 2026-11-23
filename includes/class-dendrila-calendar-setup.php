@@ -212,12 +212,24 @@ final class Dendrila_Calendar_Setup {
             wp_safe_redirect( admin_url( 'admin.php?page=dendrila-calendar-setup&setup_status=source_required' ) );
             exit;
         }
-        $destination = isset( $_POST['destination'] ) ? sanitize_key( wp_unslash( $_POST['destination'] ) ) : 'local';
-        if ( ! in_array( $destination, array( 'local', 'caldav', 'subscription' ), true ) ) {
+        // Existing WordPress setups may still submit the old destination field.
+        $provider = isset( $_POST['calendar_service'] ) ? sanitize_key( wp_unslash( $_POST['calendar_service'] ) ) : '';
+        $destination = isset( $_POST['destination'] ) ? sanitize_key( wp_unslash( $_POST['destination'] ) ) : 'caldav';
+        $modes = array(
+            'nextcloud' => 'caldav', 'icloud' => 'caldav', 'caldav' => 'caldav',
+            'google' => 'subscription', 'microsoft' => 'subscription', 'local' => 'local',
+        );
+        if ( $provider ) {
+            if ( ! isset( $modes[ $provider ] ) ) {
+                wp_safe_redirect( admin_url( 'admin.php?page=dendrila-calendar-setup&setup_status=destination_invalid' ) );
+                exit;
+            }
+            $destination = $modes[ $provider ];
+        } elseif ( ! in_array( $destination, array( 'local', 'caldav', 'subscription' ), true ) ) {
             wp_safe_redirect( admin_url( 'admin.php?page=dendrila-calendar-setup&setup_status=destination_invalid' ) );
             exit;
         }
-        $settings = array( 'completed' => false, 'sources' => $selected, 'mode' => $destination );
+        $settings = array( 'completed' => false, 'sources' => $selected, 'mode' => $destination, 'calendar_service' => $provider );
         $complete = self::destination_ready( $settings );
         $settings['completed'] = $complete;
         update_option( self::OPTION, $settings, false );
@@ -226,6 +238,7 @@ final class Dendrila_Calendar_Setup {
         $params = array(
             'page' => $complete ? 'dendrila-calendar' : 'dendrila-calendar-sync',
             'setup_status' => $complete ? 'saved' : 'connect_destination',
+            'dendrila_method' => 'subscription' === $destination ? 'subscription' : 'direct',
             'reports_sent' => (int) $report['sent'],
             'reports_failed' => (int) $report['failed'],
         );
@@ -251,6 +264,7 @@ final class Dendrila_Calendar_Setup {
         $ready = self::ready_sources( $detected );
         $selected = ! empty( $saved['sources'] ) ? $saved['sources'] : $ready;
         $mode = ! empty( $saved['mode'] ) ? $saved['mode'] : 'caldav';
+        $calendar_service = ! empty( $saved['calendar_service'] ) ? $saved['calendar_service'] : ( 'subscription' === $mode ? 'google' : ( 'local' === $mode ? 'local' : 'nextcloud' ) );
         $status = isset( $_GET['setup_status'] ) ? sanitize_key( wp_unslash( $_GET['setup_status'] ) ) : '';
         echo '<div class="wrap dendrila-calendar-setup"><h1>' . esc_html__( 'Configure Dendrila Calendar', 'dendrila-calendar' ) . '</h1>';
         echo '<p>' . esc_html__( 'This assistant detects active appointment plugins and guides external synchronization. You can view the local calendar before connecting an external destination.', 'dendrila-calendar' ) . '</p>';
@@ -293,14 +307,19 @@ final class Dendrila_Calendar_Setup {
         echo '<h2>' . esc_html__( 'Step 2 — Your destination calendar', 'dendrila-calendar' ) . '</h2>';
         echo '<p>' . esc_html__( 'Choose how appointments reach the calendar you already use.', 'dendrila-calendar' ) . '</p>';
         $choices = array(
-            'caldav' => __( 'Direct CalDAV connection (Nextcloud and compatible calendars)', 'dendrila-calendar' ),
-            'subscription' => __( 'Read-only calendar URL subscription (Google, Apple, Outlook and compatible apps)', 'dendrila-calendar' ),
-            'local' => __( 'Local calendar only for now', 'dendrila-calendar' ),
+            'nextcloud' => __( 'Nextcloud (direct connection)', 'dendrila-calendar' ),
+            'icloud' => __( 'Apple iCloud (app-specific password)', 'dendrila-calendar' ),
+            'google' => __( 'Google Calendar (read-only subscription for now)', 'dendrila-calendar' ),
+            'microsoft' => __( 'Outlook / Microsoft 365 (read-only subscription for now)', 'dendrila-calendar' ),
+            'caldav' => __( 'Another calendar service', 'dendrila-calendar' ),
+            'local' => __( 'Keep my appointments inside WordPress only', 'dendrila-calendar' ),
         );
+        echo '<fieldset class="dendrila-calendar-services"><legend>' . esc_html__( 'Where should your appointments appear?', 'dendrila-calendar' ) . '</legend>';
         foreach ( $choices as $id => $label ) {
-            echo '<p><label><input type="radio" name="destination" value="' . esc_attr( $id ) . '" ' . checked( $mode, $id, false ) . '> ' . esc_html( $label ) . '</label></p>';
+            echo '<p><label><input type="radio" name="calendar_service" value="' . esc_attr( $id ) . '" ' . checked( $calendar_service, $id, false ) . '> ' . esc_html( $label ) . '</label></p>';
         }
-        echo '<p class="description">' . esc_html__( 'Selecting a destination does not connect it. After saving, you must enter CalDAV credentials and test the connection, or create a private calendar subscription link and add it to your calendar application. Google and Outlook direct OAuth connection is not implemented.', 'dendrila-calendar' ) . '</p>';
+        echo '</fieldset>';
+        echo '<p class="description">' . esc_html__( 'Google and Outlook do not have one-click access yet. They use an optional read-only subscription until direct authorization is ready.', 'dendrila-calendar' ) . '</p>';
         echo '<h2>' . esc_html__( 'Step 3 — Confirm the setup', 'dendrila-calendar' ) . '</h2>';
         echo '<p class="description">' . esc_html__( 'If an active booking plugin is detected but its connector is unusable, saving sends a technical compatibility request for review. This includes only the plugin name, entrypoint, version, reason, WordPress/PHP versions and site URL — never appointments, customer data or passwords. Duplicate requests are suppressed.', 'dendrila-calendar' ) . '</p>';
         submit_button( __( 'Save settings and continue', 'dendrila-calendar' ) );

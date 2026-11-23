@@ -22,12 +22,15 @@ function wp_timezone_string() { return 'Europe/Paris'; }
 function wp_timezone() { return new DateTimeZone( 'Europe/Paris' ); }
 function get_user_locale() { return 'fr_FR'; }
 function get_option( $name, $default ) { return $default; }
+function sanitize_key( $key ) { return strtolower( preg_replace( '/[^a-z0-9_-]/', '', $key ) ); }
+function wp_unslash( $value ) { return $value; }
 class Dendrila_Calendar_Sources {
     public static function available() { return array( 'native' => 'Local events', 'easy_appointments' => 'Easy Appointments' ); }
     public static function events( $start, $end, $sources ) { return array( array( 'source' => 'easy_appointments', 'id' => 'ea-1', 'title' => 'Prestation test', 'start' => gmdate( 'Y-m-d\TH:i:s\Z', time() + DAY_IN_SECONDS ), 'end' => gmdate( 'Y-m-d\TH:i:s\Z', time() + DAY_IN_SECONDS + 1800 ), 'status' => 'pending' ) ); }
     public static function diagnostics() { return array(); }
 }
-class Dendrila_Calendar_Bridge { public static function render_settings() { echo '<h2>Direct synchronization into an existing calendar</h2>'; } }
+class Dendrila_Calendar_Bridge { public static function render_settings() { echo '<h2>Direct synchronization into an existing calendar</h2><select id="dendrila-connect-provider"></select>'; } }
+class Dendrila_Calendar_Discovery { const NONCE_ACTION = 'dendrila_calendar_discover'; }
 require dirname( __DIR__ ) . '/includes/class-dendrila-calendar.php';
 require dirname( __DIR__ ) . '/includes/class-dendrila-calendar-subscriptions.php';
 Dendrila_Calendar::enqueue( 'not-the-calendar' );
@@ -59,17 +62,28 @@ if ( strpos( $markup, 'Prestation test' ) === false || strpos( $markup, 'Upcomin
 $GLOBALS['queued_scripts'] = array();
 Dendrila_Calendar::enqueue( 'dendrila-calendar_page_dendrila-calendar-sync' );
 if ( isset( $GLOBALS['queued_scripts']['dendrila-calendar-admin'] ) ||
+     ! isset( $GLOBALS['queued_scripts']['dendrila-calendar-connect'] ) ||
      ! isset( $GLOBALS['queued_scripts']['dendrila-calendar-subscriptions'] ) ) {
-    throw new RuntimeException( 'Sync page must load only subscription-specific JS' );
+    throw new RuntimeException( 'Sync page must load connector-specific JS' );
+}
+if ( $GLOBALS['queued_scripts']['dendrila-calendar-connect']['version'] !== (string) filemtime( dirname( __DIR__ ) . '/assets/calendar-connect.js' ) ) {
+    throw new RuntimeException( 'Connector JS must use cache busting' );
 }
 ob_start();
 Dendrila_Calendar::render_sync_page();
 $sync_markup = ob_get_clean();
-foreach ( array( 'id="dendrila-sync-provider"', 'id="dendrila-subscription-form"', 'id="dendrila-subscription-result"', 'id="dendrila-provider-instructions"', 'Direct synchronization into an existing calendar' ) as $needle ) {
-    if ( strpos( $sync_markup, $needle ) === false ) { throw new RuntimeException( 'Missing synchronization UI: ' . $needle ); }
+if ( strpos( $sync_markup, 'id="dendrila-connect-provider"' ) === false ||
+     strpos( $sync_markup, 'Read-only subscription' ) === false ||
+     strpos( $sync_markup, 'Direct synchronization into an existing calendar' ) === false ||
+     strpos( $sync_markup, 'id="dendrila-subscription-form"' ) !== false ) {
+    throw new RuntimeException( 'Direct connection must be the only visible workflow on the sync page' );
 }
-if ( strpos( $sync_markup, 'Create subscription link' ) === false ||
-     strpos( $sync_markup, '<details' ) !== false ) {
-    throw new RuntimeException( 'Synchronization UI should be expanded and discoverable' );
+$_GET['dendrila_method'] = 'subscription';
+ob_start();
+Dendrila_Calendar::render_sync_page();
+$subscription_markup = ob_get_clean();
+if ( strpos( $subscription_markup, 'id="dendrila-subscription-form"' ) === false ||
+     strpos( $subscription_markup, 'id="dendrila-connect-provider"' ) !== false ) {
+    throw new RuntimeException( 'Subscription mode must show only the subscription flow' );
 }
-echo "Admin UI and asset loading passed\n";
+echo "Admin UI, separate connection methods, asset loading passed\n";

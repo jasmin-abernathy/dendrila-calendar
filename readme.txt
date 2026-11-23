@@ -36,8 +36,8 @@ ICS Calendar can subscribe to the URL as a destination. Importing remote feeds t
 1. Install the Dendrila Calendar plugin directory and activate it.
 2. Follow the required Configuration assistant. Supported active plugins are detected and preselected automatically.
 3. Choose the appointment sources to synchronize.
-4. Select direct CalDAV synchronization, an iCalendar URL subscription or local-only mode.
-5. For CalDAV, enter the collection URL and an application password. The setup completes when the connection succeeds.
+4. Choose the calendar service you use (Nextcloud, iCloud, Google, Outlook or another service), or local-only mode.
+5. For Nextcloud and compatible services, enter the cloud URL, account login and application password. Select a calendar from the discovered list; the setup only completes when the connection succeeds.
 6. If an active booking plugin has no usable adapter, validation sends a limited, deduplicated technical compatibility report to the maintainer using WordPress email. The address is not displayed; no customer or booking data is sent.
 
 == Frequently Asked Questions ==
@@ -73,3 +73,8 @@ No. Direct CalDAV pushes bookings into the existing external calendar on a sched
 == Troubleshooting ==
 
 Use Dendrila Calendar > Calendar view, not Local events, to find imported appointments. An independent list of the next 60 days appears under the calendar for diagnosis. Completing the setup requires a working CalDAV connection or a created calendar subscription URL; choosing an application is not a connection. Google and Outlook direct account authorization are not yet available.
+
+
+= Guided calendar connection (development) =
+
+A guided screen helps choose Nextcloud, iCloud or another CalDAV service, find account calendars, select one and synchronize the selected WordPress sources. Read-only iCalendar subscriptions remain a separate fallback. Google/Outlook direct account authorization is not available in this release. Live server verification is pending.

@@ -185,6 +185,21 @@ final class Dendrila_Calendar {
         if ( $calendar_screen ) {
             wp_enqueue_script( 'dendrila-calendar-admin', $url . 'assets/calendar.js', array(), $asset_version( 'calendar.js' ), true );
         }
+        if ( $sync_screen ) {
+            wp_enqueue_script( 'dendrila-calendar-connect', $url . 'assets/calendar-connect.js', array(), $asset_version( 'calendar-connect.js' ), true );
+            wp_localize_script( 'dendrila-calendar-connect', 'dendrilaCalendarConnect', array(
+                'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+                'initialService' => class_exists( 'Dendrila_Calendar_Setup' ) ? ( Dendrila_Calendar_Setup::settings()['calendar_service'] ?? 'nextcloud' ) : 'nextcloud',
+                'nonce' => wp_create_nonce( Dendrila_Calendar_Discovery::NONCE_ACTION ),
+                'testing' => __( 'Looking for your calendars…', 'dendrila-calendar' ),
+                'found' => __( 'Choose a calendar below, then confirm the connection.', 'dendrila-calendar' ),
+                'failed' => __( 'Unable to find calendars. Check your account details and try again.', 'dendrila-calendar' ),
+                'nextcloud' => __( 'Enter the web address of your Nextcloud, then your login details.', 'dendrila-calendar' ),
+                'icloud' => __( 'Use your Apple Account email and an app-specific password. Connection may not work on every iCloud account yet.', 'dendrila-calendar' ),
+                'caldav' => __( 'Enter your calendar service address and account details.', 'dendrila-calendar' ),
+                'oauth' => __( 'Account connection is not yet available for this service. You can use a calendar subscription instead.', 'dendrila-calendar' ),
+            ) );
+        }
         wp_enqueue_script( 'dendrila-calendar-subscriptions', $url . 'assets/calendar-subscriptions.js', array(), $asset_version( 'calendar-subscriptions.js' ), true );
         wp_localize_script( 'dendrila-calendar-subscriptions', 'dendrilaCalendarSubscriptions', array(
             'ajaxUrl' => admin_url( 'admin-ajax.php' ),
@@ -240,10 +255,16 @@ final class Dendrila_Calendar {
         if ( class_exists( 'Dendrila_Calendar_Setup' ) && ! Dendrila_Calendar_Setup::complete() ) {
             echo '<div class="notice notice-warning inline"><p>' . esc_html__( 'Your external calendar is not connected. Selecting an application in the list below is not enough; complete a CalDAV connection or create and subscribe to a private URL.', 'dendrila-calendar' ) . '</p></div>';
         }
-        Dendrila_Calendar_Bridge::render_settings();
-        echo '<hr>';
+        $method = isset( $_GET['dendrila_method'] ) ? sanitize_key( wp_unslash( $_GET['dendrila_method'] ) ) : 'direct';
+        echo '<nav class="dendrila-connection-methods" aria-label="' . esc_attr__( 'Connection method', 'dendrila-calendar' ) . '">';
+        echo '<a class="button ' . ( 'direct' === $method ? 'button-primary' : '' ) . '" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-sync' ) ) . '">' . esc_html__( 'Connect an existing calendar', 'dendrila-calendar' ) . '</a> ';
+        echo '<a class="button ' . ( 'subscription' === $method ? 'button-primary' : '' ) . '" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-sync&dendrila_method=subscription' ) ) . '">' . esc_html__( 'Read-only subscription', 'dendrila-calendar' ) . '</a></nav>';
+        if ( 'subscription' === $method ) {
+            Dendrila_Calendar_Subscriptions::render_settings();
+        } else {
+            Dendrila_Calendar_Bridge::render_settings();
+        }
         echo '<p><a class="button" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-setup' ) ) . '">' . esc_html__( 'Change source and destination settings', 'dendrila-calendar' ) . '</a></p>';
-        Dendrila_Calendar_Subscriptions::render_settings();
         echo '</div>';
     }
 
