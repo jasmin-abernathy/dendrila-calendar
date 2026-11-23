@@ -10,10 +10,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class Dendrila_Calendar_OAuth {
     const OPTION = 'dendrila_calendar_oauth_connections';
+    const CREDENTIALS_OPTION = 'dendrila_calendar_oauth_app_credentials';
     const MAX_CONNECTIONS = 5;
 
     public static function boot() {
         add_action( 'admin_post_dendrila_calendar_oauth_start', array( __CLASS__, 'start' ) );
+        add_action( 'admin_post_dendrila_calendar_oauth_save_credentials', array( __CLASS__, 'save_credentials' ) );
         // Microsoft personal accounts reject query strings in OAuth redirect URIs.
         // admin-post.php dispatches requests without an action through admin_post.
         add_action( 'admin_post', array( __CLASS__, 'callback_if_state' ) );
@@ -32,21 +34,63 @@ final class Dendrila_Calendar_OAuth {
             return array();
         }
         list( $id_name, $secret_name ) = $names[ $provider ];
-        if ( ! defined( $id_name ) || ! defined( $secret_name ) ||
-             ! is_string( constant( $id_name ) ) || ! is_string( constant( $secret_name ) ) ||
-             '' === trim( constant( $id_name ) ) || '' === trim( constant( $secret_name ) ) ) {
+        // Publisher-managed constants take precedence. For staging sites, admins can
+        // enter encrypted credentials through the WordPress dashboard on mobile.
+        $id = defined( $id_name ) && is_string( constant( $id_name ) ) ? trim( constant( $id_name ) ) : '';
+        $secret = defined( $secret_name ) && is_string( constant( $secret_name ) ) ? trim( constant( $secret_name ) ) : '';
+        if ( '' === $id || '' === $secret ) {
+            $stored = get_option( self::CREDENTIALS_OPTION, array() );
+            $entry = is_array( $stored ) && isset( $stored[ $provider ] ) && is_array( $stored[ $provider ] ) ? $stored[ $provider ] : array();
+            $id = '' === $id ? ( $entry['id'] ?? '' ) : $id;
+            $secret = '' === $secret ? Dendrila_Calendar_Bridge::reveal( $entry['secret'] ?? '' ) : $secret;
+        }
+        if ( ! is_string( $id ) || ! is_string( $secret ) || '' === trim( $id ) || '' === trim( $secret ) ) {
             return array();
         }
         $google = 'google' === $provider;
         return array(
-            'id' => constant( $id_name ),
-            'secret' => constant( $secret_name ),
+            'id' => $id,
+            'secret' => $secret,
             'authorize' => $google ? 'https://accounts.google.com/o/oauth2/v2/auth' : 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
             'token' => $google ? 'https://oauth2.googleapis.com/token' : 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
             'scope' => $google ?
                 'https://www.googleapis.com/auth/calendar.calendarlist.readonly https://www.googleapis.com/auth/calendar.events' :
                 'offline_access Calendars.ReadWrite',
         );
+    }
+
+    /** Dashboard-only setup for a staging installation; never reveal saved secrets. */
+    public static function save_credentials() {
+        self::permitted();
+        check_admin_referer( 'dendrila_calendar_oauth_save_credentials' );
+        $provider = isset( $_POST['provider'] ) && is_string( $_POST['provider'] ) ? sanitize_key( wp_unslash( $_POST['provider'] ) ) : '';
+        if ( ! in_array( $provider, array( 'google', 'microsoft' ), true ) ||
+             'https' !== wp_parse_url( self::callback_url(), PHP_URL_SCHEME ) ) {
+            self::redirect( 'invalid', $provider );
+        }
+        $submitted_id = isset( $_POST['client_id'] ) && is_string( $_POST['client_id'] ) ?
+            trim( sanitize_text_field( wp_unslash( $_POST['client_id'] ) ) ) : '';
+        $submitted_secret = isset( $_POST['client_secret'] ) && is_string( $_POST['client_secret'] ) ?
+            trim( wp_unslash( $_POST['client_secret'] ) ) : '';
+        if ( strlen( $submitted_id ) > 512 || strlen( $submitted_secret ) > 4096 ||
+             preg_match( '/[\\x00-\\x1f\\x7f]/', $submitted_id . $submitted_secret ) ) {
+            self::redirect( 'invalid_credentials', $provider );
+        }
+        $stored = get_option( self::CREDENTIALS_OPTION, array() );
+        if ( ! is_array( $stored ) ) {
+            $stored = array();
+        }
+        $old = isset( $stored[ $provider ] ) && is_array( $stored[ $provider ] ) ? $stored[ $provider ] : array();
+        // Empty fields intentionally keep previously saved values.
+        $client_id = '' !== $submitted_id ? $submitted_id : ( $old['id'] ?? '' );
+        $encrypted = '' !== $submitted_secret ? Dendrila_Calendar_Bridge::protect( $submitted_secret ) : ( $old['secret'] ?? '' );
+        if ( ! is_string( $client_id ) || '' === $client_id || ! is_string( $encrypted ) ||
+             false === Dendrila_Calendar_Bridge::reveal( $encrypted ) ) {
+            self::redirect( 'invalid_credentials', $provider );
+        }
+        $stored[ $provider ] = array( 'id' => $client_id, 'secret' => $encrypted );
+        update_option( self::CREDENTIALS_OPTION, $stored, false );
+        self::redirect( 'credentials_saved', $provider );
     }
 
     public static function ready( $provider ) {
@@ -533,6 +577,8 @@ final class Dendrila_Calendar_OAuth {
             'synced' => __( 'A synchronization attempt has finished. Review its status below.', 'dendrila-calendar' ),
             'disconnected' => __( 'Calendar disconnected. Existing remote events were not removed.', 'dendrila-calendar' ),
             'no_calendars' => __( 'No writable calendar was found in this account.', 'dendrila-calendar' ),
+            'credentials_saved' => __( 'Application credentials saved. You can now authorize your account using the button below.', 'dendrila-calendar' ),
+            'invalid_credentials' => __( 'Enter a valid client ID and secret. No credentials were changed.', 'dendrila-calendar' ),
         );
         if ( isset( $statuses[ $status ] ) ) {
             echo '<div class="notice notice-info inline"><p>' . esc_html( $statuses[ $status ] ) . '</p></div>';
@@ -561,6 +607,30 @@ final class Dendrila_Calendar_OAuth {
                 $providers = array( $preferred => $providers[ $preferred ] ) + $providers;
             }
             foreach ( $providers as $provider => $label ) {
+                $configured = self::ready( $provider );
+                $names = 'google' === $provider ?
+                    array( 'DENDRILA_CALENDAR_GOOGLE_CLIENT_ID', 'DENDRILA_CALENDAR_GOOGLE_CLIENT_SECRET' ) :
+                    array( 'DENDRILA_CALENDAR_MICROSOFT_CLIENT_ID', 'DENDRILA_CALENDAR_MICROSOFT_CLIENT_SECRET' );
+                $locked = defined( $names[0] ) || defined( $names[1] );
+                $saved = get_option( self::CREDENTIALS_OPTION, array() );
+                $entry = is_array( $saved ) && isset( $saved[ $provider ] ) && is_array( $saved[ $provider ] ) ? $saved[ $provider ] : array();
+                echo '<div class="dendrila-connect-card dendrila-oauth-app-setup"><h3>' . esc_html( $label ) . '</h3>';
+                if ( ! $configured && ! $locked || ! $locked ) {
+                    echo '<details' . ( $configured ? '' : ' open' ) . '><summary>' . esc_html__( 'Configure application credentials (administrator)', 'dendrila-calendar' ) . '</summary>';
+                    echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" autocomplete="off">';
+                    echo '<input type="hidden" name="action" value="dendrila_calendar_oauth_save_credentials">';
+                    echo '<input type="hidden" name="provider" value="' . esc_attr( $provider ) . '">';
+                    wp_nonce_field( 'dendrila_calendar_oauth_save_credentials' );
+                    echo '<p><label for="dendrila-' . esc_attr( $provider ) . '-client-id">' . esc_html__( 'OAuth client ID', 'dendrila-calendar' ) . '</label>';
+                    echo '<input type="text" id="dendrila-' . esc_attr( $provider ) . '-client-id" name="client_id" value="' . esc_attr( $entry['id'] ?? '' ) . '" autocomplete="off" spellcheck="false" placeholder="' . esc_attr__( 'Paste your client ID', 'dendrila-calendar' ) . '"></p>';
+                    echo '<p><label for="dendrila-' . esc_attr( $provider ) . '-client-secret">' . esc_html__( 'OAuth client secret', 'dendrila-calendar' ) . '</label>';
+                    echo '<input type="password" id="dendrila-' . esc_attr( $provider ) . '-client-secret" name="client_secret" value="" autocomplete="new-password" spellcheck="false" placeholder="' . esc_attr__( 'Paste your secret (never displayed again)', 'dendrila-calendar' ) . '"></p>';
+                    echo '<p class="description">' . esc_html__( 'Saved securely in the WordPress database, encrypted with this site’s keys. Leave a field empty to keep its saved value. Never paste credentials into chat.', 'dendrila-calendar' ) . '</p>';
+                    echo '<p><button class="button" type="submit">' . esc_html__( 'Save application credentials', 'dendrila-calendar' ) . '</button></p></form></details>';
+                } else {
+                    echo '<p class="description">' . esc_html__( 'Application credentials are managed in wp-config.php.', 'dendrila-calendar' ) . '</p>';
+                }
+                echo '<p class="description">' . esc_html__( 'Redirect URI:', 'dendrila-calendar' ) . ' <code>' . esc_html( self::callback_url() ) . '</code></p>';
                 echo '<form class="dendrila-oauth-provider" method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
                 echo '<input type="hidden" name="action" value="dendrila_calendar_oauth_start">';
                 echo '<input type="hidden" name="provider" value="' . esc_attr( $provider ) . '">';
@@ -570,7 +640,7 @@ final class Dendrila_Calendar_OAuth {
                 if ( ! self::ready( $provider ) ) {
                     echo '<p class="description">' . esc_html__( 'Direct authorization requires the publisher to configure the Dendrila OAuth application once. Users do not need developer credentials.', 'dendrila-calendar' ) . '</p>';
                 }
-                echo '</form>';
+                echo '</form></div>';
             }
             echo '<p><a class="button" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-sync&dendrila_method=subscription' ) ) . '">' .
                 esc_html__( 'Use a read-only calendar subscription instead', 'dendrila-calendar' ) . '</a></p>';
