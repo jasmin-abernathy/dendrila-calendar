@@ -23,12 +23,14 @@ require_once __DIR__ . '/includes/class-dendrila-calendar.php';
 require_once __DIR__ . '/includes/class-dendrila-calendar-subscriptions.php';
 require_once __DIR__ . '/includes/class-dendrila-calendar-bridge.php';
 require_once __DIR__ . '/includes/class-dendrila-calendar-discovery.php';
+require_once __DIR__ . '/includes/class-dendrila-calendar-oauth.php';
 require_once __DIR__ . '/includes/class-dendrila-calendar-setup.php';
 
 add_action( 'plugins_loaded', array( 'Dendrila_Calendar', 'boot' ) );
 add_action( 'plugins_loaded', array( 'Dendrila_Calendar_Subscriptions', 'boot' ) );
 add_action( 'plugins_loaded', array( 'Dendrila_Calendar_Bridge', 'boot' ) );
 add_action( 'plugins_loaded', array( 'Dendrila_Calendar_Discovery', 'boot' ) );
+add_action( 'plugins_loaded', array( 'Dendrila_Calendar_OAuth', 'boot' ) );
 
 register_activation_hook( __FILE__, array( 'Dendrila_Calendar_Setup', 'activate' ) );
 add_action( 'plugins_loaded', array( 'Dendrila_Calendar_Setup', 'boot' ) );

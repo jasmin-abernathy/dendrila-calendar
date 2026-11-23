@@ -45,6 +45,7 @@ jobs:
           test -s assets/calendar-connect.js
           test -s includes/class-dendrila-calendar-detector.php
           test -s includes/class-dendrila-calendar-setup.php
+          test -s includes/class-dendrila-calendar-oauth.php
           test -s assets/calendar.css
           test -s languages/dendrila-calendar.pot
           ! grep -R -E 'https?://(unpkg|cdnjs|cdn\.jsdelivr)' assets includes dendrila-calendar.php

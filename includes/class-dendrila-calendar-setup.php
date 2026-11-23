@@ -44,6 +44,8 @@ final class Dendrila_Calendar_Setup {
             $connections = Dendrila_Calendar_Bridge::connections();
         } elseif ( 'subscription' === $mode && class_exists( 'Dendrila_Calendar_Subscriptions' ) ) {
             $connections = Dendrila_Calendar_Subscriptions::subscriptions();
+        } elseif ( 'oauth' === $mode && class_exists( 'Dendrila_Calendar_OAuth' ) ) {
+            $connections = Dendrila_Calendar_OAuth::connections();
         } else {
             return false;
         }
@@ -114,7 +116,7 @@ final class Dendrila_Calendar_Setup {
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin-only navigation slug, sanitized and used only for routing/notices.
         $page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
         if ( 'dendrila-calendar-sync' === $page && ! self::complete() ) {
-            echo '<div class="notice notice-info"><p>' . esc_html__( 'Complete setup by connecting and validating a CalDAV destination below.', 'dendrila-calendar' ) . '</p></div>';
+            echo '<div class="notice notice-info"><p>' . esc_html__( 'Finish by connecting your calendar account or creating an optional private calendar subscription.', 'dendrila-calendar' ) . '</p></div>';
             // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only report counter; absint() sanitized.
             // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Informational notice only; absint() sanitized.
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only count from the redirect; absint() enforced.
@@ -227,7 +229,9 @@ final class Dendrila_Calendar_Setup {
         $destination = isset( $_POST['destination'] ) ? sanitize_key( wp_unslash( $_POST['destination'] ) ) : 'caldav';
         $modes = array(
             'nextcloud' => 'caldav', 'icloud' => 'caldav', 'caldav' => 'caldav',
-            'google' => 'subscription', 'microsoft' => 'subscription', 'local' => 'local',
+            'google' => class_exists( 'Dendrila_Calendar_OAuth' ) && Dendrila_Calendar_OAuth::ready( 'google' ) ? 'oauth' : 'subscription',
+            'microsoft' => class_exists( 'Dendrila_Calendar_OAuth' ) && Dendrila_Calendar_OAuth::ready( 'microsoft' ) ? 'oauth' : 'subscription',
+            'local' => 'local',
         );
         if ( $provider ) {
             if ( ! isset( $modes[ $provider ] ) ) {
@@ -248,7 +252,7 @@ final class Dendrila_Calendar_Setup {
         $params = array(
             'page' => $complete ? 'dendrila-calendar' : 'dendrila-calendar-sync',
             'setup_status' => $complete ? 'saved' : 'connect_destination',
-            'dendrila_method' => 'subscription' === $destination ? 'subscription' : 'direct',
+            'dendrila_method' => in_array( $destination, array( 'subscription', 'oauth' ), true ) ? $destination : 'direct',
             'reports_sent' => (int) $report['sent'],
             'reports_failed' => (int) $report['failed'],
         );
@@ -324,8 +328,8 @@ final class Dendrila_Calendar_Setup {
         $choices = array(
             'nextcloud' => __( 'Nextcloud (direct connection)', 'dendrila-calendar' ),
             'icloud' => __( 'Apple iCloud (app-specific password)', 'dendrila-calendar' ),
-            'google' => __( 'Google Calendar (read-only subscription for now)', 'dendrila-calendar' ),
-            'microsoft' => __( 'Outlook / Microsoft 365 (read-only subscription for now)', 'dendrila-calendar' ),
+            'google' => __( 'Google Calendar', 'dendrila-calendar' ),
+            'microsoft' => __( 'Outlook / Microsoft 365', 'dendrila-calendar' ),
             'caldav' => __( 'Another calendar service', 'dendrila-calendar' ),
             'local' => __( 'Keep my appointments inside WordPress only', 'dendrila-calendar' ),
         );
@@ -334,7 +338,7 @@ final class Dendrila_Calendar_Setup {
             echo '<p><label><input type="radio" name="calendar_service" value="' . esc_attr( $id ) . '" ' . checked( $calendar_service, $id, false ) . '> ' . esc_html( $label ) . '</label></p>';
         }
         echo '</fieldset>';
-        echo '<p class="description">' . esc_html__( 'Google and Outlook do not have one-click access yet. They use an optional read-only subscription until direct authorization is ready.', 'dendrila-calendar' ) . '</p>';
+        echo '<p class="description">' . esc_html__( 'Google and Outlook can authorize access when the Dendrila OAuth application is enabled by the publisher. Otherwise a read-only calendar subscription remains available.', 'dendrila-calendar' ) . '</p>';
         echo '<p class="description">' . esc_html__( 'If an active booking plugin is detected but its connector is unusable, saving sends a technical compatibility request for review. This includes only the plugin name, entrypoint, version, reason, WordPress/PHP versions and site URL — never appointments, customer data or passwords. Duplicate requests are suppressed.', 'dendrila-calendar' ) . '</p>';
         submit_button( __( 'Save settings and continue', 'dendrila-calendar' ) );
         echo '<p><button type="button" class="button" id="dendrila-setup-back" hidden>' . esc_html__( 'Back', 'dendrila-calendar' ) . '</button></p>';

@@ -38,6 +38,13 @@ a.dendrila-event:hover,a.dendrila-event:focus {background:#d9e9f8; color:#003d71
  .dendrila-grid--month .dendrila-day--outside {display:none;}
  .dendrila-grid--month .dendrila-day-date {font-size:1rem;}
 }
+.dendrila-agenda-options {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:12px;margin:18px 0}
+.dendrila-agenda-option,.dendrila-oauth-provider {background:#fff;border:1px solid #dcdcde;border-radius:8px;padding:18px;margin:0}
+.dendrila-agenda-option h3 {margin-top:0}
+.dendrila-oauth-provider {margin:12px 0}
+.dendrila-oauth-provider p {margin-bottom:0}
+.dendrila-oauth-provider button:disabled {opacity:.55}
+.dendrila-oauth .dendrila-connect-card {max-width:740px}
 @media(prefers-reduced-motion:reduce) { .dendrila-calendar-wrap * {scroll-behavior:auto; transition:none!important;} }
 
 .dendrila-source-actions { display: flex; gap: 8px; margin: 8px 0 12px; flex-wrap: wrap; }

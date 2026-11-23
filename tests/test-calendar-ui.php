@@ -31,6 +31,7 @@ class Dendrila_Calendar_Sources {
 }
 class Dendrila_Calendar_Bridge { public static function render_settings() { echo '<h2>Direct synchronization into an existing calendar</h2><select id="dendrila-connect-provider"></select>'; } }
 class Dendrila_Calendar_Discovery { const NONCE_ACTION = 'dendrila_calendar_discover'; }
+class Dendrila_Calendar_OAuth { public static function render_settings() { echo '<h2>OAuth provider account authorization</h2>'; } }
 require dirname( __DIR__ ) . '/includes/class-dendrila-calendar.php';
 require dirname( __DIR__ ) . '/includes/class-dendrila-calendar-subscriptions.php';
 Dendrila_Calendar::enqueue( 'not-the-calendar' );
@@ -73,10 +74,18 @@ ob_start();
 Dendrila_Calendar::render_sync_page();
 $sync_markup = ob_get_clean();
 if ( strpos( $sync_markup, 'id="dendrila-connect-provider"' ) === false ||
-     strpos( $sync_markup, 'Read-only subscription' ) === false ||
-     strpos( $sync_markup, 'Direct synchronization into an existing calendar' ) === false ||
+     strpos( $sync_markup, 'Choose an agenda' ) === false ||
+     strpos( $sync_markup, 'Which calendar do you use?' ) === false ||
      strpos( $sync_markup, 'id="dendrila-subscription-form"' ) !== false ) {
     throw new RuntimeException( 'Direct connection must be the only visible workflow on the sync page' );
+}
+$_GET['dendrila_method'] = 'oauth';
+ob_start();
+Dendrila_Calendar::render_sync_page();
+$oauth_markup = ob_get_clean();
+if ( strpos( $oauth_markup, 'OAuth provider account authorization' ) === false ||
+     strpos( $oauth_markup, 'id="dendrila-connect-provider"' ) !== false ) {
+    throw new RuntimeException( 'OAuth must use its own connection screen.' );
 }
 $_GET['dendrila_method'] = 'subscription';
 ob_start();

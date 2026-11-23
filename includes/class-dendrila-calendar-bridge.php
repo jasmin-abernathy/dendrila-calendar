@@ -285,6 +285,9 @@ final class Dendrila_Calendar_Bridge {
         foreach ( array_keys( self::connections() ) as $id ) {
             self::run_one( $id );
         }
+        if ( class_exists( 'Dendrila_Calendar_OAuth' ) ) {
+            Dendrila_Calendar_OAuth::run_all();
+        }
     }
 
     public static function run_one( $id ) {

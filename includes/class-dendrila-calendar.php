@@ -261,14 +261,46 @@ final class Dendrila_Calendar {
             echo '<div class="notice notice-warning inline"><p>' . esc_html__( 'Your external calendar is not connected. Selecting an application in the list below is not enough; complete a CalDAV connection or create and subscribe to a private URL.', 'dendrila-calendar' ) . '</p></div>';
         }
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only tab selection; no state change.
-        $method = isset( $_GET['dendrila_method'] ) ? sanitize_key( wp_unslash( $_GET['dendrila_method'] ) ) : 'direct';
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only view switch, no mutation.
+        $method = isset( $_GET['dendrila_method'] ) ? sanitize_key( wp_unslash( $_GET['dendrila_method'] ) ) : 'choice';
+        if ( ! in_array( $method, array( 'choice', 'oauth', 'direct', 'subscription' ), true ) ) {
+            $method = 'choice';
+        }
         echo '<nav class="dendrila-connection-methods" aria-label="' . esc_attr__( 'Connection method', 'dendrila-calendar' ) . '">';
-        echo '<a class="button ' . ( 'direct' === $method ? 'button-primary' : '' ) . '" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-sync' ) ) . '">' . esc_html__( 'Connect an existing calendar', 'dendrila-calendar' ) . '</a> ';
-        echo '<a class="button ' . ( 'subscription' === $method ? 'button-primary' : '' ) . '" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-sync&dendrila_method=subscription' ) ) . '">' . esc_html__( 'Read-only subscription', 'dendrila-calendar' ) . '</a></nav>';
-        if ( 'subscription' === $method ) {
+        $links = array(
+            'choice' => __( 'Choose an agenda', 'dendrila-calendar' ),
+            'oauth' => __( 'Google / Outlook', 'dendrila-calendar' ),
+            'direct' => __( 'Nextcloud / iCloud', 'dendrila-calendar' ),
+            'subscription' => __( 'iCalendar subscription', 'dendrila-calendar' ),
+        );
+        foreach ( $links as $id => $label ) {
+            $url = add_query_arg( 'dendrila_method', $id, admin_url( 'admin.php?page=dendrila-calendar-sync' ) );
+            echo '<a class="button ' . ( $id === $method ? 'button-primary' : '' ) . '" href="' . esc_url( $url ) . '">' . esc_html( $label ) . '</a> ';
+        }
+        echo '</nav>';
+        if ( 'oauth' === $method ) {
+            Dendrila_Calendar_OAuth::render_settings();
+        } elseif ( 'subscription' === $method ) {
             Dendrila_Calendar_Subscriptions::render_settings();
-        } else {
+        } elseif ( 'direct' === $method ) {
             Dendrila_Calendar_Bridge::render_settings();
+        } else {
+            echo '<section class="dendrila-agenda-chooser"><h2>' . esc_html__( 'Which calendar do you use?', 'dendrila-calendar' ) . '</h2>';
+            echo '<p>' . esc_html__( 'Pick your everyday calendar. We will guide you without technical setup.', 'dendrila-calendar' ) . '</p>';
+            $choices = array(
+                array( 'Google Calendar', 'oauth', __( 'Authorize your Google account when this service is enabled.', 'dendrila-calendar' ) ),
+                array( 'Microsoft Outlook', 'oauth', __( 'Authorize your Microsoft account when this service is enabled.', 'dendrila-calendar' ) ),
+                array( 'Apple Calendar / iCloud', 'direct', __( 'Use an Apple app password to connect your iCloud calendar.', 'dendrila-calendar' ) ),
+                array( 'Nextcloud / CalDAV', 'direct', __( 'Enter your cloud address and choose an agenda.', 'dendrila-calendar' ) ),
+                array( 'Other iCalendar / ICS', 'subscription', __( 'Create a private read-only subscription link.', 'dendrila-calendar' ) ),
+            );
+            echo '<div class="dendrila-agenda-options">';
+            foreach ( $choices as $choice ) {
+                $url = add_query_arg( 'dendrila_method', $choice[1], admin_url( 'admin.php?page=dendrila-calendar-sync' ) );
+                echo '<article class="dendrila-agenda-option"><h3>' . esc_html( $choice[0] ) . '</h3><p>' . esc_html( $choice[2] ) . '</p>';
+                echo '<a class="button button-primary" href="' . esc_url( $url ) . '">' . esc_html__( 'Continue', 'dendrila-calendar' ) . '</a></article>';
+            }
+            echo '</div></section>';
         }
         echo '<p><a class="button" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-setup' ) ) . '">' . esc_html__( 'Change source and destination settings', 'dendrila-calendar' ) . '</a></p>';
         echo '</div>';
