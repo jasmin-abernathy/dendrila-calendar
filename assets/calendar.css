@@ -108,3 +108,11 @@ a.dendrila-event:hover,a.dendrila-event:focus {background:#d9e9f8; color:#003d71
 .dendrila-connect-card fieldset label {font-weight:400;}
 #dendrila-discovery-feedback:not(:empty) {border-left:3px solid #2271b1; background:#f0f5fa; padding:12px; margin:12px 0;}
 @media(max-width:600px){.dendrila-connect-card{padding:14px 12px;} .dendrila-connection-methods .button {flex:1 1 100%;text-align:center;}}
+
+/* OAuth application setup: comfortable one-column controls on mobile. */
+.dendrila-oauth-app-setup {max-width:760px;}
+.dendrila-oauth-app-setup summary {cursor:pointer;font-weight:600;padding:10px 0;}
+.dendrila-oauth-app-setup code {display:inline-block;max-width:100%;overflow-wrap:anywhere;white-space:normal;}
+.dendrila-oauth-app-setup input[type=text],.dendrila-oauth-app-setup input[type=password] {box-sizing:border-box;width:100%;max-width:540px;min-height:44px;}
+.dendrila-oauth-app-setup .button {min-height:42px;white-space:normal;}
+@media(max-width:600px){.dendrila-oauth-app-setup .button{width:100%;text-align:center;}}
