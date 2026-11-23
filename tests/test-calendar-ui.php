@@ -74,11 +74,11 @@ if ( $GLOBALS['queued_scripts']['dendrila-calendar-connect']['version'] !== (str
 ob_start();
 Dendrila_Calendar::render_sync_page();
 $sync_markup = ob_get_clean();
-if ( strpos( $sync_markup, 'id="dendrila-connect-provider"' ) === false ||
+if ( strpos( $sync_markup, 'id="dendrila-connect-provider"' ) !== false ||
      strpos( $sync_markup, 'Choose an agenda' ) === false ||
      strpos( $sync_markup, 'Which calendar do you use?' ) === false ||
      strpos( $sync_markup, 'id="dendrila-subscription-form"' ) !== false ) {
-    throw new RuntimeException( 'Direct connection must be the only visible workflow on the sync page' );
+    throw new RuntimeException( 'The default view must only display the calendar provider chooser.' );
 }
 $_GET['dendrila_method'] = 'oauth';
 ob_start();
