@@ -30,7 +30,9 @@ if ( substr_count( $html, 'disabled="disabled"' ) !== 2 ||
      strpos( $html, 'Connect with Google Calendar' ) === false ||
      strpos( $html, 'Connect with Microsoft Outlook' ) === false ||
      strpos( $html, 'Use a read-only calendar subscription instead' ) === false ||
-     strpos( $html, 'client_secret' ) !== false ) {
+     strpos( $html, 'name="client_secret"' ) === false ||
+     strpos( $html, 'type="password"' ) === false ||
+     strpos( $html, 'value="test-google-secret"' ) !== false ) {
     throw new RuntimeException( 'OAuth buttons or disabled explanation are broken.' );
 }
 echo "Google/Microsoft OAuth controls: guarded, translated and without exposed secrets\n";
