@@ -64,6 +64,11 @@ if ( strpos( $markup, 'id="dendrila-day-details"' ) === false ||
      strpos( $markup, 'dashicons-backup' ) !== false ) {
     throw new RuntimeException( 'New calendar layout or native icon wiring regressed.' );
 }
+$calendar_pos = strpos( $markup, 'id="dendrila-grid"' );
+$actions_pos = strpos( $markup, 'class="dendrila-calendar-intro-actions"' );
+if ( false === $calendar_pos || false === $actions_pos || $actions_pos < $calendar_pos ) {
+    throw new RuntimeException( 'Calendar must come before secondary administration actions.' );
+}
 if ( strpos( $markup, 'Prestation test' ) === false || strpos( $markup, 'Upcoming appointments (server view)' ) === false || strpos( $markup, 'Synchronize appointments with your external calendar' ) === false || strpos( $markup, 'type="search"' ) === false || strpos( $markup, 'Export filtered events' ) !== false ) {
     throw new RuntimeException( 'Missing functional calendar controls' );
 }
