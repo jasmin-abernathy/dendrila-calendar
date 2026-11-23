@@ -206,8 +206,9 @@ final class Dendrila_Calendar_Setup {
         check_admin_referer( 'dendrila_calendar_setup' );
         $detected = Dendrila_Calendar_Detector::discover();
         $ready = self::ready_sources( $detected );
-        $requested = isset( $_POST['sources'] ) && is_array( $_POST['sources'] ) ? wp_unslash( $_POST['sources'] ) : array();
-        $selected = array_values( array_unique( array_intersect( array_filter( $requested, 'is_string' ), $ready ) ) );
+        $submitted = isset( $_POST['sources'] ) && is_array( $_POST['sources'] ) ? wp_unslash( $_POST['sources'] ) : array();
+        $requested = array_map( 'sanitize_key', array_filter( $submitted, 'is_string' ) );
+        $selected = array_values( array_unique( array_intersect( $requested, $ready ) ) );
         if ( ! $selected ) {
             wp_safe_redirect( admin_url( 'admin.php?page=dendrila-calendar-setup&setup_status=source_required' ) );
             exit;

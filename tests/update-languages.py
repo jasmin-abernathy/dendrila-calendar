@@ -62,7 +62,7 @@ entries.update({
     'Save settings and continue': 'Enregistrer et continuer',
 
     'Synchronize appointments with your external calendar': 'Synchroniser les rendez-vous avec votre agenda externe',
-    '%d created, %d updated, %d cancelled, %d failed': '%d créés, %d modifiés, %d annulés, %d échecs',
+    '%1$d created, %2$d updated, %3$d cancelled, %4$d failed': '%1$d créés, %2$d modifiés, %3$d annulés, %4$d échecs',
     'Appointment sources': 'Sources de rendez-vous',
     'CalDAV app password': 'Mot de passe d’application CalDAV',
     'CalDAV calendar collection URL (HTTPS)': 'Adresse du calendrier CalDAV (HTTPS)',

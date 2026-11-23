@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Dendrila Calendar 0.0.1\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 
-msgid "%d created, %d updated, %d cancelled, %d failed"
+msgid "%1$d created, %2$d updated, %3$d cancelled, %4$d failed"
 msgstr ""
 
 msgid "1. Choose your calendar service"

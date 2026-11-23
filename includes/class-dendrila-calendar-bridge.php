@@ -185,7 +185,8 @@ final class Dendrila_Calendar_Bridge {
             ! Dendrila_Calendar_Discovery::verified_choice( $token, $url, $provider, $username, $password ) ) {
             self::redirect( 'invalid' );
         }
-        $selected = isset( $_POST['sources'] ) && is_array( $_POST['sources'] ) ? wp_unslash( $_POST['sources'] ) : array();
+        $requested = isset( $_POST['sources'] ) && is_array( $_POST['sources'] ) ? wp_unslash( $_POST['sources'] ) : array();
+        $selected = array_map( 'sanitize_key', array_filter( $requested, 'is_string' ) );
         $sources = Dendrila_Calendar_Subscriptions::allowed_sources( $selected, Dendrila_Calendar_Sources::available() );
         if ( ! $url || ! $sources || '' === trim( $username ) || '' === $password || strlen( $password ) > 4096 ) {
             self::redirect( 'invalid' );
@@ -440,7 +441,8 @@ final class Dendrila_Calendar_Bridge {
                 echo '<p class="notice notice-warning inline">' . esc_html( $item['last_error'] ) . '</p>';
             }
             if ( ! empty( $item['last_stats'] ) ) {
-                echo '<p>' . esc_html( sprintf( __( '%d created, %d updated, %d cancelled, %d failed', 'dendrila-calendar' ), $item['last_stats']['added'], $item['last_stats']['updated'], $item['last_stats']['cancelled'], $item['last_stats']['failed'] ) ) . '</p>';
+                /* translators: 1: events created, 2: events updated, 3: events cancelled, 4: failed events. */
+                echo '<p>' . esc_html( sprintf( __( '%1$d created, %2$d updated, %3$d cancelled, %4$d failed', 'dendrila-calendar' ), $item['last_stats']['added'], $item['last_stats']['updated'], $item['last_stats']['cancelled'], $item['last_stats']['failed'] ) ) . '</p>';
             }
             foreach ( array( 'sync' => __( 'Synchronize now', 'dendrila-calendar' ), 'remove' => __( 'Disconnect', 'dendrila-calendar' ) ) as $action => $button ) {
                 echo '<form method="post" style="display:inline-block;margin-right:1em" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';

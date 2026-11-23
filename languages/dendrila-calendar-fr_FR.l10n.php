@@ -6,7 +6,7 @@ return array(
     'language' => 'fr_FR',
     'plural-forms' => 'nplurals=2; plural=n>1;',
     'messages' => array(
-        '%d created, %d updated, %d cancelled, %d failed' => '%d créés, %d modifiés, %d annulés, %d échecs',
+        '%1$d created, %2$d updated, %3$d cancelled, %4$d failed' => '%1$d créés, %2$d modifiés, %3$d annulés, %4$d échecs',
         '1. Choose your calendar service' => '1. Choisissez votre service d’agenda',
         '2. Connect your account' => '2. Connectez votre compte',
         '3. Choose where to add appointments' => '3. Choisissez où enregistrer les rendez-vous',

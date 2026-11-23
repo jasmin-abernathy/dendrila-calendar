@@ -17,7 +17,7 @@ final class Dendrila_Calendar_Integrations {
         $sources = array();
         foreach ( Dendrila_Calendar_Detector::discover() as $id => $details ) {
             if ( $details['ready'] && ! in_array( $id, array( 'oryx', 'tec', 'ics_calendar' ), true ) ) {
-                $sources[ $id ] = __( $details['label'], 'dendrila-calendar' );
+                $sources[ $id ] = sanitize_text_field( $details['label'] );
             }
         }
         return $sources;
@@ -85,11 +85,10 @@ final class Dendrila_Calendar_Integrations {
     private static function query( $sql, $params ) {
         global $wpdb;
         self::$last_error = '';
-        $prepared = $wpdb->prepare( $sql, $params );
-        $rows = $wpdb->get_results( $prepared );
+        // Each adapter provides SQL with fixed plugin table identifiers; dynamic values use placeholders.
+        $rows = $wpdb->get_results( $wpdb->prepare( $sql, $params ) );
         if ( ! empty( $wpdb->last_error ) ) {
             self::$last_error = 'Database query failed for this source. Check the WordPress PHP log.';
-            error_log( '[Dendrila Calendar] Source database query failed (details excluded from UI): ' . $wpdb->last_error );
         }
         return is_array( $rows ) && ! self::$last_error ? $rows : array();
     }

@@ -66,7 +66,8 @@ final class Dendrila_Calendar_Subscriptions {
             wp_send_json_error( array( 'message' => __( 'HTTPS is required for private calendar subscriptions.', 'dendrila-calendar' ) ), 400 );
         }
         $available = Dendrila_Calendar_Sources::available();
-        $requested = isset( $_POST['sources'] ) && is_array( $_POST['sources'] ) ? wp_unslash( $_POST['sources'] ) : array();
+        $submitted = isset( $_POST['sources'] ) && is_array( $_POST['sources'] ) ? wp_unslash( $_POST['sources'] ) : array();
+        $requested = array_map( 'sanitize_key', array_filter( $submitted, 'is_string' ) );
         $sources = self::allowed_sources( $requested, $available );
         if ( ! $sources ) {
             wp_send_json_error( array( 'message' => __( 'Select at least one calendar source.', 'dendrila-calendar' ) ), 400 );
@@ -271,12 +272,12 @@ final class Dendrila_Calendar_Subscriptions {
             define( 'DONOTCACHEPAGE', true );
         }
         $token = isset( $_GET['dendrila_calendar_feed'] ) && is_string( $_GET['dendrila_calendar_feed'] ) ?
-            wp_unslash( $_GET['dendrila_calendar_feed'] ) : '';
+            sanitize_text_field( wp_unslash( $_GET['dendrila_calendar_feed'] ) ) : '';
         $subscription = self::lookup_token( $token, self::subscriptions() );
         if ( ! $subscription ) {
             self::error_response( 404 );
         }
-        if ( ! in_array( isset( $_SERVER['REQUEST_METHOD'] ) ? $_SERVER['REQUEST_METHOD'] : 'GET', array( 'GET', 'HEAD' ), true ) ) {
+        if ( ! in_array( isset( $_SERVER['REQUEST_METHOD'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) : 'GET', array( 'GET', 'HEAD' ), true ) ) {
             header( 'Allow: GET, HEAD' );
             self::error_response( 405 );
         }
@@ -295,7 +296,7 @@ final class Dendrila_Calendar_Subscriptions {
         status_header( 200 );
         header( 'Content-Type: text/calendar; charset=UTF-8' );
         header( 'Content-Disposition: inline; filename="dendrila-calendar.ics"' );
-        if ( 'HEAD' !== ( isset( $_SERVER['REQUEST_METHOD'] ) ? $_SERVER['REQUEST_METHOD'] : 'GET' ) ) {
+        if ( 'HEAD' !== ( isset( $_SERVER['REQUEST_METHOD'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) : 'GET' ) ) {
             echo $calendar; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- RFC 5545 serializer.
         }
         exit;

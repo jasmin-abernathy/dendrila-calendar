@@ -16,7 +16,7 @@ final class Dendrila_Calendar_Sources {
         $detected = Dendrila_Calendar_Detector::discover();
         foreach ( array( 'oryx', 'tec' ) as $id ) {
             if ( isset( $detected[ $id ] ) && $detected[ $id ]['ready'] ) {
-                $sources[ $id ] = __( $detected[ $id ]['label'], 'dendrila-calendar' );
+                $sources[ $id ] = sanitize_text_field( $detected[ $id ]['label'] );
             }
         }
         $sources = array_merge( $sources, Dendrila_Calendar_Integrations::available() );
@@ -100,7 +100,6 @@ final class Dendrila_Calendar_Sources {
             } catch ( Throwable $e ) {
                 // Do not expose SQL queries, filesystem paths or secrets to the browser.
                 self::$diagnostics[ $source ] = 'Connector raised ' . get_class( $e ) . '. Check the WordPress PHP error log.';
-                error_log( '[Dendrila Calendar] ' . $source . ': ' . $e->getMessage() );
                 continue;
             }
         }
