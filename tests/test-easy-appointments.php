@@ -12,7 +12,7 @@ class Fake_EA_WPDB {
     public $last_error = '';
     public $last_sql = '';
     public $rows = array();
-    public function prepare( $sql, $params ) {
+    public function prepare( $sql, ...$params ) {
         if ( count( $params ) !== 4 || $params[0] !== 'wp_ea_appointments' || $params[1] !== 'wp_ea_services' ) { throw new Exception( 'Expected two escaped table names and two date bounds' ); }
         if ( substr_count( $sql, '%i' ) !== 2 || substr_count( $sql, '%s' ) !== 2 ) { throw new Exception( 'Missing table/date placeholders in EA query' ); }
         $this->last_sql = $sql;

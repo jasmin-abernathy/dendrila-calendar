@@ -104,7 +104,7 @@ final class Dendrila_Calendar_Integrations {
              FROM %i a LEFT JOIN %i s ON s.id = a.service
              WHERE a.date <= %s AND COALESCE(NULLIF(a.end_date, '0000-00-00'), a.date) >= %s
              ORDER BY a.date ASC, a.start ASC LIMIT 750",
-                    $params
+                    $params[ 0 ], $params[ 1 ], $params[ 2 ], $params[ 3 ]
                 ) );
                 break;
             case 'fluent_booking':
@@ -113,7 +113,7 @@ final class Dendrila_Calendar_Integrations {
              FROM %i b LEFT JOIN %i s ON s.id = b.event_id
              WHERE b.booking_type = %s AND b.start_time < %s AND b.end_time > %s
              ORDER BY b.start_time ASC LIMIT 750",
-                    $params
+                    $params[ 0 ], $params[ 1 ], $params[ 2 ], $params[ 3 ], $params[ 4 ]
                 ) );
                 break;
             case 'simply_schedule':
@@ -123,7 +123,7 @@ final class Dendrila_Calendar_Integrations {
              WHERE a.start_date < %s AND a.end_date > %s
              AND a.status NOT IN ('canceled', 'abandoned')
              ORDER BY a.start_date ASC LIMIT 750",
-                    $params
+                    $params[ 0 ], $params[ 1 ], $params[ 2 ], $params[ 3 ]
                 ) );
                 break;
             case 'bookly':
@@ -133,7 +133,7 @@ final class Dendrila_Calendar_Integrations {
              FROM %i a LEFT JOIN %i s ON s.id = a.service_id
              WHERE a.start_date < %s AND a.end_date > %s
              ORDER BY a.start_date ASC LIMIT 750",
-                    $params
+                    $params[ 0 ], $params[ 1 ], $params[ 2 ], $params[ 3 ]
                 ) );
                 break;
             case 'amelia_appointments':
@@ -142,7 +142,7 @@ final class Dendrila_Calendar_Integrations {
              FROM %i a LEFT JOIN %i s ON s.id = a.serviceId
              WHERE a.bookingStart < %s AND a.bookingEnd > %s
              ORDER BY a.bookingStart ASC LIMIT 600",
-                    $params
+                    $params[ 0 ], $params[ 1 ], $params[ 2 ], $params[ 3 ]
                 ) );
                 break;
             case 'amelia_periods':
@@ -151,7 +151,7 @@ final class Dendrila_Calendar_Integrations {
              FROM %i p INNER JOIN %i e ON e.id = p.eventId
              WHERE p.periodStart < %s AND p.periodEnd > %s
              ORDER BY p.periodStart ASC LIMIT 600",
-                    $params
+                    $params[ 0 ], $params[ 1 ], $params[ 2 ], $params[ 3 ]
                 ) );
                 break;
             case 'booking_calendar':
@@ -160,7 +160,7 @@ final class Dendrila_Calendar_Integrations {
              FROM %i d INNER JOIN %i b ON b.booking_id = d.booking_id
              WHERE b.trash = 0 AND d.booking_date >= %s AND d.booking_date < %s
              GROUP BY b.booking_id, DATE(d.booking_date) ORDER BY booked_day ASC LIMIT 750",
-                    $params
+                    $params[ 0 ], $params[ 1 ], $params[ 2 ], $params[ 3 ]
                 ) );
                 break;
             default:

@@ -41,7 +41,7 @@ namespace {
         public $prefix = 'wp_';
         public $last_error = '';
         public $sql = array();
-        public function prepare( $sql, $params ) {
+        public function prepare( $sql, ...$params ) {
             // Simulate WordPress 6.2+ identifier placeholders to catch unescaped plugin tables.
             if ( ! is_array( $params ) || ! count( $params ) ) throw new \Exception( 'Missing bound SQL arguments' );
             preg_match_all( '/%(?:s|i)/', $sql, $placeholders );
