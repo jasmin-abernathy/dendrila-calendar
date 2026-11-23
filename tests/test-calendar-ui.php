@@ -13,6 +13,7 @@ function esc_url( $s ) { return $s; }
 function current_user_can( $role ) { return $role === 'manage_options'; }
 function wp_die( $message ) { throw new RuntimeException( $message ); }
 function admin_url( $path = '' ) { return 'https://example.org/wp-admin/' . $path; }
+function add_query_arg( $key, $value, $url ) { return $url . ( strpos( $url, '?' ) === false ? '?' : '&' ) . urlencode( $key ) . '=' . urlencode( $value ); }
 function plugin_dir_url( $path ) { return 'https://example.org/wp-content/plugins/dendrila-calendar/'; }
 function wp_enqueue_style( $handle, $url, $deps, $version ) { $GLOBALS['queued_styles'][ $handle ] = compact( 'url', 'version' ); }
 function wp_enqueue_script( $handle, $url, $deps, $version ) { $GLOBALS['queued_scripts'][ $handle ] = compact( 'url', 'deps', 'version' ); }
