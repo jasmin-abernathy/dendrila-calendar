@@ -81,16 +81,99 @@ final class Dendrila_Calendar_Integrations {
         );
     }
 
-    /** Never select customers, IP addresses, notes, email addresses or phone numbers. */
-    private static function query( $sql, $params ) {
+    /**
+     * Only constant, read-only query templates are accepted.
+     * Table identifiers use WordPress 6.2+ %i placeholders; values use %s.
+     * The cache is deliberately brief so new bookings become visible quickly.
+     * Never select customer names, email addresses, notes, IPs or phone numbers.
+     */
+    private static function query( $source, $params ) {
         global $wpdb;
         self::$last_error = '';
-        // Each adapter provides SQL with fixed plugin table identifiers; dynamic values use placeholders.
-        $rows = $wpdb->get_results( $wpdb->prepare( $sql, $params ) );
+        $cache_key = 'sql_' . hash( 'sha256', $source . '|' . json_encode( $params ) );
+        $cached = function_exists( 'wp_cache_get' ) ? wp_cache_get( $cache_key, 'dendrila_calendar' ) : false;
+        if ( is_array( $cached ) ) {
+            return $cached;
+        }
+
+        // All SQL statements below are literal, SELECT-only and have bound identifiers and values.
+        switch ( $source ) {
+            case 'easy_appointments':
+                $rows = $wpdb->get_results( $wpdb->prepare(
+                    "SELECT a.id, a.date, a.start, a.end, a.end_date, a.status, s.name AS service_title
+             FROM %i a LEFT JOIN %i s ON s.id = a.service
+             WHERE a.date <= %s AND COALESCE(NULLIF(a.end_date, '0000-00-00'), a.date) >= %s
+             ORDER BY a.date ASC, a.start ASC LIMIT 750",
+                    $params
+                ) );
+                break;
+            case 'fluent_booking':
+                $rows = $wpdb->get_results( $wpdb->prepare(
+                    "SELECT b.id, b.start_time, b.end_time, b.status, s.title AS service_title
+             FROM %i b LEFT JOIN %i s ON s.id = b.event_id
+             WHERE b.booking_type = %s AND b.start_time < %s AND b.end_time > %s
+             ORDER BY b.start_time ASC LIMIT 750",
+                    $params
+                ) );
+                break;
+            case 'simply_schedule':
+                $rows = $wpdb->get_results( $wpdb->prepare(
+                    "SELECT a.id, a.start_date, a.end_date, a.status, t.title AS service_title
+             FROM %i a LEFT JOIN %i t ON t.id = a.appointment_type_id
+             WHERE a.start_date < %s AND a.end_date > %s
+             AND a.status NOT IN ('canceled', 'abandoned')
+             ORDER BY a.start_date ASC LIMIT 750",
+                    $params
+                ) );
+                break;
+            case 'bookly':
+                $rows = $wpdb->get_results( $wpdb->prepare(
+                    "SELECT a.id, a.start_date, a.end_date, a.extras_duration,
+                    a.custom_service_name, s.title AS service_title
+             FROM %i a LEFT JOIN %i s ON s.id = a.service_id
+             WHERE a.start_date < %s AND a.end_date > %s
+             ORDER BY a.start_date ASC LIMIT 750",
+                    $params
+                ) );
+                break;
+            case 'amelia_appointments':
+                $rows = $wpdb->get_results( $wpdb->prepare(
+                    "SELECT a.id, a.bookingStart AS begins, a.bookingEnd AS finishes, a.status, s.name AS title
+             FROM %i a LEFT JOIN %i s ON s.id = a.serviceId
+             WHERE a.bookingStart < %s AND a.bookingEnd > %s
+             ORDER BY a.bookingStart ASC LIMIT 600",
+                    $params
+                ) );
+                break;
+            case 'amelia_periods':
+                $rows = $wpdb->get_results( $wpdb->prepare(
+                    "SELECT p.id, p.periodStart AS begins, p.periodEnd AS finishes, e.name AS title, e.status
+             FROM %i p INNER JOIN %i e ON e.id = p.eventId
+             WHERE p.periodStart < %s AND p.periodEnd > %s
+             ORDER BY p.periodStart ASC LIMIT 600",
+                    $params
+                ) );
+                break;
+            case 'booking_calendar':
+                $rows = $wpdb->get_results( $wpdb->prepare(
+                    "SELECT b.booking_id, DATE(d.booking_date) AS booked_day, MAX(d.approved) AS approved
+             FROM %i d INNER JOIN %i b ON b.booking_id = d.booking_id
+             WHERE b.trash = 0 AND d.booking_date >= %s AND d.booking_date < %s
+             GROUP BY b.booking_id, DATE(d.booking_date) ORDER BY booked_day ASC LIMIT 750",
+                    $params
+                ) );
+                break;
+            default:
+                return array();
+        }
         if ( ! empty( $wpdb->last_error ) ) {
             self::$last_error = 'Database query failed for this source. Check plugin compatibility.';
+            return array();
         }
-        return is_array( $rows ) && ! self::$last_error ? $rows : array();
+        if ( is_array( $rows ) && function_exists( 'wp_cache_set' ) ) {
+            wp_cache_set( $cache_key, $rows, 'dendrila_calendar', 10 );
+        }
+        return is_array( $rows ) ? $rows : array();
     }
 
     private static function collect( $rows, $build ) {
@@ -172,13 +255,7 @@ final class Dendrila_Calendar_Integrations {
         list( $local_start, $local_end ) = self::local_bounds( $start, $end );
         $table = $wpdb->prefix . 'ea_appointments';
         $services = $wpdb->prefix . 'ea_services';
-        $rows = self::query(
-            "SELECT a.id, a.date, a.start, a.end, a.end_date, a.status, s.name AS service_title
-             FROM %i a LEFT JOIN %i s ON s.id = a.service
-             WHERE a.date <= %s AND COALESCE(NULLIF(a.end_date, '0000-00-00'), a.date) >= %s
-             ORDER BY a.date ASC, a.start ASC LIMIT 750",
-            array( $table, $services, $local_end->format( 'Y-m-d' ), $local_start->format( 'Y-m-d' ) )
-        );
+        $rows = self::query( 'easy_appointments', array( $table, $services, $local_end->format( 'Y-m-d' ), $local_start->format( 'Y-m-d' ) ) );
         return self::collect( $rows, static function ( $row ) use ( $start, $end ) {
             $from = self::site_date( (string) $row->date . ' ' . (string) $row->start );
             $end_day = ! empty( $row->end_date ) && '0000-00-00' !== $row->end_date ? $row->end_date : $row->date;
@@ -195,13 +272,7 @@ final class Dendrila_Calendar_Integrations {
         global $wpdb;
         $bookings = $wpdb->prefix . 'fcal_bookings';
         $slots = $wpdb->prefix . 'fcal_calendar_events';
-        $rows = self::query(
-            "SELECT b.id, b.start_time, b.end_time, b.status, s.title AS service_title
-             FROM %i b LEFT JOIN %i s ON s.id = b.event_id
-             WHERE b.booking_type = %s AND b.start_time < %s AND b.end_time > %s
-             ORDER BY b.start_time ASC LIMIT 750",
-            array( $bookings, $slots, 'scheduling', $end, $start )
-        );
+        $rows = self::query( 'fluent_booking', array( $bookings, $slots, 'scheduling', $end, $start ) );
         return self::collect( $rows, static function ( $row ) use ( $start, $end ) {
             return self::result(
                 'fb-' . absint( $row->id ), $row->service_title ?: __( 'Appointment', 'dendrila-calendar' ),
@@ -216,14 +287,7 @@ final class Dendrila_Calendar_Integrations {
         global $wpdb;
         $appointments = $wpdb->prefix . 'ssa_appointments';
         $types = $wpdb->prefix . 'ssa_appointment_types';
-        $rows = self::query(
-            "SELECT a.id, a.start_date, a.end_date, a.status, t.title AS service_title
-             FROM %i a LEFT JOIN %i t ON t.id = a.appointment_type_id
-             WHERE a.start_date < %s AND a.end_date > %s
-             AND a.status NOT IN ('canceled', 'abandoned')
-             ORDER BY a.start_date ASC LIMIT 750",
-            array( $appointments, $types, $end, $start )
-        );
+        $rows = self::query( 'simply_schedule', array( $appointments, $types, $end, $start ) );
         return self::collect( $rows, static function ( $row ) use ( $start, $end ) {
             return self::result(
                 'ssa-' . absint( $row->id ), $row->service_title ?: __( 'Appointment', 'dendrila-calendar' ),
@@ -239,14 +303,7 @@ final class Dendrila_Calendar_Integrations {
         list( $local_start, $local_end ) = self::local_bounds( $start, $end );
         $appointments = $wpdb->prefix . 'bookly_appointments';
         $services = $wpdb->prefix . 'bookly_services';
-        $rows = self::query(
-            "SELECT a.id, a.start_date, a.end_date, a.extras_duration,
-                    a.custom_service_name, s.title AS service_title
-             FROM %i a LEFT JOIN %i s ON s.id = a.service_id
-             WHERE a.start_date < %s AND a.end_date > %s
-             ORDER BY a.start_date ASC LIMIT 750",
-            array( $appointments, $services, $local_end->format( 'Y-m-d H:i:s' ), $local_start->format( 'Y-m-d H:i:s' ) )
-        );
+        $rows = self::query( 'bookly', array( $appointments, $services, $local_end->format( 'Y-m-d H:i:s' ), $local_start->format( 'Y-m-d H:i:s' ) ) );
         return self::collect( $rows, static function ( $row ) use ( $start, $end ) {
             $to = self::site_date( $row->end_date );
             if ( $to && (int) $row->extras_duration > 0 ) {
@@ -267,13 +324,7 @@ final class Dendrila_Calendar_Integrations {
         $services = $wpdb->prefix . 'amelia_services';
         $events = $wpdb->prefix . 'amelia_events';
         $periods = $wpdb->prefix . 'amelia_events_periods';
-        $rows = self::query(
-            "SELECT a.id, a.bookingStart AS begins, a.bookingEnd AS finishes, a.status, s.name AS title
-             FROM %i a LEFT JOIN %i s ON s.id = a.serviceId
-             WHERE a.bookingStart < %s AND a.bookingEnd > %s
-             ORDER BY a.bookingStart ASC LIMIT 600",
-            array( $appointments, $services, $end, $start )
-        );
+        $rows = self::query( 'amelia_appointments', array( $appointments, $services, $end, $start ) );
         $items = self::collect( $rows, static function ( $row ) use ( $start, $end ) {
             return self::result(
                 'amelia-a-' . absint( $row->id ), $row->title ?: __( 'Appointment', 'dendrila-calendar' ),
@@ -282,13 +333,7 @@ final class Dendrila_Calendar_Integrations {
             );
         } );
         // Amelia event periods are distinct occurrences. A recurring parent alone is not an occurrence.
-        $period_rows = self::query(
-            "SELECT p.id, p.periodStart AS begins, p.periodEnd AS finishes, e.name AS title, e.status
-             FROM %i p INNER JOIN %i e ON e.id = p.eventId
-             WHERE p.periodStart < %s AND p.periodEnd > %s
-             ORDER BY p.periodStart ASC LIMIT 600",
-            array( $periods, $events, $end, $start )
-        );
+        $period_rows = self::query( 'amelia_periods', array( $periods, $events, $end, $start ) );
         return array_merge( $items, self::collect( $period_rows, static function ( $row ) use ( $start, $end ) {
             return self::result(
                 'amelia-e-' . absint( $row->id ), $row->title ?: __( 'Event', 'dendrila-calendar' ),
@@ -307,13 +352,7 @@ final class Dendrila_Calendar_Integrations {
         list( $local_start, $local_end ) = self::local_bounds( $start, $end );
         $dates = $wpdb->prefix . 'bookingdates';
         $bookings = $wpdb->prefix . 'booking';
-        $rows = self::query(
-            "SELECT b.booking_id, DATE(d.booking_date) AS booked_day, MAX(d.approved) AS approved
-             FROM %i d INNER JOIN %i b ON b.booking_id = d.booking_id
-             WHERE b.trash = 0 AND d.booking_date >= %s AND d.booking_date < %s
-             GROUP BY b.booking_id, DATE(d.booking_date) ORDER BY booked_day ASC LIMIT 750",
-            array( $dates, $bookings, $local_start->format( 'Y-m-d 00:00:00' ), $local_end->format( 'Y-m-d 00:00:00' ) )
-        );
+        $rows = self::query( 'booking_calendar', array( $dates, $bookings, $local_start->format( 'Y-m-d 00:00:00' ), $local_end->format( 'Y-m-d 00:00:00' ) ) );
         return self::collect( $rows, static function ( $row ) use ( $start, $end ) {
             $begins = self::site_date( $row->booked_day . ' 00:00:00' );
             $finishes = $begins ? $begins->modify( '+1 day' ) : null;
