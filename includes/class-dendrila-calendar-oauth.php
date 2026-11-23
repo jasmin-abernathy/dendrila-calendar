@@ -553,7 +553,14 @@ final class Dendrila_Calendar_OAuth {
             }
             echo '</fieldset><p><button type="submit" class="button button-primary">' . esc_html__( 'Test and connect this calendar', 'dendrila-calendar' ) . '</button></p></form>';
         } else {
-            foreach ( array( 'google' => 'Google Calendar', 'microsoft' => 'Microsoft Outlook' ) as $provider => $label ) {
+            // Optional provider hint from the calendar chooser; display preference only.
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only interface selection.
+            $preferred = isset( $_GET['oauth_provider'] ) && is_string( $_GET['oauth_provider'] ) ? sanitize_key( wp_unslash( $_GET['oauth_provider'] ) ) : '';
+            $providers = array( 'google' => 'Google Calendar', 'microsoft' => 'Microsoft Outlook' );
+            if ( isset( $providers[ $preferred ] ) ) {
+                $providers = array( $preferred => $providers[ $preferred ] ) + $providers;
+            }
+            foreach ( $providers as $provider => $label ) {
                 echo '<form class="dendrila-oauth-provider" method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
                 echo '<input type="hidden" name="action" value="dendrila_calendar_oauth_start">';
                 echo '<input type="hidden" name="provider" value="' . esc_attr( $provider ) . '">';
