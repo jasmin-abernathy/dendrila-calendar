@@ -88,7 +88,7 @@ final class Dendrila_Calendar_Integrations {
         // Each adapter provides SQL with fixed plugin table identifiers; dynamic values use placeholders.
         $rows = $wpdb->get_results( $wpdb->prepare( $sql, $params ) );
         if ( ! empty( $wpdb->last_error ) ) {
-            self::$last_error = 'Database query failed for this source. Check the WordPress PHP log.';
+            self::$last_error = 'Database query failed for this source. Check plugin compatibility.';
         }
         return is_array( $rows ) && ! self::$last_error ? $rows : array();
     }

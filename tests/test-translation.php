@@ -18,6 +18,13 @@ foreach ( $paths as $path ) {
         $expected[ str_replace( "\\'", "'", $source ) ] = true;
     }
 }
+// Regression: names from the detector are data, not translatable string literals.
+foreach ( $paths as $path ) {
+    $php = file_get_contents( $path );
+    if ( preg_match( '/(?:__|esc_html__|esc_attr__)\\s*\\(\\s*\\$/', $php ) ) {
+        throw new RuntimeException( 'Dynamic translation key in ' . basename( $path ) );
+    }
+}
 foreach ( array_keys( $expected ) as $english ) {
     if ( ! array_key_exists( $english, $messages ) || ! is_string( $messages[ $english ] ) || '' === trim( $messages[ $english ] ) ) {
         throw new RuntimeException( 'Missing French translation: ' . $english );

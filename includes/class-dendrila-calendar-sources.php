@@ -99,7 +99,7 @@ final class Dendrila_Calendar_Sources {
                 }
             } catch ( Throwable $e ) {
                 // Do not expose SQL queries, filesystem paths or secrets to the browser.
-                self::$diagnostics[ $source ] = 'Connector raised ' . get_class( $e ) . '. Check the WordPress PHP error log.';
+                self::$diagnostics[ $source ] = 'Connector raised ' . get_class( $e ) . '. Review this source adapter and its version.';
                 continue;
             }
         }
