@@ -27,6 +27,7 @@ jobs:
           php tests/test-subscriptions.php
           php tests/test-direct-sync.php
           php tests/test-oauth.php
+          php tests/test-oauth-flow.php
           php tests/test-discovery.php
           php tests/test-setup-detection.php
           php tests/test-setup-wizard.php
