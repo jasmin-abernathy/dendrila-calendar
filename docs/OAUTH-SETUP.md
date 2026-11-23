@@ -8,7 +8,9 @@ The WordPress admin flow is **Dendrila Calendar → Calendar synchronization →
 
 The plugin already contains OAuth authorization-code + PKCE handling, encrypted server-side tokens, calendar discovery, create/update/cancel and revocation. It intentionally does not ship with any client secret.
 
-For a **development site** the plugin publisher or tester must first register an OAuth application with the provider and set these server-side constants in `wp-config.php` (above the stop editing marker):
+For a **development site**, register the OAuth app with the provider, then open **WordPress admin → Dendrila Calendar → Calendar synchronization → Google / Outlook → Configure application credentials**. Paste the client ID and client secret into the mobile-friendly administrator form and save. The secret is encrypted before it is stored in the WordPress database and never displayed again. This does not remove the requirement to create the provider application; it removes the need to edit PHP files on mobile.
+
+Alternatively, publishers can configure these server-side constants in `wp-config.php` (above the stop editing marker):
 
 ```php
 define( 'DENDRILA_CALENDAR_GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_ID' );
@@ -28,7 +30,7 @@ This URI intentionally has no query parameters, including for Microsoft personal
 - **Google:** Create an OAuth **Web application** client in Google Cloud, enable Google Calendar API, configure the consent screen and add your Google email as a test user while the app remains in Testing status. Configure the exact redirect URI above. The plugin requests calendar-list read and event write scopes. Google may require verification before broader public use.
 - **Microsoft:** Register a **Web** application in Microsoft Entra, with an account type allowing personal Microsoft accounts if Outlook.com is intended; add the exact redirect URI above, and configure delegated `Calendars.ReadWrite` and `offline_access`. Depending on tenant policy, administrator consent may be necessary.
 
-If no OAuth client is configured, the corresponding Connect button stays disabled and explains why. This is a missing publisher setup, not an invitation for ordinary plugin users to supply developer credentials.
+If no OAuth client is configured, the corresponding Connect button stays disabled and presents the administrator-only credential form. In public distribution, users should not need developer credentials; this manual setup is for staging and development.
 
 For a distributable plugin where end users never create OAuth clients, use a **publisher-owned authorization service** with secure token handling and a registered redirect, implemented and independently reviewed before a public rollout. Do not distribute a shared client secret in a WordPress plugin.
 
