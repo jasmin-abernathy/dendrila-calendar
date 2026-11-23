@@ -68,6 +68,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dendrila-calendar-0.0.2-installable
-          path: build/dendrila-calendar-0.0.1-installable.zip
+          path: build/dendrila-calendar-0.0.2-installable.zip
           if-no-files-found: error
           retention-days: 14
