@@ -4,6 +4,7 @@ define( 'ABSPATH', '/' );
 function __( $text, $domain = '' ) { return $text; }
 function esc_html__( $text, $domain = '' ) { return htmlspecialchars( $text, ENT_QUOTES, 'UTF-8' ); }
 function esc_html( $text ) { return htmlspecialchars( (string) $text, ENT_QUOTES, 'UTF-8' ); }
+function esc_attr__( $text, $domain = '' ) { return htmlspecialchars( (string) $text, ENT_QUOTES, 'UTF-8' ); }
 function esc_attr( $text ) { return htmlspecialchars( (string) $text, ENT_QUOTES, 'UTF-8' ); }
 function esc_url( $url ) { return $url; }
 function admin_url( $path = '' ) { return 'https://example.org/wp-admin/' . $path; }
