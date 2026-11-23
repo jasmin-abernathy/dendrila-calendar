@@ -16,7 +16,7 @@ final class Dendrila_Calendar_Sources {
         $detected = Dendrila_Calendar_Detector::discover();
         foreach ( array( 'oryx', 'tec' ) as $id ) {
             if ( isset( $detected[ $id ] ) && $detected[ $id ]['ready'] ) {
-                $sources[ $id ] = sanitize_text_field( $detected[ $id ]['label'] );
+                $sources[ $id ] = $detected[ $id ]['label'];
             }
         }
         $sources = array_merge( $sources, Dendrila_Calendar_Integrations::available() );
