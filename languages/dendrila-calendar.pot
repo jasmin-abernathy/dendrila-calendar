@@ -30,9 +30,6 @@ msgstr ""
 msgid "Account authorization was cancelled."
 msgstr ""
 
-msgid "Account connection is not yet available for this service. You can use a calendar subscription instead."
-msgstr ""
-
 msgid "Account username or email"
 msgstr ""
 
@@ -54,6 +51,12 @@ msgstr ""
 msgid "Apple iCloud (app-specific password)"
 msgstr ""
 
+msgid "Application credentials are managed in wp-config.php."
+msgstr ""
+
+msgid "Application credentials saved. You can now authorize your account using the button below."
+msgstr ""
+
 msgid "Application password"
 msgstr ""
 
@@ -67,12 +70,6 @@ msgid "Appointments to send"
 msgstr ""
 
 msgid "Approved"
-msgstr ""
-
-msgid "Authorize your Google account when this service is enabled."
-msgstr ""
-
-msgid "Authorize your Microsoft account when this service is enabled."
 msgstr ""
 
 msgid "Automatic calendar synchronization"
@@ -120,13 +117,13 @@ msgstr ""
 msgid "Check the calendar address, credentials and selected sources."
 msgstr ""
 
-msgid "Choose Google or Microsoft to authorize Dendrila Calendar, then select the calendar that will receive your appointments."
-msgstr ""
-
 msgid "Choose a calendar and at least one source."
 msgstr ""
 
 msgid "Choose an agenda"
+msgstr ""
+
+msgid "Choose Google or Microsoft to authorize Dendrila Calendar, then select the calendar that will receive your appointments."
 msgstr ""
 
 msgid "Choose how appointments reach the calendar you already use."
@@ -150,6 +147,9 @@ msgstr ""
 msgid "Configuration saved."
 msgstr ""
 
+msgid "Configure application credentials (administrator)"
+msgstr ""
+
 msgid "Configure Dendrila Calendar"
 msgstr ""
 
@@ -171,6 +171,12 @@ msgstr ""
 msgid "Connect your calendar account"
 msgstr ""
 
+msgid "Connect your Google account securely. Authorization requires a configured Dendrila OAuth application."
+msgstr ""
+
+msgid "Connect your Microsoft account securely. Authorization requires a configured Dendrila OAuth application."
+msgstr ""
+
 msgid "Connection method"
 msgstr ""
 
@@ -178,6 +184,9 @@ msgid "Connection name"
 msgstr ""
 
 msgid "Continue"
+msgstr ""
+
+msgid "Continue to your provider’s secure account authorization. No calendar password is entered in WordPress."
 msgstr ""
 
 msgid "Copy link"
@@ -225,6 +234,9 @@ msgstr ""
 msgid "End"
 msgstr ""
 
+msgid "Enter a valid client ID and secret. No credentials were changed."
+msgstr ""
+
 msgid "Enter a valid HTTPS address for your calendar service."
 msgstr ""
 
@@ -243,13 +255,13 @@ msgstr ""
 msgid "Event"
 msgstr ""
 
-msgid "Find Subscribe by URL, Internet calendar, or iCalendar subscription in your calendar application. Paste the link rather than importing a one-time ICS file."
-msgstr ""
-
 msgid "Find events"
 msgstr ""
 
 msgid "Find my calendars"
+msgstr ""
+
+msgid "Find Subscribe by URL, Internet calendar, or iCalendar subscription in your calendar application. Paste the link rather than importing a one-time ICS file."
 msgstr ""
 
 msgid "Finish by connecting your calendar account or creating an optional private calendar subscription."
@@ -267,16 +279,19 @@ msgstr ""
 msgid "Google / Outlook"
 msgstr ""
 
+msgid "Google and Outlook can authorize access when the Dendrila OAuth application is enabled by the publisher. Otherwise a read-only calendar subscription remains available."
+msgstr ""
+
 msgid "Google Calendar"
 msgstr ""
 
 msgid "Google Calendar and Outlook need OAuth account authorization and are not connected by this CalDAV form. Existing URL subscriptions remain available separately."
 msgstr ""
 
-msgid "Google and Outlook can authorize access when the Dendrila OAuth application is enabled by the publisher. Otherwise a read-only calendar subscription remains available."
+msgid "HTTPS is required for private calendar subscriptions."
 msgstr ""
 
-msgid "HTTPS is required for private calendar subscriptions."
+msgid "iCalendar subscription"
 msgstr ""
 
 msgid "If an active booking plugin is detected but its connector is unusable, saving sends a technical compatibility request for review. This includes only the plugin name, entrypoint, version, reason, WordPress/PHP versions and site URL — never appointments, customer data or passwords. Duplicate requests are suppressed."
@@ -357,6 +372,12 @@ msgstr ""
 msgid "Not authorized."
 msgstr ""
 
+msgid "OAuth client ID"
+msgstr ""
+
+msgid "OAuth client secret"
+msgstr ""
+
 msgid "On a computer, open Google Calendar settings, choose Add calendar > From URL, paste the private HTTPS link, and add the calendar. Google decides when to refresh it. The mobile app cannot add URL subscriptions directly."
 msgstr ""
 
@@ -381,6 +402,12 @@ msgstr ""
 msgid "Outlook / Microsoft 365"
 msgstr ""
 
+msgid "Paste your client ID"
+msgstr ""
+
+msgid "Paste your secret (never displayed again)"
+msgstr ""
+
 msgid "Pending"
 msgstr ""
 
@@ -388,6 +415,9 @@ msgid "Pick your everyday calendar. We will guide you without technical setup."
 msgstr ""
 
 msgid "Previous"
+msgstr ""
+
+msgid "Redirect URI:"
 msgstr ""
 
 msgid "Reserved day"
@@ -399,7 +429,13 @@ msgstr ""
 msgid "Revoke this subscription? Connected calendars will stop updating."
 msgstr ""
 
+msgid "Save application credentials"
+msgstr ""
+
 msgid "Save settings and continue"
+msgstr ""
+
+msgid "Saved securely in the WordPress database, encrypted with this site’s keys. Leave a field empty to keep its saved value. Never paste credentials into chat."
 msgstr ""
 
 msgid "Search title or status"
@@ -628,7 +664,4 @@ msgid "Your cloud address"
 msgstr ""
 
 msgid "Your external calendar is not connected. Selecting an application in the list below is not enough; complete a CalDAV connection or create and subscribe to a private URL."
-msgstr ""
-
-msgid "iCalendar subscription"
 msgstr ""
