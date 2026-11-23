@@ -191,6 +191,7 @@ final class Dendrila_Calendar {
             wp_enqueue_script( 'dendrila-calendar-connect', $url . 'assets/calendar-connect.js', array(), $asset_version( 'calendar-connect.js' ), true );
             wp_localize_script( 'dendrila-calendar-connect', 'dendrilaCalendarConnect', array(
                 'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+                'oauthUrl' => admin_url( 'admin.php?page=dendrila-calendar-sync&dendrila_method=oauth' ),
                 'initialService' => class_exists( 'Dendrila_Calendar_Setup' ) ? ( Dendrila_Calendar_Setup::settings()['calendar_service'] ?? 'nextcloud' ) : 'nextcloud',
                 'nonce' => wp_create_nonce( Dendrila_Calendar_Discovery::NONCE_ACTION ),
                 'testing' => __( 'Looking for your calendars…', 'dendrila-calendar' ),
@@ -199,7 +200,7 @@ final class Dendrila_Calendar {
                 'nextcloud' => __( 'Enter the web address of your Nextcloud, then your login details.', 'dendrila-calendar' ),
                 'icloud' => __( 'Use your Apple Account email and an app-specific password. Connection may not work on every iCloud account yet.', 'dendrila-calendar' ),
                 'caldav' => __( 'Enter your calendar service address and account details.', 'dendrila-calendar' ),
-                'oauth' => __( 'Account connection is not yet available for this service. You can use a calendar subscription instead.', 'dendrila-calendar' ),
+                'oauth' => __( 'Continue to your provider’s secure account authorization. No calendar password is entered in WordPress.', 'dendrila-calendar' ),
             ) );
         }
         if ( $setup_screen ) {
@@ -288,8 +289,8 @@ final class Dendrila_Calendar {
             echo '<section class="dendrila-agenda-chooser"><h2>' . esc_html__( 'Which calendar do you use?', 'dendrila-calendar' ) . '</h2>';
             echo '<p>' . esc_html__( 'Pick your everyday calendar. We will guide you without technical setup.', 'dendrila-calendar' ) . '</p>';
             $choices = array(
-                array( 'Google Calendar', 'oauth', __( 'Authorize your Google account when this service is enabled.', 'dendrila-calendar' ) ),
-                array( 'Microsoft Outlook', 'oauth', __( 'Authorize your Microsoft account when this service is enabled.', 'dendrila-calendar' ) ),
+                array( 'Google Calendar', 'oauth', __( 'Connect your Google account securely. Authorization requires a configured Dendrila OAuth application.', 'dendrila-calendar' ) ),
+                array( 'Microsoft Outlook', 'oauth', __( 'Connect your Microsoft account securely. Authorization requires a configured Dendrila OAuth application.', 'dendrila-calendar' ) ),
                 array( 'Apple Calendar / iCloud', 'direct', __( 'Use an Apple app password to connect your iCloud calendar.', 'dendrila-calendar' ) ),
                 array( 'Nextcloud / CalDAV', 'direct', __( 'Enter your cloud address and choose an agenda.', 'dendrila-calendar' ) ),
                 array( 'Other iCalendar / ICS', 'subscription', __( 'Create a private read-only subscription link.', 'dendrila-calendar' ) ),
