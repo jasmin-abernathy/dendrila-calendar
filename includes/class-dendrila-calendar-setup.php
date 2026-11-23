@@ -50,8 +50,14 @@ final class Dendrila_Calendar_Setup {
             return false;
         }
         foreach ( $connections as $connection ) {
-            if ( is_array( $connection ) && ! empty( $connection['sources'] ) &&
-                 ! array_diff( $settings['sources'], $connection['sources'] ) ) {
+            if ( ! is_array( $connection ) || empty( $connection['sources'] ) ) {
+                continue;
+            }
+            // A Google account cannot silently complete a Microsoft setup, or vice versa.
+            if ( 'oauth' === $mode && ( $connection['provider'] ?? '' ) !== ( $settings['calendar_service'] ?? '' ) ) {
+                continue;
+            }
+            if ( ! array_diff( $settings['sources'], $connection['sources'] ) ) {
                 return true;
             }
         }

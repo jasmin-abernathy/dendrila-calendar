@@ -61,4 +61,26 @@ if ( Dendrila_Calendar_Setup::complete() ) { throw new RuntimeException( 'Choosi
 class Dendrila_Calendar_Subscriptions { public static $items = array(); public static function subscriptions() { return self::$items; } }
 Dendrila_Calendar_Subscriptions::$items = array( 'test' => array( 'sources' => array( 'easy_appointments' ) ) );
 if ( ! Dendrila_Calendar_Setup::complete() ) { throw new RuntimeException( 'Saved subscription must count as a configured feed' ); }
+// A different provider must not satisfy the configured OAuth destination.
+class Dendrila_Calendar_OAuth {
+    public static $items = array();
+    public static function connections() { return self::$items; }
+    public static function ready( $provider ) { return in_array( $provider, array( 'google', 'microsoft' ), true ); }
+}
+$GLOBALS['config'][ Dendrila_Calendar_Setup::OPTION ] = array(
+    'sources' => array( 'easy_appointments' ), 'mode' => 'oauth',
+    'calendar_service' => 'microsoft', 'completed' => true
+);
+Dendrila_Calendar_OAuth::$items = array(
+    'google' => array( 'provider' => 'google', 'sources' => array( 'easy_appointments' ) )
+);
+if ( Dendrila_Calendar_Setup::complete() ) {
+    throw new RuntimeException( 'A Google account cannot finish Microsoft setup.' );
+}
+Dendrila_Calendar_OAuth::$items['microsoft'] = array(
+    'provider' => 'microsoft', 'sources' => array( 'easy_appointments' )
+);
+if ( ! Dendrila_Calendar_Setup::complete() ) {
+    throw new RuntimeException( 'Authorized Microsoft calendar must complete OAuth setup.' );
+}
 echo "First-run assistant: verified destinations, auto-preselection and no mailbox leak passed\n";
