@@ -48,3 +48,19 @@ jobs:
           test -s assets/calendar.css
           test -s languages/dendrila-calendar.pot
           ! grep -R -E 'https?://(unpkg|cdnjs|cdn\.jsdelivr)' assets includes dendrila-calendar.php
+
+      - name: Build installable WordPress ZIP
+        run: |
+          mkdir -p build/dendrila-calendar
+          cp dendrila-calendar.php readme.txt build/dendrila-calendar/
+          cp -R assets includes languages build/dendrila-calendar/
+          cd build
+          zip -q -r dendrila-calendar-0.0.1-installable.zip dendrila-calendar
+          unzip -t dendrila-calendar-0.0.1-installable.zip
+      - name: Upload installable plugin ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: dendrila-calendar-0.0.1-installable
+          path: build/dendrila-calendar-0.0.1-installable.zip
+          if-no-files-found: error
+          retention-days: 14
