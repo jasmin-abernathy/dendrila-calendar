@@ -10,6 +10,7 @@ function admin_url( $path = '' ) { return 'https://example.org/wp-admin/' . $pat
 function current_user_can( $cap ) { return 'manage_options' === $cap; }
 function get_option( $name, $default = array() ) { return $default; }
 function get_transient( $key ) { return false; }
+function get_current_user_id() { return 1; }
 function wp_nonce_field( $name ) { echo '<input type="hidden" name="_wpnonce" value="test">'; }
 function disabled( $actual, $expected, $echo = true ) {
     $result = $actual == $expected ? ' disabled="disabled"' : '';
