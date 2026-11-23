@@ -92,7 +92,10 @@
   providerSelect.addEventListener('change', displayService);
   next.addEventListener('click', () => {
     if (isOAuth(providerSelect.value)) {
-      show(unavailable, $('dendrila-oauth-back'));
+      // Google and Microsoft use provider authorization, never a CalDAV password.
+      const destination = new URL(settings.oauthUrl, window.location.href);
+      destination.searchParams.set('oauth_provider', providerSelect.value);
+      window.location.assign(destination.toString());
     } else {
       show(account, serverField.hidden ? username : server);
     }
