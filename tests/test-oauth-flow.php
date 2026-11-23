@@ -69,7 +69,7 @@ function wp_safe_remote_request( $url, $args ) {
             : response( 200, array( 'items' => array( array( 'id' => 'primary@example.test', 'summary' => 'Google test', 'accessRole' => 'owner' ) ) ) );
     }
     if ( 'POST' === $args['method'] ) {
-        return response( 201, array( 'id' => 'test-created-event' ) );
+        return response( strpos( $url, 'googleapis.com' ) !== false ? 200 : 201, array( 'id' => 'test-created-event' ) );
     }
     if ( 'DELETE' === $args['method'] ) {
         return response( 204, array() );
