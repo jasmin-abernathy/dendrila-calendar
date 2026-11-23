@@ -117,9 +117,11 @@ final class Dendrila_Calendar_Setup {
             echo '<div class="notice notice-info"><p>' . esc_html__( 'Complete setup by connecting and validating a CalDAV destination below.', 'dendrila-calendar' ) . '</p></div>';
             // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only report counter; absint() sanitized.
             // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Informational notice only; absint() sanitized.
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only count from the redirect; absint() enforced.
         $reports_sent = isset( $_GET['reports_sent'] ) ? absint( $_GET['reports_sent'] ) : 0;
             // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only report counter; absint() sanitized.
             // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Informational notice only; absint() sanitized.
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only count from the redirect; absint() enforced.
         $reports_failed = isset( $_GET['reports_failed'] ) ? absint( $_GET['reports_failed'] ) : 0;
             if ( $reports_sent ) {
                 echo '<div class="notice notice-info"><p>' . esc_html__( 'A connector compatibility request was submitted for review.', 'dendrila-calendar' ) . '</p></div>';
