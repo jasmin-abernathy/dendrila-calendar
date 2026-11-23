@@ -14,6 +14,8 @@ jobs:
           node --check assets/calendar.js
           node --check assets/calendar-subscriptions.js
           node --check assets/calendar-connect.js
+      - name: Calendar browser initialization
+        run: node tests/test-calendar-init.js
       - name: Adapter smoke tests
         run: |
           php tests/test-sources.php
