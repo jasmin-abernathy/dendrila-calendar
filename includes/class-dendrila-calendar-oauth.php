@@ -42,7 +42,7 @@ final class Dendrila_Calendar_OAuth {
             $stored = get_option( self::CREDENTIALS_OPTION, array() );
             $entry = is_array( $stored ) && isset( $stored[ $provider ] ) && is_array( $stored[ $provider ] ) ? $stored[ $provider ] : array();
             $id = '' === $id ? ( $entry['id'] ?? '' ) : $id;
-            $secret = '' === $secret ? Dendrila_Calendar_Bridge::reveal( $entry['secret'] ?? '' ) : $secret;
+            $secret = '' === $secret && class_exists( 'Dendrila_Calendar_Bridge' ) ? Dendrila_Calendar_Bridge::reveal( $entry['secret'] ?? '' ) : $secret;
         }
         if ( ! is_string( $id ) || ! is_string( $secret ) || '' === trim( $id ) || '' === trim( $secret ) ) {
             return array();
