@@ -174,10 +174,10 @@ final class Dendrila_Calendar_Integrations {
         $services = $wpdb->prefix . 'ea_services';
         $rows = self::query(
             "SELECT a.id, a.date, a.start, a.end, a.end_date, a.status, s.name AS service_title
-             FROM {$table} a LEFT JOIN {$services} s ON s.id = a.service
+             FROM %i a LEFT JOIN %i s ON s.id = a.service
              WHERE a.date <= %s AND COALESCE(NULLIF(a.end_date, '0000-00-00'), a.date) >= %s
              ORDER BY a.date ASC, a.start ASC LIMIT 750",
-            array( $local_end->format( 'Y-m-d' ), $local_start->format( 'Y-m-d' ) )
+            array( $table, $services, $local_end->format( 'Y-m-d' ), $local_start->format( 'Y-m-d' ) )
         );
         return self::collect( $rows, static function ( $row ) use ( $start, $end ) {
             $from = self::site_date( (string) $row->date . ' ' . (string) $row->start );
@@ -197,10 +197,10 @@ final class Dendrila_Calendar_Integrations {
         $slots = $wpdb->prefix . 'fcal_calendar_events';
         $rows = self::query(
             "SELECT b.id, b.start_time, b.end_time, b.status, s.title AS service_title
-             FROM {$bookings} b LEFT JOIN {$slots} s ON s.id = b.event_id
+             FROM %i b LEFT JOIN %i s ON s.id = b.event_id
              WHERE b.booking_type = %s AND b.start_time < %s AND b.end_time > %s
              ORDER BY b.start_time ASC LIMIT 750",
-            array( 'scheduling', $end, $start )
+            array( $bookings, $slots, 'scheduling', $end, $start )
         );
         return self::collect( $rows, static function ( $row ) use ( $start, $end ) {
             return self::result(
@@ -218,11 +218,11 @@ final class Dendrila_Calendar_Integrations {
         $types = $wpdb->prefix . 'ssa_appointment_types';
         $rows = self::query(
             "SELECT a.id, a.start_date, a.end_date, a.status, t.title AS service_title
-             FROM {$appointments} a LEFT JOIN {$types} t ON t.id = a.appointment_type_id
+             FROM %i a LEFT JOIN %i t ON t.id = a.appointment_type_id
              WHERE a.start_date < %s AND a.end_date > %s
              AND a.status NOT IN ('canceled', 'abandoned')
              ORDER BY a.start_date ASC LIMIT 750",
-            array( $end, $start )
+            array( $appointments, $types, $end, $start )
         );
         return self::collect( $rows, static function ( $row ) use ( $start, $end ) {
             return self::result(
@@ -242,10 +242,10 @@ final class Dendrila_Calendar_Integrations {
         $rows = self::query(
             "SELECT a.id, a.start_date, a.end_date, a.extras_duration,
                     a.custom_service_name, s.title AS service_title
-             FROM {$appointments} a LEFT JOIN {$services} s ON s.id = a.service_id
+             FROM %i a LEFT JOIN %i s ON s.id = a.service_id
              WHERE a.start_date < %s AND a.end_date > %s
              ORDER BY a.start_date ASC LIMIT 750",
-            array( $local_end->format( 'Y-m-d H:i:s' ), $local_start->format( 'Y-m-d H:i:s' ) )
+            array( $appointments, $services, $local_end->format( 'Y-m-d H:i:s' ), $local_start->format( 'Y-m-d H:i:s' ) )
         );
         return self::collect( $rows, static function ( $row ) use ( $start, $end ) {
             $to = self::site_date( $row->end_date );
@@ -269,10 +269,10 @@ final class Dendrila_Calendar_Integrations {
         $periods = $wpdb->prefix . 'amelia_events_periods';
         $rows = self::query(
             "SELECT a.id, a.bookingStart AS begins, a.bookingEnd AS finishes, a.status, s.name AS title
-             FROM {$appointments} a LEFT JOIN {$services} s ON s.id = a.serviceId
+             FROM %i a LEFT JOIN %i s ON s.id = a.serviceId
              WHERE a.bookingStart < %s AND a.bookingEnd > %s
              ORDER BY a.bookingStart ASC LIMIT 600",
-            array( $end, $start )
+            array( $appointments, $services, $end, $start )
         );
         $items = self::collect( $rows, static function ( $row ) use ( $start, $end ) {
             return self::result(
@@ -284,10 +284,10 @@ final class Dendrila_Calendar_Integrations {
         // Amelia event periods are distinct occurrences. A recurring parent alone is not an occurrence.
         $period_rows = self::query(
             "SELECT p.id, p.periodStart AS begins, p.periodEnd AS finishes, e.name AS title, e.status
-             FROM {$periods} p INNER JOIN {$events} e ON e.id = p.eventId
+             FROM %i p INNER JOIN %i e ON e.id = p.eventId
              WHERE p.periodStart < %s AND p.periodEnd > %s
              ORDER BY p.periodStart ASC LIMIT 600",
-            array( $end, $start )
+            array( $periods, $events, $end, $start )
         );
         return array_merge( $items, self::collect( $period_rows, static function ( $row ) use ( $start, $end ) {
             return self::result(
@@ -309,10 +309,10 @@ final class Dendrila_Calendar_Integrations {
         $bookings = $wpdb->prefix . 'booking';
         $rows = self::query(
             "SELECT b.booking_id, DATE(d.booking_date) AS booked_day, MAX(d.approved) AS approved
-             FROM {$dates} d INNER JOIN {$bookings} b ON b.booking_id = d.booking_id
+             FROM %i d INNER JOIN %i b ON b.booking_id = d.booking_id
              WHERE b.trash = 0 AND d.booking_date >= %s AND d.booking_date < %s
              GROUP BY b.booking_id, DATE(d.booking_date) ORDER BY booked_day ASC LIMIT 750",
-            array( $local_start->format( 'Y-m-d 00:00:00' ), $local_end->format( 'Y-m-d 00:00:00' ) )
+            array( $dates, $bookings, $local_start->format( 'Y-m-d 00:00:00' ), $local_end->format( 'Y-m-d 00:00:00' ) )
         );
         return self::collect( $rows, static function ( $row ) use ( $start, $end ) {
             $begins = self::site_date( $row->booked_day . ' 00:00:00' );
