@@ -32,9 +32,6 @@ msgstr "La connexion à ce compte n’est pas encore activée sur ce site."
 msgid "Account authorization was cancelled."
 msgstr "L’autorisation du compte a été annulée."
 
-msgid "Account connection is not yet available for this service. You can use a calendar subscription instead."
-msgstr "La connexion directe n’est pas encore disponible pour ce service. Vous pouvez utiliser un abonnement."
-
 msgid "Account username or email"
 msgstr "Identifiant ou adresse e-mail"
 
@@ -56,6 +53,12 @@ msgstr "Un autre service d’agenda"
 msgid "Apple iCloud (app-specific password)"
 msgstr "Apple iCloud (mot de passe d’application)"
 
+msgid "Application credentials are managed in wp-config.php."
+msgstr "Les identifiants de l’application sont gérés dans wp-config.php."
+
+msgid "Application credentials saved. You can now authorize your account using the button below."
+msgstr "Identifiants de l’application enregistrés. Vous pouvez maintenant autoriser votre compte avec le bouton ci-dessous."
+
 msgid "Application password"
 msgstr "Mot de passe d’application"
 
@@ -70,12 +73,6 @@ msgstr "Rendez-vous à transmettre"
 
 msgid "Approved"
 msgstr "Approuvé"
-
-msgid "Authorize your Google account when this service is enabled."
-msgstr "Autorisez votre compte Google lorsque ce service sera activé."
-
-msgid "Authorize your Microsoft account when this service is enabled."
-msgstr "Autorisez votre compte Microsoft lorsque ce service sera activé."
 
 msgid "Automatic calendar synchronization"
 msgstr "Synchronisation automatique des calendriers"
@@ -122,14 +119,14 @@ msgstr "Modifier les sources et la destination"
 msgid "Check the calendar address, credentials and selected sources."
 msgstr "Vérifiez l’adresse du calendrier, les identifiants et les sources sélectionnées."
 
-msgid "Choose Google or Microsoft to authorize Dendrila Calendar, then select the calendar that will receive your appointments."
-msgstr "Choisissez Google ou Microsoft pour autoriser Dendrila Calendar, puis sélectionnez l’agenda qui recevra vos rendez-vous."
-
 msgid "Choose a calendar and at least one source."
 msgstr "Choisissez un agenda et au moins une source."
 
 msgid "Choose an agenda"
 msgstr "Choisir un agenda"
+
+msgid "Choose Google or Microsoft to authorize Dendrila Calendar, then select the calendar that will receive your appointments."
+msgstr "Choisissez Google ou Microsoft pour autoriser Dendrila Calendar, puis sélectionnez l’agenda qui recevra vos rendez-vous."
 
 msgid "Choose how appointments reach the calendar you already use."
 msgstr "Choisissez comment les rendez-vous rejoindront votre agenda habituel."
@@ -152,6 +149,9 @@ msgstr "Configuration"
 msgid "Configuration saved."
 msgstr "Configuration enregistrée."
 
+msgid "Configure application credentials (administrator)"
+msgstr "Configurer les identifiants de l’application (administration)"
+
 msgid "Configure Dendrila Calendar"
 msgstr "Configurer Dendrila Calendar"
 
@@ -173,6 +173,12 @@ msgstr "Connecter votre compte"
 msgid "Connect your calendar account"
 msgstr "Connecter votre compte d’agenda"
 
+msgid "Connect your Google account securely. Authorization requires a configured Dendrila OAuth application."
+msgstr "Connectez votre compte Google de manière sécurisée. L’application OAuth Dendrila doit être configurée."
+
+msgid "Connect your Microsoft account securely. Authorization requires a configured Dendrila OAuth application."
+msgstr "Connectez votre compte Microsoft de manière sécurisée. L’application OAuth Dendrila doit être configurée."
+
 msgid "Connection method"
 msgstr "Méthode de connexion"
 
@@ -181,6 +187,9 @@ msgstr "Nom de la connexion"
 
 msgid "Continue"
 msgstr "Continuer"
+
+msgid "Continue to your provider’s secure account authorization. No calendar password is entered in WordPress."
+msgstr "Poursuivez vers l’autorisation sécurisée de votre fournisseur. Aucun mot de passe d’agenda n’est saisi dans WordPress."
 
 msgid "Copy link"
 msgstr "Copier le lien"
@@ -227,6 +236,9 @@ msgstr "Modifier l’événement"
 msgid "End"
 msgstr "Fin"
 
+msgid "Enter a valid client ID and secret. No credentials were changed."
+msgstr "Saisissez un identifiant client et un secret valides. Aucun identifiant n’a été modifié."
+
 msgid "Enter a valid HTTPS address for your calendar service."
 msgstr "Saisissez une adresse HTTPS valide pour votre agenda."
 
@@ -245,14 +257,14 @@ msgstr "Saisissez l’adresse de votre cloud et choisissez un agenda."
 msgid "Event"
 msgstr "Événement"
 
-msgid "Find Subscribe by URL, Internet calendar, or iCalendar subscription in your calendar application. Paste the link rather than importing a one-time ICS file."
-msgstr "Recherchez S’abonner par URL, Agenda Internet ou Abonnement iCalendar dans votre application. Collez le lien au lieu d’importer une seule fois un fichier ICS."
-
 msgid "Find events"
 msgstr "Rechercher des événements"
 
 msgid "Find my calendars"
 msgstr "Trouver mes calendriers"
+
+msgid "Find Subscribe by URL, Internet calendar, or iCalendar subscription in your calendar application. Paste the link rather than importing a one-time ICS file."
+msgstr "Recherchez S’abonner par URL, Agenda Internet ou Abonnement iCalendar dans votre application. Collez le lien au lieu d’importer une seule fois un fichier ICS."
 
 msgid "Finish by connecting your calendar account or creating an optional private calendar subscription."
 msgstr "Terminez en connectant votre compte d’agenda ou en créant un abonnement privé facultatif."
@@ -269,17 +281,20 @@ msgstr "Accès refusé"
 msgid "Google / Outlook"
 msgstr "Google / Outlook"
 
+msgid "Google and Outlook can authorize access when the Dendrila OAuth application is enabled by the publisher. Otherwise a read-only calendar subscription remains available."
+msgstr "Google et Outlook peuvent autoriser l’accès lorsque l’application OAuth Dendrila est activée par son éditeur. Sinon, un abonnement en lecture seule reste disponible."
+
 msgid "Google Calendar"
 msgstr "Google Agenda"
 
 msgid "Google Calendar and Outlook need OAuth account authorization and are not connected by this CalDAV form. Existing URL subscriptions remain available separately."
 msgstr "Google Agenda et Outlook nécessitent une connexion OAuth, indisponible avec ce formulaire CalDAV. Les abonnements par URL restent disponibles séparément."
 
-msgid "Google and Outlook can authorize access when the Dendrila OAuth application is enabled by the publisher. Otherwise a read-only calendar subscription remains available."
-msgstr "Google et Outlook peuvent autoriser l’accès lorsque l’application OAuth Dendrila est activée par son éditeur. Sinon, un abonnement en lecture seule reste disponible."
-
 msgid "HTTPS is required for private calendar subscriptions."
 msgstr "Le protocole HTTPS est obligatoire pour les abonnements privés."
+
+msgid "iCalendar subscription"
+msgstr "Abonnement iCalendar"
 
 msgid "If an active booking plugin is detected but its connector is unusable, saving sends a technical compatibility request for review. This includes only the plugin name, entrypoint, version, reason, WordPress/PHP versions and site URL — never appointments, customer data or passwords. Duplicate requests are suppressed."
 msgstr "Si une extension de réservation active est détectée mais que son connecteur est inutilisable, l’enregistrement transmettra une demande technique de compatibilité. Elle contiendra uniquement le nom de l’extension, son fichier principal, sa version, le motif, les versions WordPress/PHP et l’URL du site — jamais les rendez-vous, données clients ou mots de passe. Les demandes identiques sont regroupées."
@@ -359,6 +374,12 @@ msgstr "Aucun agenda modifiable n’a été trouvé sur ce compte."
 msgid "Not authorized."
 msgstr "Accès refusé."
 
+msgid "OAuth client ID"
+msgstr "Identifiant client OAuth"
+
+msgid "OAuth client secret"
+msgstr "Secret client OAuth"
+
 msgid "On a computer, open Google Calendar settings, choose Add calendar > From URL, paste the private HTTPS link, and add the calendar. Google decides when to refresh it. The mobile app cannot add URL subscriptions directly."
 msgstr "Depuis un ordinateur, ouvrez les paramètres de Google Agenda, puis Ajouter un agenda > À partir de l’URL. Collez le lien HTTPS privé. Google choisit la fréquence d’actualisation ; l’application mobile ne permet pas d’ajouter directement un abonnement par URL."
 
@@ -383,6 +404,12 @@ msgstr "Autre service CalDAV"
 msgid "Outlook / Microsoft 365"
 msgstr "Outlook / Microsoft 365"
 
+msgid "Paste your client ID"
+msgstr "Collez votre identifiant client"
+
+msgid "Paste your secret (never displayed again)"
+msgstr "Collez votre secret (il ne sera plus affiché)"
+
 msgid "Pending"
 msgstr "En attente"
 
@@ -391,6 +418,9 @@ msgstr "Choisissez votre agenda habituel. Nous vous guiderons sans réglages tec
 
 msgid "Previous"
 msgstr "Précédent"
+
+msgid "Redirect URI:"
+msgstr "URI de redirection :"
 
 msgid "Reserved day"
 msgstr "Journée réservée"
@@ -401,8 +431,14 @@ msgstr "Révoquer le lien"
 msgid "Revoke this subscription? Connected calendars will stop updating."
 msgstr "Révoquer cet abonnement ? Les calendriers connectés cesseront de recevoir ses mises à jour."
 
+msgid "Save application credentials"
+msgstr "Enregistrer les identifiants de l’application"
+
 msgid "Save settings and continue"
 msgstr "Enregistrer et continuer"
+
+msgid "Saved securely in the WordPress database, encrypted with this site’s keys. Leave a field empty to keep its saved value. Never paste credentials into chat."
+msgstr "Enregistrés dans la base WordPress et chiffrés avec les clés du site. Laissez un champ vide pour conserver sa valeur. Ne partagez jamais ces identifiants dans une discussion."
 
 msgid "Search title or status"
 msgstr "Rechercher par titre ou statut"
@@ -631,6 +667,3 @@ msgstr "Adresse de votre cloud"
 
 msgid "Your external calendar is not connected. Selecting an application in the list below is not enough; complete a CalDAV connection or create and subscribe to a private URL."
 msgstr "Votre agenda externe n’est pas connecté. Sélectionner une application dans la liste ne suffit pas : terminez une connexion CalDAV ou créez un lien privé et abonnez-vous à ce lien."
-
-msgid "iCalendar subscription"
-msgstr "Abonnement iCalendar"
