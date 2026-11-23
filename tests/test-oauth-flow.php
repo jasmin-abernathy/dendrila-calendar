@@ -23,7 +23,7 @@ function wp_unslash( $s ) { return $s; }
 function wp_die( $s ) { throw new RuntimeException( $s ); }
 function current_user_can( $cap ) { return $cap === 'manage_options'; }
 function get_current_user_id() { return 7; }
-function check_admin_referer( $nonce ) { if ( ! in_array( $nonce, array( 'dendrila_calendar_oauth_start', 'dendrila_calendar_oauth_confirm' ), true ) ) { throw new RuntimeException( 'Unexpected nonce action' ); } }
+function check_admin_referer( $nonce ) { if ( ! in_array( $nonce, array( 'dendrila_calendar_oauth_start', 'dendrila_calendar_oauth_confirm', 'dendrila_calendar_oauth_dedupe' ), true ) ) { throw new RuntimeException( 'Unexpected nonce action' ); } }
 function add_query_arg( $arguments, $url ) {
     return $url . ( strpos( $url, '?' ) === false ? '?' : '&' ) . http_build_query( $arguments );
 }
@@ -174,3 +174,60 @@ if ( count( array_filter( $GLOBALS['calls'], static function ( $call ) { return 
     throw new RuntimeException( 'Real event creation/deletion probe did not run for both calendars.' );
 }
 echo "Google/Microsoft simulated consent, provider calendar discovery, write probe and encrypted tokens passed\n";
+
+
+// Regression: reauthorizing the same destination updates its token in place,
+// preserving remote-event identities. No third connection may appear.
+$original = Dendrila_Calendar_OAuth::connections();
+$google_id = '';
+foreach ( $original as $id => $connection ) {
+    if ( 'google' === $connection['provider'] ) { $google_id = $id; break; }
+}
+if ( '' === $google_id ) { throw new RuntimeException( 'Google fixture connection missing.' ); }
+$original[ $google_id ]['map'] = array(
+    'existing-source-key' => array( 'remote_id' => 'dc-existing-event', 'fingerprint' => 'before-reauth' ),
+);
+update_option( Dendrila_Calendar_OAuth::OPTION, $original, false );
+$_POST = array( 'provider' => 'google' );
+$repeat_url = redirected( array( 'Dendrila_Calendar_OAuth', 'start' ) );
+parse_str( parse_url( $repeat_url, PHP_URL_QUERY ), $repeat_args );
+$_GET = array( 'state' => $repeat_args['state'], 'code' => 'repeat-consent' );
+$after_repeat = redirected( $GLOBALS['hooks']['admin_post'] );
+if ( strpos( $after_repeat, 'oauth_status=choose' ) === false ) {
+    throw new RuntimeException( 'Repeat OAuth consent did not reach calendar selection.' );
+}
+$_POST = array( 'calendar' => 'primary@example.test', 'sources' => array( 'easy_appointments' ) );
+$repeat_confirm = redirected( array( 'Dendrila_Calendar_OAuth', 'confirm' ) );
+if ( strpos( $repeat_confirm, 'oauth_status=updated' ) === false ) {
+    throw new RuntimeException( 'Already connected destination was not updated in place.' );
+}
+$updated = Dendrila_Calendar_OAuth::connections();
+if ( count( $updated ) !== 2 || empty( $updated[ $google_id ]['map']['existing-source-key'] ) ) {
+    throw new RuntimeException( 'Reconnection added a duplicate or discarded event identities.' );
+}
+
+// An older version could already have saved duplicates. Consolidation is
+// explicitly initiated by the administrator; it must not delete remote events.
+$extra = $updated[ $google_id ];
+$extra['map'] = array(
+    'additional-source-key' => array( 'remote_id' => 'dc-additional-event', 'fingerprint' => 'other-event' ),
+    'existing-source-key' => array( 'remote_id' => 'dc-conflicting-remote-id', 'fingerprint' => 'older-event' ),
+);
+$updated['duplicategoogle'] = $extra;
+update_option( Dendrila_Calendar_OAuth::OPTION, $updated, false );
+$before_cleanup_calls = count( $GLOBALS['calls'] );
+$_POST = array( 'connection_id' => 'duplicategoogle' );
+$cleanup = redirected( array( 'Dendrila_Calendar_OAuth', 'consolidate_duplicate' ) );
+if ( strpos( $cleanup, 'oauth_status=deduped' ) === false ) {
+    throw new RuntimeException( 'Duplicate consolidation did not complete.' );
+}
+$clean = Dendrila_Calendar_OAuth::connections();
+if ( count( $clean ) !== 2 || isset( $clean['duplicategoogle'] ) ||
+     ( $clean[ $google_id ]['map']['existing-source-key']['remote_id'] ?? '' ) !== 'dc-existing-event' ||
+     ( $clean[ $google_id ]['map']['additional-source-key']['remote_id'] ?? '' ) !== 'dc-additional-event' ) {
+    throw new RuntimeException( 'Consolidation deleted a mapping, changed the primary event or retained the duplicate.' );
+}
+if ( count( $GLOBALS['calls'] ) !== $before_cleanup_calls ) {
+    throw new RuntimeException( 'Consolidating connections must not delete or modify remote events.' );
+}
+echo "OAuth same-calendar reauthorization and safe duplicate consolidation passed\n";

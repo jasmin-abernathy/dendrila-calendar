@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Dendrila Calendar 0.0.2\n"
+"Project-Id-Version: Dendrila Calendar 0.0.3\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 
 msgid "%1$d created, %2$d updated, %3$d cancelled, %4$d failed"
@@ -100,6 +100,9 @@ msgid "Busy times are checked at booking submission. The Easy Appointments slot 
 msgstr ""
 
 msgid "Calendar"
+msgstr ""
+
+msgid "Calendar actions"
 msgstr ""
 
 msgid "Calendar availability is temporarily unavailable. Please try again."
@@ -210,6 +213,9 @@ msgstr ""
 msgid "Connection name"
 msgstr ""
 
+msgid "Consolidate duplicate connection"
+msgstr ""
+
 msgid "Continue"
 msgstr ""
 
@@ -253,6 +259,9 @@ msgid "Direct synchronization into an existing calendar"
 msgstr ""
 
 msgid "Disconnect"
+msgstr ""
+
+msgid "Duplicate connection consolidated. Remote calendar events were not removed."
 msgstr ""
 
 msgid "Edit calendar event"
@@ -390,6 +399,9 @@ msgstr ""
 msgid "No calendar was found in this account."
 msgstr ""
 
+msgid "No events for this day."
+msgstr ""
+
 msgid "No events for this period."
 msgstr ""
 
@@ -510,6 +522,9 @@ msgstr ""
 msgid "Select your WordPress sources, create a private calendar URL, then subscribe to it in your calendar app. The app refreshes events automatically on its own schedule; this is a read-only subscription, not instant or two-way synchronization."
 msgstr ""
 
+msgid "Selected day appointments"
+msgstr ""
+
 msgid "Setup required"
 msgstr ""
 
@@ -610,6 +625,12 @@ msgid "This account did not expose a calendar collection."
 msgstr ""
 
 msgid "This assistant detects active appointment plugins and guides external synchronization. You can view the local calendar before connecting an external destination."
+msgstr ""
+
+msgid "This calendar was already connected. Authorization and selected sources were updated without creating a duplicate."
+msgstr ""
+
+msgid "This calendar was already connected. You can consolidate this duplicate without deleting any remote events."
 msgstr ""
 
 msgid "This list contains only events created in Dendrila Calendar. Appointments imported from Easy Appointments and other plugins appear in the unified calendar."

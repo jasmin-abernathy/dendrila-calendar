@@ -3,7 +3,7 @@
  * Plugin Name: Dendrila Calendar
  * Plugin URI: https://github.com/jasmin-abernathy/dendrila-calendar
  * Description: Unified private calendar for WordPress events and bookings from optional, read-only integrations.
- * Version: 0.0.2
+ * Version: 0.0.3
  * Requires at least: 6.5
  * Requires PHP: 7.4
  * Author: Le Potager du Web

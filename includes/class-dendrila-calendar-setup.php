@@ -289,7 +289,7 @@ final class Dendrila_Calendar_Setup {
         $status = isset( $_GET['setup_status'] ) ? sanitize_key( wp_unslash( $_GET['setup_status'] ) ) : '';
         echo '<div class="wrap dendrila-calendar-setup"><h1>' . esc_html__( 'Configure Dendrila Calendar', 'dendrila-calendar' ) . '</h1>';
         echo '<p>' . esc_html__( 'This assistant detects active appointment plugins and guides external synchronization. You can view the local calendar before connecting an external destination.', 'dendrila-calendar' ) . '</p>';
-        echo '<p><a class="button" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-view' ) ) . '">' . esc_html__( 'Open calendar view', 'dendrila-calendar' ) . '</a></p>';
+        echo '<p><a class="button" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar' ) ) . '">' . esc_html__( 'Open calendar view', 'dendrila-calendar' ) . '</a></p>';
         if ( 'saved' === $status ) {
             echo '<div class="notice notice-success inline"><p>' . esc_html__( 'Configuration saved.', 'dendrila-calendar' ) . '</p></div>';
         } elseif ( in_array( $status, array( 'source_required', 'destination_invalid' ), true ) ) {

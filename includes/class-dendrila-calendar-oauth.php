@@ -22,6 +22,7 @@ final class Dendrila_Calendar_OAuth {
         add_action( 'admin_post_dendrila_calendar_oauth_callback', array( __CLASS__, 'callback' ) );
         add_action( 'admin_post_dendrila_calendar_oauth_confirm', array( __CLASS__, 'confirm' ) );
         add_action( 'admin_post_dendrila_calendar_oauth_disconnect', array( __CLASS__, 'disconnect' ) );
+        add_action( 'admin_post_dendrila_calendar_oauth_dedupe', array( __CLASS__, 'consolidate_duplicate' ) );
         add_action( 'admin_post_dendrila_calendar_oauth_sync', array( __CLASS__, 'sync_now' ) );
     }
 
@@ -100,6 +101,14 @@ final class Dendrila_Calendar_OAuth {
     public static function connections() {
         $saved = get_option( self::OPTION, array() );
         return is_array( $saved ) ? $saved : array();
+    }
+
+    /** Two authorizations for one provider/calendar should be one connection. */
+    private static function same_destination( $item, $provider, $calendar ) {
+        return is_array( $item ) &&
+            isset( $item['provider'], $item['calendar'] ) &&
+            $item['provider'] === $provider &&
+            $item['calendar'] === $calendar;
     }
 
     private static function store( $items ) {
@@ -422,9 +431,17 @@ final class Dendrila_Calendar_OAuth {
             self::redirect( 'invalid', $provider );
         }
         $connections = self::connections();
-        if ( count( $connections ) >= self::MAX_CONNECTIONS ) {
+        $existing_id = '';
+        foreach ( $connections as $candidate_id => $candidate ) {
+            if ( self::same_destination( $candidate, $provider, $calendar ) ) {
+                $existing_id = $candidate_id;
+                break;
+            }
+        }
+        if ( '' === $existing_id && count( $connections ) >= self::MAX_CONNECTIONS ) {
             self::redirect( 'limit', $provider );
         }
+        $old = '' !== $existing_id ? $connections[ $existing_id ] : array();
         $item = array(
             'provider' => $provider,
             'calendar' => $calendar,
@@ -433,15 +450,16 @@ final class Dendrila_Calendar_OAuth {
             'refresh' => $pending['refresh'],
             'expires' => $pending['expires'],
             'sources' => $sources,
-            'map' => array(),
+            // Reauthorizing an existing calendar MUST retain synchronization identities.
+            'map' => isset( $old['map'] ) && is_array( $old['map'] ) ? $old['map'] : array(),
             'last_error' => '',
-            'last_run' => '',
+            'last_run' => $old['last_run'] ?? '',
         );
         $access = Dendrila_Calendar_Bridge::reveal( $item['access'] );
         if ( ! $access || ! self::probe( $item, $access ) ) {
             self::redirect( 'probe', $provider );
         }
-        $id = substr( hash( 'sha256', self::random_urlsafe() ), 0, 16 );
+        $id = '' === $existing_id ? substr( hash( 'sha256', self::random_urlsafe() ), 0, 16 ) : $existing_id;
         $connections[ $id ] = $item;
         if ( ! self::store( $connections ) ) {
             self::redirect( 'failed', $provider );
@@ -451,7 +469,69 @@ final class Dendrila_Calendar_OAuth {
             Dendrila_Calendar_Setup::destination_connected();
         }
         self::run_one( $id );
-        self::redirect( 'connected', $provider );
+        self::redirect( '' === $existing_id ? 'connected' : 'updated', $provider );
+    }
+
+
+    /**
+     * Consolidate an already-existing duplicate without deleting remote events.
+     * Keep the primary map, merge nonconflicting mapping keys and current tokens.
+     * Conflicting remote IDs are not deleted: doing so could remove a real event.
+     */
+    public static function consolidate_duplicate() {
+        self::permitted();
+        check_admin_referer( 'dendrila_calendar_oauth_dedupe' );
+        $id = isset( $_POST['connection_id'] ) && is_string( $_POST['connection_id'] )
+            ? sanitize_key( wp_unslash( $_POST['connection_id'] ) ) : '';
+        $connections = self::connections();
+        if ( ! isset( $connections[ $id ] ) ) {
+            self::redirect( 'invalid' );
+        }
+        $duplicate = $connections[ $id ];
+        $primary_id = '';
+        foreach ( $connections as $candidate_id => $item ) {
+            if ( $candidate_id !== $id &&
+                 self::same_destination( $item, $duplicate['provider'], $duplicate['calendar'] ) ) {
+                $primary_id = $candidate_id;
+                break;
+            }
+        }
+        if ( '' === $primary_id ) {
+            self::redirect( 'invalid' );
+        }
+        $primary = $connections[ $primary_id ];
+        if ( ! isset( $primary['map'] ) || ! is_array( $primary['map'] ) ) {
+            $primary['map'] = array();
+        }
+        foreach ( (array) ( $duplicate['map'] ?? array() ) as $source_key => $remote ) {
+            if ( ! isset( $primary['map'][ $source_key ] ) && is_array( $remote ) &&
+                 ! empty( $remote['remote_id'] ) ) {
+                $primary['map'][ $source_key ] = $remote;
+            }
+        }
+        $primary['sources'] = Dendrila_Calendar_Subscriptions::allowed_sources(
+            array_values( array_unique( array_merge(
+                (array) ( $primary['sources'] ?? array() ),
+                (array) ( $duplicate['sources'] ?? array() )
+            ) ) ),
+            Dendrila_Calendar_Sources::available()
+        );
+        if ( (int) ( $duplicate['expires'] ?? 0 ) > (int) ( $primary['expires'] ?? 0 ) ) {
+            foreach ( array( 'access', 'refresh', 'expires' ) as $token_key ) {
+                if ( isset( $duplicate[ $token_key ] ) ) {
+                    $primary[ $token_key ] = $duplicate[ $token_key ];
+                }
+            }
+        }
+        if ( (string) ( $duplicate['last_run'] ?? '' ) > (string) ( $primary['last_run'] ?? '' ) ) {
+            $primary['last_run'] = $duplicate['last_run'];
+        }
+        $connections[ $primary_id ] = $primary;
+        unset( $connections[ $id ] );
+        if ( ! self::store( $connections ) ) {
+            self::redirect( 'failed' );
+        }
+        self::redirect( 'deduped' );
     }
 
     public static function disconnect() {
@@ -664,6 +744,8 @@ final class Dendrila_Calendar_OAuth {
             'probe' => __( 'The provider did not confirm that events can be created and removed. No connection was saved.', 'dendrila-calendar' ),
             'limit' => __( 'Too many connected calendars.', 'dendrila-calendar' ),
             'connected' => __( 'Your calendar has been connected and synchronization started.', 'dendrila-calendar' ),
+            'updated' => __( 'This calendar was already connected. Authorization and selected sources were updated without creating a duplicate.', 'dendrila-calendar' ),
+            'deduped' => __( 'Duplicate connection consolidated. Remote calendar events were not removed.', 'dendrila-calendar' ),
             'synced' => __( 'A synchronization attempt has finished. Review its status below.', 'dendrila-calendar' ),
             'disconnected' => __( 'Calendar disconnected. Existing remote events were not removed.', 'dendrila-calendar' ),
             'no_calendars' => __( 'No writable calendar was found in this account.', 'dendrila-calendar' ),
@@ -737,11 +819,29 @@ final class Dendrila_Calendar_OAuth {
             echo '<p><a class="button" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-sync&dendrila_method=subscription' ) ) . '">' .
                 esc_html__( 'Use a read-only calendar subscription instead', 'dendrila-calendar' ) . '</a></p>';
         }
+        $already_shown = array();
         foreach ( self::connections() as $id => $item ) {
+            $duplicate = false;
+            foreach ( $already_shown as $previous ) {
+                if ( self::same_destination( $previous, $item['provider'], $item['calendar'] ) ) {
+                    $duplicate = true;
+                    break;
+                }
+            }
+            $already_shown[] = $item;
             echo '<div class="dendrila-bridge-connection dendrila-status-card"><h3><span class="dendrila-status-dot" aria-hidden="true"></span>' . esc_html( $item['label'] ) . ' (' . esc_html( $item['provider'] ) . ')</h3>';
             echo '<p>' . esc_html__( 'Last synchronization:', 'dendrila-calendar' ) . ' ' . esc_html( $item['last_run'] ?: __( 'Never synchronized', 'dendrila-calendar' ) ) . '</p>';
             if ( ! empty( $item['last_error'] ) ) {
                 echo '<p class="notice notice-warning inline">' . esc_html( $item['last_error'] ) . '</p>';
+            }
+            if ( $duplicate ) {
+                echo '<p class="notice notice-warning inline">' .
+                    esc_html__( 'This calendar was already connected. You can consolidate this duplicate without deleting any remote events.', 'dendrila-calendar' ) . '</p>';
+                echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
+                echo '<input type="hidden" name="action" value="dendrila_calendar_oauth_dedupe">';
+                echo '<input type="hidden" name="connection_id" value="' . esc_attr( $id ) . '">';
+                wp_nonce_field( 'dendrila_calendar_oauth_dedupe' );
+                echo '<button class="button" type="submit">' . esc_html__( 'Consolidate duplicate connection', 'dendrila-calendar' ) . '</button></form>';
             }
             foreach ( array(
                 'sync' => __( 'Synchronize now', 'dendrila-calendar' ),

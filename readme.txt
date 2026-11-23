@@ -4,7 +4,7 @@ Tags: calendar, events, bookings, administration
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.0.2
+Stable tag: 0.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -56,7 +56,18 @@ The WordPress administration calendar is restricted to administrators. Private s
 
 == Changelog ==
 
-= 0.0.2 (development; private testing) =
+= 0.0.3 (development; private testing) =
+* Fixed the return-to-calendar link to use the registered WordPress administration page.
+* WordPress-standard, 20-pixel synchronization icon replaces the previous oversized/reused calendar graphic.
+* Calendar shown first on its page, with view controls, sources and search above; secondary administration links below.
+* Responsive seven-column monthly calendar on mobile, tap a day to see its events, and collapsible server fallback list.
+* Reauthorizing the same Google/Outlook destination updates its connection in place and retains event mappings.
+* A safe administrator-only action consolidates previously duplicated connections, preserving known remote mappings without deleting any remote events.
+* Internal test build only: end-to-end provider/booking and browser responsive checks are still needed before a public release.
+
+
+
+= 0.0.3 (development; private testing) =
 * Google Calendar and Outlook OAuth account connections, with mobile-friendly administrator credential setup for testing.
 * Optional server-side Google/Outlook busy-time protection for Easy Appointments, checked when a reservation is submitted (fail-closed on provider errors). The slot picker may still show occupied times.
 * Guided post-authorization calendar selection and more distinct connected-account status.

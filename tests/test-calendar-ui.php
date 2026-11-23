@@ -48,8 +48,8 @@ if ( $GLOBALS['queued_scripts']['dendrila-calendar-admin']['deps'] !== array() )
 if ( $GLOBALS['queued_scripts']['dendrila-calendar-admin']['version'] !== (string) filemtime( dirname( __DIR__ ) . '/assets/calendar.js' ) ) {
     throw new RuntimeException( 'Calendar asset version must reflect its file modification time' );
 }
-if ( Dendrila_Calendar::VERSION !== '0.0.2' ) {
-    throw new RuntimeException( 'Plugin version does not match the 0.0.2 test release' );
+if ( Dendrila_Calendar::VERSION !== '0.0.3' ) {
+    throw new RuntimeException( 'Plugin version does not match the 0.0.3 test release' );
 }
 ob_start();
 Dendrila_Calendar::render();
@@ -58,6 +58,11 @@ foreach ( array( 'id="dendrila-grid"', 'id="dendrila-search"', 'id="dendrila-sou
     if ( strpos( $markup, $id ) === false ) {
         throw new RuntimeException( 'Missing UI control: ' . $id );
     }
+}
+if ( strpos( $markup, 'id="dendrila-day-details"' ) === false ||
+     strpos( $markup, 'aria-label="Calendar actions"' ) === false ||
+     strpos( $markup, 'dashicons-backup' ) !== false ) {
+    throw new RuntimeException( 'New calendar layout or native icon wiring regressed.' );
 }
 if ( strpos( $markup, 'Prestation test' ) === false || strpos( $markup, 'Upcoming appointments (server view)' ) === false || strpos( $markup, 'Synchronize appointments with your external calendar' ) === false || strpos( $markup, 'type="search"' ) === false || strpos( $markup, 'Export filtered events' ) !== false ) {
     throw new RuntimeException( 'Missing functional calendar controls' );
@@ -75,6 +80,10 @@ if ( $GLOBALS['queued_scripts']['dendrila-calendar-connect']['version'] !== (str
 ob_start();
 Dendrila_Calendar::render_sync_page();
 $sync_markup = ob_get_clean();
+if ( strpos( $sync_markup, 'admin.php?page=dendrila-calendar' ) === false ||
+     strpos( $sync_markup, 'admin.php?page=dendrila-calendar-view' ) !== false ) {
+    throw new RuntimeException( 'Return to calendar must target registered admin slug.' );
+}
 if ( strpos( $sync_markup, 'id="dendrila-connect-provider"' ) !== false ||
      strpos( $sync_markup, 'Choose an agenda' ) === false ||
      strpos( $sync_markup, 'Which calendar do you use?' ) === false ||

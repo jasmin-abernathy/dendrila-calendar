@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Dendrila Calendar 0.0.2\n"
+"Project-Id-Version: Dendrila Calendar 0.0.3\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fr_FR\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
@@ -103,6 +103,9 @@ msgstr "Les plages occupées sont vérifiées au moment d’envoyer la réservat
 
 msgid "Calendar"
 msgstr "Agenda"
+
+msgid "Calendar actions"
+msgstr "Actions du calendrier"
 
 msgid "Calendar availability is temporarily unavailable. Please try again."
 msgstr "La vérification des disponibilités est temporairement indisponible. Réessayez."
@@ -212,6 +215,9 @@ msgstr "Méthode de connexion"
 msgid "Connection name"
 msgstr "Nom de la connexion"
 
+msgid "Consolidate duplicate connection"
+msgstr "Consolider la connexion en double"
+
 msgid "Continue"
 msgstr "Continuer"
 
@@ -256,6 +262,9 @@ msgstr "Synchronisation directe avec un agenda existant"
 
 msgid "Disconnect"
 msgstr "Déconnecter"
+
+msgid "Duplicate connection consolidated. Remote calendar events were not removed."
+msgstr "Connexion en double consolidée. Aucun événement distant n’a été supprimé."
 
 msgid "Edit calendar event"
 msgstr "Modifier l’événement"
@@ -392,6 +401,9 @@ msgstr "Nextcloud / iCloud"
 msgid "No calendar was found in this account."
 msgstr "Aucun calendrier trouvé dans ce compte."
 
+msgid "No events for this day."
+msgstr "Aucun événement pour ce jour."
+
 msgid "No events for this period."
 msgstr "Aucun événement pour cette période."
 
@@ -512,6 +524,9 @@ msgstr "Tout désélectionner"
 msgid "Select your WordPress sources, create a private calendar URL, then subscribe to it in your calendar app. The app refreshes events automatically on its own schedule; this is a read-only subscription, not instant or two-way synchronization."
 msgstr "Sélectionnez les sources WordPress, créez une adresse privée puis abonnez-y votre agenda. Les événements s’actualisent automatiquement selon la fréquence choisie par votre application. Cette synchronisation est en lecture seule, non instantanée et non bidirectionnelle."
 
+msgid "Selected day appointments"
+msgstr "Rendez-vous du jour sélectionné"
+
 msgid "Setup required"
 msgstr "Configuration nécessaire"
 
@@ -613,6 +628,12 @@ msgstr "Aucun calendrier accessible trouvé pour ce compte."
 
 msgid "This assistant detects active appointment plugins and guides external synchronization. You can view the local calendar before connecting an external destination."
 msgstr "Cet assistant détecte les extensions de réservation actives et vous guide pour synchroniser un agenda externe. Vous pouvez consulter le calendrier local avant de connecter une destination."
+
+msgid "This calendar was already connected. Authorization and selected sources were updated without creating a duplicate."
+msgstr "Cet agenda était déjà connecté. L’autorisation et les sources ont été mises à jour sans créer de doublon."
+
+msgid "This calendar was already connected. You can consolidate this duplicate without deleting any remote events."
+msgstr "Cet agenda est déjà connecté. Vous pouvez regrouper cette connexion en double sans supprimer d’événements distants."
 
 msgid "This list contains only events created in Dendrila Calendar. Appointments imported from Easy Appointments and other plugins appear in the unified calendar."
 msgstr "Cette liste contient uniquement les événements créés dans Dendrila Calendar. Les rendez-vous importés depuis Easy Appointments et les autres extensions apparaissent dans le calendrier unifié."

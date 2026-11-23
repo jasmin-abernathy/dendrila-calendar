@@ -28,7 +28,7 @@ const required = [
   'dendrila-grid', 'dendrila-period', 'dendrila-message', 'dendrila-view',
   'dendrila-month', 'dendrila-source-toggles', 'dendrila-search',
   'dendrila-prev', 'dendrila-next', 'dendrila-today',
-  'dendrila-sources-all', 'dendrila-sources-none'
+  'dendrila-sources-all', 'dendrila-sources-none', 'dendrila-day-details'
 ];
 for (const id of required) ids[id] = new Node();
 ids['dendrila-view'].value = 'month';
@@ -81,6 +81,13 @@ function textTree(node) {
   assert(requests > 0, 'Initial AJAX request must be fired');
   assert(ids['dendrila-grid'].children.length > 0, 'Calendar grid should exist');
   assert(textTree(ids['dendrila-grid']).includes('Prestation test'), 'The appointment must be drawn in the calendar');
+  const gridDate = `${today.getUTCFullYear()}-${String(today.getUTCMonth() + 1).padStart(2, '0')}-15`;
+  const day = ids['dendrila-grid'].children.find(node => node.dataset.day === gridDate);
+  assert(day, 'The current month should expose a selectable day cell');
+  const dayButton = day.children.find(node => node.tagName === 'button');
+  assert(dayButton && typeof dayButton.handlers.click === 'function', 'Month view needs an accessible day picker');
+  dayButton.handlers.click();
+  assert(textTree(ids['dendrila-day-details']).includes('Prestation test'), 'The selected day should show its appointments');
   for (const view of ['week', 'list']) {
     ids['dendrila-view'].value = view;
     assert(typeof ids['dendrila-view'].handlers.change === 'function', 'View control must work');
@@ -88,5 +95,5 @@ function textTree(node) {
     await new Promise(resolve => setImmediate(resolve));
     assert(ids['dendrila-grid'].className.includes(view), 'Calendar did not switch to ' + view);
   }
-  console.log('Calendar DOM smoke test: month, week, list and Easy Appointments event initialized');
+  console.log('Calendar DOM smoke test: interactive month, day detail, week and list initialized');
 })().catch(error => { console.error(error); process.exitCode = 1; });

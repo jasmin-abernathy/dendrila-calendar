@@ -11,7 +11,7 @@ function current_user_can( $role ) { return $role === 'manage_options'; }
 function get_current_screen() { return (object) array( 'id' => $GLOBALS['fake_screen'] ); }
 function load_plugin_textdomain( $domain, $deprecated, $path ) {}
 function register_post_type( $type, $args ) { $GLOBALS['post_type_args'] = $args; }
-function add_menu_page( $title, $menu, $cap, $slug, $callback, $icon, $order ) { $GLOBALS['menu_slug'] = $slug; }
+function add_menu_page( $title, $menu, $cap, $slug, $callback, $icon, $order ) { $GLOBALS['menu_slug'] = $slug; $GLOBALS['menu_icon'] = $icon; }
 function add_submenu_page( $parent, $title, $menu, $cap, $slug, $callback ) {
     $GLOBALS['submenus'][] = compact( 'parent', 'title', 'menu', 'cap', 'slug' );
 }
@@ -23,6 +23,7 @@ if ( $GLOBALS['post_type_args']['labels']['menu_name'] !== 'Local events' ||
 }
 Dendrila_Calendar::admin_menu();
 if ( $GLOBALS['menu_slug'] !== 'dendrila-calendar' ||
+    $GLOBALS['menu_icon'] !== 'dashicons-backup' ||
     $GLOBALS['submenus'][0]['menu'] !== 'Calendar view' ||
     $GLOBALS['submenus'][0]['slug'] !== 'dendrila-calendar' ||
     $GLOBALS['submenus'][1]['menu'] !== 'Synchronization' ||

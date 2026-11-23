@@ -2,7 +2,7 @@
 /** French translations for Dendrila Calendar (WordPress 6.5+). */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 return array(
-    'project-id-version' => 'Dendrila Calendar 0.0.2',
+    'project-id-version' => 'Dendrila Calendar 0.0.3',
     'language' => 'fr_FR',
     'plural-forms' => 'nplurals=2; plural=n>1;',
     'messages' => array(
@@ -39,6 +39,7 @@ return array(
         'Booking' => 'Réservation',
         'Busy times are checked at booking submission. The Easy Appointments slot picker might still display those times.' => 'Les plages occupées sont vérifiées au moment d’envoyer la réservation. Le sélecteur Easy Appointments peut encore afficher ces horaires.',
         'Calendar' => 'Agenda',
+        'Calendar actions' => 'Actions du calendrier',
         'Calendar availability is temporarily unavailable. Please try again.' => 'La vérification des disponibilités est temporairement indisponible. Réessayez.',
         'Calendar connected. Automatic direct synchronization is enabled.' => 'Agenda connecté. La synchronisation directe est activée.',
         'Calendar disconnected. Existing remote events were not removed.' => 'Agenda déconnecté. Les événements déjà transmis n’ont pas été supprimés.',
@@ -75,6 +76,7 @@ return array(
         'Connect your Microsoft account securely. Authorization requires a configured Dendrila OAuth application.' => 'Connectez votre compte Microsoft de manière sécurisée. L’application OAuth Dendrila doit être configurée.',
         'Connection method' => 'Méthode de connexion',
         'Connection name' => 'Nom de la connexion',
+        'Consolidate duplicate connection' => 'Consolider la connexion en double',
         'Continue' => 'Continuer',
         'Continue to your provider’s secure account authorization. No calendar password is entered in WordPress.' => 'Poursuivez vers l’autorisation sécurisée de votre fournisseur. Aucun mot de passe d’agenda n’est saisi dans WordPress.',
         'Copy link' => 'Copier le lien',
@@ -90,6 +92,7 @@ return array(
         'Direct authorization requires the publisher to configure the Dendrila OAuth application once. Users do not need developer credentials.' => 'La connexion directe doit être activée une fois par l’éditeur de Dendrila. Vous n’avez pas besoin de compte développeur.',
         'Direct synchronization into an existing calendar' => 'Synchronisation directe avec un agenda existant',
         'Disconnect' => 'Déconnecter',
+        'Duplicate connection consolidated. Remote calendar events were not removed.' => 'Connexion en double consolidée. Aucun événement distant n’a été supprimé.',
         'Edit calendar event' => 'Modifier l’événement',
         'End' => 'Fin',
         'Enter a valid client ID and secret. No credentials were changed.' => 'Saisissez un identifiant client et un secret valides. Aucun identifiant n’a été modifié.',
@@ -135,6 +138,7 @@ return array(
         'Nextcloud (direct connection)' => 'Nextcloud (connexion directe)',
         'Nextcloud / iCloud' => 'Nextcloud / iCloud',
         'No calendar was found in this account.' => 'Aucun calendrier trouvé dans ce compte.',
+        'No events for this day.' => 'Aucun événement pour ce jour.',
         'No events for this period.' => 'Aucun événement pour cette période.',
         'No events returned by the active source connectors for the next 60 days. Check the source diagnostics below.' => 'Aucun événement renvoyé par les connecteurs actifs dans les 60 prochains jours. Consultez le diagnostic des sources ci-dessous.',
         'No external destination connected yet. Complete the connection on the Synchronization page.' => 'Aucune destination externe n’est encore connectée. Terminez la connexion depuis la page Synchronisation.',
@@ -175,6 +179,7 @@ return array(
         'Select at least one calendar source.' => 'Sélectionnez au moins une source de calendrier.',
         'Select none' => 'Tout désélectionner',
         'Select your WordPress sources, create a private calendar URL, then subscribe to it in your calendar app. The app refreshes events automatically on its own schedule; this is a read-only subscription, not instant or two-way synchronization.' => 'Sélectionnez les sources WordPress, créez une adresse privée puis abonnez-y votre agenda. Les événements s’actualisent automatiquement selon la fréquence choisie par votre application. Cette synchronisation est en lecture seule, non instantanée et non bidirectionnelle.',
+        'Selected day appointments' => 'Rendez-vous du jour sélectionné',
         'Setup required' => 'Configuration nécessaire',
         'Show instructions for this application (not a connection)' => 'Afficher les instructions pour cette application (sans connexion)',
         'Source' => 'Source',
@@ -209,6 +214,8 @@ return array(
         'The subscription could not be saved. Try again.' => 'L’abonnement n’a pas pu être enregistré. Réessayez.',
         'This account did not expose a calendar collection.' => 'Aucun calendrier accessible trouvé pour ce compte.',
         'This assistant detects active appointment plugins and guides external synchronization. You can view the local calendar before connecting an external destination.' => 'Cet assistant détecte les extensions de réservation actives et vous guide pour synchroniser un agenda externe. Vous pouvez consulter le calendrier local avant de connecter une destination.',
+        'This calendar was already connected. Authorization and selected sources were updated without creating a duplicate.' => 'Cet agenda était déjà connecté. L’autorisation et les sources ont été mises à jour sans créer de doublon.',
+        'This calendar was already connected. You can consolidate this duplicate without deleting any remote events.' => 'Cet agenda est déjà connecté. Vous pouvez regrouper cette connexion en double sans supprimer d’événements distants.',
         'This list contains only events created in Dendrila Calendar. Appointments imported from Easy Appointments and other plugins appear in the unified calendar.' => 'Cette liste contient uniquement les événements créés dans Dendrila Calendar. Les rendez-vous importés depuis Easy Appointments et les autres extensions apparaissent dans le calendrier unifié.',
         'This server did not provide a calendar account. Check your service address.' => 'Le service n’a pas fourni de compte de calendrier. Vérifiez son adresse.',
         'This time is occupied in a connected calendar. Please choose another.' => 'Ce créneau est déjà occupé dans un agenda connecté. Choisissez-en un autre.',
