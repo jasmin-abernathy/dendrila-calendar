@@ -57,11 +57,11 @@ final class Dendrila_Calendar_Subscriptions {
         if ( ! current_user_can( 'manage_options' ) ) {
             wp_send_json_error( array( 'message' => __( 'You cannot manage calendar subscriptions.', 'dendrila-calendar' ) ), 403 );
         }
-        check_ajax_referer( 'dendrila_calendar_subscription', 'nonce' );
     }
 
     public static function create() {
         self::authorized();
+        check_ajax_referer( 'dendrila_calendar_subscription', 'nonce' );
         if ( 'https' !== wp_parse_url( home_url( '/' ), PHP_URL_SCHEME ) ) {
             wp_send_json_error( array( 'message' => __( 'HTTPS is required for private calendar subscriptions.', 'dendrila-calendar' ) ), 400 );
         }
@@ -113,6 +113,7 @@ final class Dendrila_Calendar_Subscriptions {
 
     public static function revoke() {
         self::authorized();
+        check_ajax_referer( 'dendrila_calendar_subscription', 'nonce' );
         $id = isset( $_POST['id'] ) && is_string( $_POST['id'] ) ? sanitize_key( wp_unslash( $_POST['id'] ) ) : '';
         $subscriptions = self::subscriptions();
         if ( ! preg_match( '/^[a-f0-9]{16}$/D', $id ) || ! isset( $subscriptions[ $id ] ) ) {
@@ -265,12 +266,16 @@ final class Dendrila_Calendar_Subscriptions {
     }
 
     public static function serve() {
+        // Public bearer-token endpoint: a WordPress nonce would prevent external calendar clients from fetching it.
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only private feed, 64-char token verified below.
         if ( ! isset( $_GET['dendrila_calendar_feed'] ) ) {
             return;
         }
         if ( ! defined( 'DONOTCACHEPAGE' ) ) {
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- Standard cache-plugin compatibility constant, not a plugin-defined API.
             define( 'DONOTCACHEPAGE', true );
         }
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- This GET parameter IS the private bearer token.
         $token = isset( $_GET['dendrila_calendar_feed'] ) && is_string( $_GET['dendrila_calendar_feed'] ) ?
             sanitize_text_field( wp_unslash( $_GET['dendrila_calendar_feed'] ) ) : '';
         $subscription = self::lookup_token( $token, self::subscriptions() );

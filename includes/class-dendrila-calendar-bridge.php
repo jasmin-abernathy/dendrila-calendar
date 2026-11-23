@@ -162,7 +162,6 @@ final class Dendrila_Calendar_Bridge {
         if ( ! current_user_can( 'manage_options' ) ) {
             wp_die( esc_html__( 'You are not allowed to manage calendar connections.', 'dendrila-calendar' ) );
         }
-        check_admin_referer( 'dendrila_calendar_direct_connection' );
     }
 
     private static function redirect( $status ) {
@@ -172,9 +171,12 @@ final class Dendrila_Calendar_Bridge {
 
     public static function connect() {
         self::permitted();
+        // Validate the form submission before reading or changing connection data.
+        check_admin_referer( 'dendrila_calendar_direct_connection' );
         $items = self::connections();
         $url = isset( $_POST['calendar_url'] ) && is_string( $_POST['calendar_url'] ) ? self::validate_endpoint( esc_url_raw( wp_unslash( $_POST['calendar_url'] ) ) ) : false;
         $username = isset( $_POST['username'] ) && is_string( $_POST['username'] ) ? sanitize_text_field( wp_unslash( $_POST['username'] ) ) : '';
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Secret credentials must not be modified: type/length checked, encrypted before storage and never echoed.
         $password = isset( $_POST['app_password'] ) && is_string( $_POST['app_password'] ) ? wp_unslash( $_POST['app_password'] ) : '';
         $label = isset( $_POST['label'] ) && is_string( $_POST['label'] ) ? sanitize_text_field( wp_unslash( $_POST['label'] ) ) : 'CalDAV';
         $provider = isset( $_POST['provider'] ) && is_string( $_POST['provider'] ) ? sanitize_key( wp_unslash( $_POST['provider'] ) ) : 'caldav';
@@ -235,6 +237,8 @@ final class Dendrila_Calendar_Bridge {
 
     public static function remove() {
         self::permitted();
+        // Validate the form submission before reading or changing connection data.
+        check_admin_referer( 'dendrila_calendar_direct_connection' );
         $id = isset( $_POST['id'] ) ? sanitize_key( wp_unslash( $_POST['id'] ) ) : '';
         $items = self::connections();
         if ( isset( $items[ $id ] ) ) {
@@ -247,6 +251,8 @@ final class Dendrila_Calendar_Bridge {
 
     public static function sync_now() {
         self::permitted();
+        // Validate the form submission before reading or changing connection data.
+        check_admin_referer( 'dendrila_calendar_direct_connection' );
         $id = isset( $_POST['id'] ) ? sanitize_key( wp_unslash( $_POST['id'] ) ) : '';
         if ( ! isset( self::connections()[ $id ] ) ) {
             self::redirect( 'invalid' );
@@ -370,6 +376,7 @@ final class Dendrila_Calendar_Bridge {
             return;
         }
         $sources = Dendrila_Calendar_Sources::available();
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only admin notice state, not an action.
         $status = isset( $_GET['bridge_status'] ) ? sanitize_key( wp_unslash( $_GET['bridge_status'] ) ) : '';
         $labels = array(
             'connected' => __( 'Calendar connected. Automatic direct synchronization is enabled.', 'dendrila-calendar' ),
