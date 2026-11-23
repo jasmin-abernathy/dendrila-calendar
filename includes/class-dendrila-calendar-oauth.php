@@ -615,7 +615,7 @@ final class Dendrila_Calendar_OAuth {
                 $saved = get_option( self::CREDENTIALS_OPTION, array() );
                 $entry = is_array( $saved ) && isset( $saved[ $provider ] ) && is_array( $saved[ $provider ] ) ? $saved[ $provider ] : array();
                 echo '<div class="dendrila-connect-card dendrila-oauth-app-setup"><h3>' . esc_html( $label ) . '</h3>';
-                if ( ! $configured && ! $locked || ! $locked ) {
+                if ( ! $locked ) {
                     echo '<details' . ( $configured ? '' : ' open' ) . '><summary>' . esc_html__( 'Configure application credentials (administrator)', 'dendrila-calendar' ) . '</summary>';
                     echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" autocomplete="off">';
                     echo '<input type="hidden" name="action" value="dendrila_calendar_oauth_save_credentials">';
