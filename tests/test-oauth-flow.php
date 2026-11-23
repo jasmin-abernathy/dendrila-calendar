@@ -28,6 +28,7 @@ function add_query_arg( $arguments, $url ) {
     return $url . ( strpos( $url, '?' ) === false ? '?' : '&' ) . http_build_query( $arguments );
 }
 function admin_url( $path = '' ) { return 'https://wordpress.example.test/wp-admin/' . $path; }
+function add_action( $tag, $callback ) { $GLOBALS['hooks'][ $tag ] = $callback; }
 function wp_parse_url( $url, $component = -1 ) { return parse_url( $url, $component ); }
 function set_transient( $key, $value, $ttl = 0 ) { $GLOBALS['transients'][ $key ] = $value; }
 function get_transient( $key ) { return $GLOBALS['transients'][ $key ] ?? false; }
@@ -95,6 +96,10 @@ class Dendrila_Calendar_Sources {
 }
 class Dendrila_Calendar_Setup { public static function destination_connected() {} }
 require dirname( __DIR__ ) . '/includes/class-dendrila-calendar-oauth.php';
+Dendrila_Calendar_OAuth::boot();
+if ( ! isset( $GLOBALS['hooks']['admin_post'] ) ) {
+    throw new RuntimeException( 'Query-free OAuth callback routing was not registered.' );
+}
 
 function redirected( $callback ) {
     try { $callback(); }
@@ -117,8 +122,11 @@ foreach ( array(
         throw new RuntimeException( 'OAuth authorization URL is insecure.' );
     }
     parse_str( parse_url( $auth_url, PHP_URL_QUERY ), $args );
+    if ( $args['redirect_uri'] !== 'https://wordpress.example.test/wp-admin/admin-post.php' ) {
+        throw new RuntimeException( 'OAuth callback must not contain a query string for Microsoft personal accounts.' );
+    }
     $_GET = array( 'state' => $args['state'], 'code' => 'provider-valid-code' );
-    $after = redirected( array( 'Dendrila_Calendar_OAuth', 'callback' ) );
+    $after = redirected( $GLOBALS['hooks']['admin_post'] );
     if ( strpos( $after, 'oauth_status=choose' ) === false ) {
         throw new RuntimeException( 'Authorization did not reach calendar choice.' );
     }

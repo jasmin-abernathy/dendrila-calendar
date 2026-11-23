@@ -14,6 +14,9 @@ final class Dendrila_Calendar_OAuth {
 
     public static function boot() {
         add_action( 'admin_post_dendrila_calendar_oauth_start', array( __CLASS__, 'start' ) );
+        // Microsoft personal accounts reject query strings in OAuth redirect URIs.
+        // admin-post.php dispatches requests without an action through admin_post.
+        add_action( 'admin_post', array( __CLASS__, 'callback_if_state' ) );
         add_action( 'admin_post_dendrila_calendar_oauth_callback', array( __CLASS__, 'callback' ) );
         add_action( 'admin_post_dendrila_calendar_oauth_confirm', array( __CLASS__, 'confirm' ) );
         add_action( 'admin_post_dendrila_calendar_oauth_disconnect', array( __CLASS__, 'disconnect' ) );
@@ -60,7 +63,8 @@ final class Dendrila_Calendar_OAuth {
     }
 
     private static function callback_url() {
-        return admin_url( 'admin-post.php?action=dendrila_calendar_oauth_callback' );
+        // Query-free callback works for Google, Microsoft 365 and Outlook.com.
+        return admin_url( 'admin-post.php' );
     }
 
     private static function pending_key() {
@@ -207,6 +211,20 @@ final class Dendrila_Calendar_OAuth {
             $result[ $entry['id'] ] = sanitize_text_field( (string) $name );
         }
         return $result;
+    }
+
+    /**
+     * WordPress admin-post.php fires the admin_post hook when no action is given.
+     * Only handle our one-time state, leaving unrelated admin-post requests alone.
+     */
+    public static function callback_if_state() {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- One-time OAuth state is validated in callback().
+        $state = isset( $_GET['state'] ) && is_string( $_GET['state'] ) ? sanitize_text_field( wp_unslash( $_GET['state'] ) ) : '';
+        if ( ! preg_match( '/^[A-Za-z0-9_-]{30,100}$/D', $state ) ||
+             ! get_transient( self::state_key( $state ) ) ) {
+            return;
+        }
+        self::callback();
     }
 
     /** Return from Google/Microsoft: state checked, then tokens encrypted server-side. */
