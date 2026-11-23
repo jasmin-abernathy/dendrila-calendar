@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class Dendrila_Calendar {
-    const VERSION = '0.0.1';
+    const VERSION = '0.0.2';
     const POST_TYPE = 'dendrila_event';
     const START_KEY = '_dendrila_calendar_start_utc';
     const END_KEY = '_dendrila_calendar_end_utc';
@@ -56,6 +56,12 @@ final class Dendrila_Calendar {
         ) );
     }
 
+
+    /** An independent clock/synchronization mark rather than another calendar Dashicon. */
+    private static function menu_icon() {
+        return 'data:image/svg+xml;base64,' . base64_encode( '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><g fill="none" stroke="#a7aaad" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><rect x="5.5" y="6.4" width="13" height="12.8" rx="2.1"/><path d="M8.8 4.2v4.2M15.2 4.2v4.2M5.5 10.1h13"/><path d="M12 12.5v3.1l2 1.2"/><path d="M20 8a9 9 0 0 0-2.4-3.1M4 16a9 9 0 0 0 2.4 3.1"/><path d="m17.8 4.7 1.3.2-.1-1.6M6.2 19.3l-1.3-.2.1 1.6"/></g></svg>' );
+    }
+
     public static function admin_menu() {
         add_menu_page(
             __( 'Dendrila Calendar', 'dendrila-calendar' ),
@@ -63,7 +69,7 @@ final class Dendrila_Calendar {
             'manage_options',
             'dendrila-calendar',
             array( __CLASS__, 'render' ),
-            'dashicons-calendar-alt',
+            self::menu_icon(),
             27
         );
         // First submenu uses the top-level slug: clicking Dendrila always opens
@@ -256,10 +262,11 @@ final class Dendrila_Calendar {
         if ( ! current_user_can( 'manage_options' ) ) {
             wp_die( esc_html__( 'You are not allowed to view this calendar.', 'dendrila-calendar' ) );
         }
-        echo '<div class="wrap dendrila-calendar-wrap"><h1>' . esc_html__( 'Automatic calendar synchronization', 'dendrila-calendar' ) . '</h1>';
+        echo '<div class="wrap dendrila-calendar-wrap dendrila-settings-page"><h1>' . esc_html__( 'Automatic calendar synchronization', 'dendrila-calendar' ) . '</h1>';
+        echo '<p class="dendrila-settings-lead">' . esc_html__( 'Connect your calendars, choose the bookings to send and protect your availability.', 'dendrila-calendar' ) . '</p>';
         echo '<p><a href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-view' ) ) . '" class="button">' . esc_html__( 'Back to calendar', 'dendrila-calendar' ) . '</a></p>';
         if ( class_exists( 'Dendrila_Calendar_Setup' ) && ! Dendrila_Calendar_Setup::complete() ) {
-            echo '<div class="notice notice-warning inline"><p>' . esc_html__( 'Your external calendar is not connected. Selecting an application in the list below is not enough; complete a CalDAV connection or create and subscribe to a private URL.', 'dendrila-calendar' ) . '</p></div>';
+            echo '<div class="notice notice-warning inline"><p>' . esc_html__( 'Finish connecting an agenda below. Google and Outlook use account authorization; Nextcloud and iCloud use CalDAV.', 'dendrila-calendar' ) . '</p></div>';
         }
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only tab selection; no state change.
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only view switch, no mutation.
@@ -281,6 +288,7 @@ final class Dendrila_Calendar {
         echo '</nav>';
         if ( 'oauth' === $method ) {
             Dendrila_Calendar_OAuth::render_settings();
+            Dendrila_Calendar_Availability::render_settings();
         } elseif ( 'subscription' === $method ) {
             Dendrila_Calendar_Subscriptions::render_settings();
         } elseif ( 'direct' === $method ) {

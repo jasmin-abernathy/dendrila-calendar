@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Dendrila Calendar 0.0.1\n"
+"Project-Id-Version: Dendrila Calendar 0.0.2\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fr_FR\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
@@ -26,11 +26,20 @@ msgstr "Une demande de compatibilité de connecteur a été transmise pour exame
 msgid "A synchronization attempt has finished. Review its status below."
 msgstr "Une tentative de synchronisation est terminée. Consultez son état ci-dessous."
 
+msgid "A test event is created then removed before automatic synchronization begins."
+msgstr "Un événement de test est créé puis supprimé avant le début de la synchronisation automatique."
+
 msgid "Account authorization is not configured for this site."
 msgstr "La connexion à ce compte n’est pas encore activée sur ce site."
 
+msgid "Account authorization successful"
+msgstr "Autorisation du compte réussie"
+
 msgid "Account authorization was cancelled."
 msgstr "L’autorisation du compte a été annulée."
+
+msgid "Account authorized: choose your calendar"
+msgstr "Compte autorisé : choisissez votre agenda"
 
 msgid "Account username or email"
 msgstr "Identifiant ou adresse e-mail"
@@ -89,8 +98,14 @@ msgstr "Retour au calendrier"
 msgid "Booking"
 msgstr "Réservation"
 
+msgid "Busy times are checked at booking submission. The Easy Appointments slot picker might still display those times."
+msgstr "Les plages occupées sont vérifiées au moment d’envoyer la réservation. Le sélecteur Easy Appointments peut encore afficher ces horaires."
+
 msgid "Calendar"
 msgstr "Agenda"
+
+msgid "Calendar availability is temporarily unavailable. Please try again."
+msgstr "La vérification des disponibilités est temporairement indisponible. Réessayez."
 
 msgid "Calendar connected. Automatic direct synchronization is enabled."
 msgstr "Agenda connecté. La synchronisation directe est activée."
@@ -113,8 +128,14 @@ msgstr "Service d’agenda"
 msgid "Calendar view"
 msgstr "Vue calendrier"
 
+msgid "Cannot verify this appointment time. Please select another slot."
+msgstr "Impossible de vérifier cet horaire de rendez-vous. Choisissez un autre créneau."
+
 msgid "Change source and destination settings"
 msgstr "Modifier les sources et la destination"
+
+msgid "Check busy times in Google and Outlook before accepting an Easy Appointments booking."
+msgstr "Vérifier les plages occupées dans Google et Outlook avant de confirmer une réservation Easy Appointments."
 
 msgid "Check the calendar address, credentials and selected sources."
 msgstr "Vérifiez l’adresse du calendrier, les identifiants et les sources sélectionnées."
@@ -161,6 +182,9 @@ msgstr "Configurer les sources et la destination"
 msgid "Connect a CalDAV calendar such as Nextcloud. New and changed WordPress bookings are pushed automatically approximately every five minutes while WordPress cron runs. This is one-way; the destination is never polled for changes."
 msgstr "Connectez un agenda CalDAV, par exemple Nextcloud. Les nouveaux rendez-vous et leurs modifications sont envoyés environ toutes les cinq minutes lorsque les tâches programmées WordPress fonctionnent. La synchronisation est unidirectionnelle."
 
+msgid "Connect at least one Google or Outlook calendar first."
+msgstr "Connectez d’abord au moins un agenda Google ou Outlook."
+
 msgid "Connect this calendar"
 msgstr "Connecter cet agenda"
 
@@ -172,6 +196,9 @@ msgstr "Connecter votre compte"
 
 msgid "Connect your calendar account"
 msgstr "Connecter votre compte d’agenda"
+
+msgid "Connect your calendars, choose the bookings to send and protect your availability."
+msgstr "Connectez vos agendas, choisissez les rendez-vous à envoyer et protégez vos disponibilités."
 
 msgid "Connect your Google account securely. Authorization requires a configured Dendrila OAuth application."
 msgstr "Connectez votre compte Google de manière sécurisée. L’application OAuth Dendrila doit être configurée."
@@ -269,6 +296,9 @@ msgstr "Recherchez S’abonner par URL, Agenda Internet ou Abonnement iCalendar 
 msgid "Finish by connecting your calendar account or creating an optional private calendar subscription."
 msgstr "Terminez en connectant votre compte d’agenda ou en créant un abonnement privé facultatif."
 
+msgid "Finish connecting an agenda below. Google and Outlook use account authorization; Nextcloud and iCloud use CalDAV."
+msgstr "Terminez la connexion ci-dessous. Google et Outlook utilisent une autorisation de compte ; Nextcloud et iCloud utilisent CalDAV."
+
 msgid "Finish connecting my calendar"
 msgstr "Terminer la connexion de mon agenda"
 
@@ -296,6 +326,9 @@ msgstr "Le protocole HTTPS est obligatoire pour les abonnements privés."
 msgid "iCalendar subscription"
 msgstr "Abonnement iCalendar"
 
+msgid "If a provider cannot be checked, the new reservation is refused rather than double-booked."
+msgstr "Si un agenda ne peut pas être vérifié, la réservation est refusée pour éviter un doublon."
+
 msgid "If an active booking plugin is detected but its connector is unusable, saving sends a technical compatibility request for review. This includes only the plugin name, entrypoint, version, reason, WordPress/PHP versions and site URL — never appointments, customer data or passwords. Duplicate requests are suppressed."
 msgstr "Si une extension de réservation active est détectée mais que son connecteur est inutilisable, l’enregistrement transmettra une demande technique de compatibilité. Elle contiendra uniquement le nom de l’extension, son fichier principal, sa version, le motif, les versions WordPress/PHP et l’URL du site — jamais les rendez-vous, données clients ou mots de passe. Les demandes identiques sont regroupées."
 
@@ -310,6 +343,9 @@ msgstr "Période invalide"
 
 msgid "Keep my appointments inside WordPress only"
 msgstr "Garder mes rendez-vous uniquement dans WordPress"
+
+msgid "Last synchronization:"
+msgstr "Dernière synchronisation :"
 
 msgid "Link copied."
 msgstr "Lien copié."
@@ -416,8 +452,17 @@ msgstr "En attente"
 msgid "Pick your everyday calendar. We will guide you without technical setup."
 msgstr "Choisissez votre agenda habituel. Nous vous guiderons sans réglages techniques."
 
+msgid "Prevent double bookings"
+msgstr "Empêcher les doubles réservations"
+
 msgid "Previous"
 msgstr "Précédent"
+
+msgid "Protect Easy Appointments reservations"
+msgstr "Protéger les réservations Easy Appointments"
+
+msgid "Ready to connect"
+msgstr "Prêt à connecter"
 
 msgid "Redirect URI:"
 msgstr "URI de redirection :"
@@ -433,6 +478,9 @@ msgstr "Révoquer cet abonnement ? Les calendriers connectés cesseront de recev
 
 msgid "Save application credentials"
 msgstr "Enregistrer les identifiants de l’application"
+
+msgid "Save availability protection"
+msgstr "Enregistrer la protection des disponibilités"
 
 msgid "Save settings and continue"
 msgstr "Enregistrer et continuer"
@@ -463,6 +511,9 @@ msgstr "Tout désélectionner"
 
 msgid "Select your WordPress sources, create a private calendar URL, then subscribe to it in your calendar app. The app refreshes events automatically on its own schedule; this is a read-only subscription, not instant or two-way synchronization."
 msgstr "Sélectionnez les sources WordPress, créez une adresse privée puis abonnez-y votre agenda. Les événements s’actualisent automatiquement selon la fréquence choisie par votre application. Cette synchronisation est en lecture seule, non instantanée et non bidirectionnelle."
+
+msgid "Setup required"
+msgstr "Configuration nécessaire"
 
 msgid "Show instructions for this application (not a connection)"
 msgstr "Afficher les instructions pour cette application (sans connexion)"
@@ -548,6 +599,9 @@ msgstr "Le lien complet ne s’affiche qu’une fois après sa création. S’il
 msgid "The provider did not confirm that events can be created and removed. No connection was saved."
 msgstr "Le service n’a pas confirmé les droits de création et de suppression d’événements. Aucune connexion n’a été enregistrée."
 
+msgid "The provider has granted access. Select the destination calendar and confirm the final test."
+msgstr "Le service a autorisé l’accès. Choisissez l’agenda de destination, puis confirmez le test final."
+
 msgid "The server cannot securely protect the calendar password."
 msgstr "Le serveur ne peut pas protéger de manière sûre le mot de passe du calendrier."
 
@@ -565,6 +619,9 @@ msgstr "Cette liste contient uniquement les événements créés dans Dendrila C
 
 msgid "This server did not provide a calendar account. Check your service address."
 msgstr "Le service n’a pas fourni de compte de calendrier. Vérifiez son adresse."
+
+msgid "This time is occupied in a connected calendar. Please choose another."
+msgstr "Ce créneau est déjà occupé dans un agenda connecté. Choisissez-en un autre."
 
 msgid "Times use the site timezone: %s. The event is visible only to administrators."
 msgstr "Les horaires utilisent le fuseau horaire du site : %s. L’événement est visible uniquement par les administrateurs."
@@ -664,6 +721,3 @@ msgstr "Votre agenda est connecté et la synchronisation a démarré."
 
 msgid "Your cloud address"
 msgstr "Adresse de votre cloud"
-
-msgid "Your external calendar is not connected. Selecting an application in the list below is not enough; complete a CalDAV connection or create and subscribe to a private URL."
-msgstr "Votre agenda externe n’est pas connecté. Sélectionner une application dans la liste ne suffit pas : terminez une connexion CalDAV ou créez un lien privé et abonnez-vous à ce lien."

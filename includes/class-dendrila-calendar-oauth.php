@@ -395,6 +395,10 @@ final class Dendrila_Calendar_OAuth {
         }
         $created = self::api( $item['provider'], $access, 'POST', self::calendar_url( $item ), $body );
         if ( ! $created || ! in_array( $created['status'], 'google' === $item['provider'] ? array( 200, 201 ) : array( 201 ), true ) || empty( $created['data']['id'] ) ) {
+            // A Google insert may create the event despite an unexpected status.
+            if ( 'google' === $item['provider'] && ! empty( $body['id'] ) ) {
+                self::api( 'google', $access, 'DELETE', self::calendar_url( $item, $body['id'] ) );
+            }
             return false;
         }
         $deleted = self::api( $item['provider'], $access, 'DELETE', self::calendar_url( $item, $created['data']['id'] ) );
@@ -556,6 +560,92 @@ final class Dendrila_Calendar_OAuth {
         }
     }
 
+
+    /**
+     * Read UTC busy windows without caching event details. Use calendarView on
+     * Microsoft because getSchedule does not support personal Outlook accounts.
+     * On any unavailable provider, return false (never interpret as free).
+     */
+    public static function busy_intervals( $from, $to ) {
+        $begin = strtotime( $from ); $finish = strtotime( $to );
+        if ( ! $begin || ! $finish || $finish <= $begin || $finish - $begin > 48 * 3600 ||
+            ! preg_match( '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/D', $from ) ||
+            ! preg_match( '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/D', $to ) ) { return false; }
+        $connections = self::connections();
+        if ( ! $connections ) { return false; }
+        $busy = array();
+        foreach ( $connections as $key => $item ) {
+            $provider = $item['provider'] ?? '';
+            if ( ! in_array( $provider, array( 'google', 'microsoft' ), true ) || empty( $item['calendar'] ) ) { return false; }
+            $token = self::refresh_access( $item );
+            if ( ! $token ) { return false; }
+            $connections[ $key ]['access'] = $item['access'];
+            $connections[ $key ]['refresh'] = $item['refresh'];
+            $connections[ $key ]['expires'] = $item['expires'];
+            $google = 'google' === $provider;
+            $ignore = array();
+            foreach ( (array) ( $item['map'] ?? array() ) as $mapped ) {
+                if ( is_array( $mapped ) && ! empty( $mapped['remote_id'] ) ) { $ignore[ $mapped['remote_id'] ] = true; }
+            }
+            $base = $google ?
+                'https://www.googleapis.com/calendar/v3/calendars/' . rawurlencode( $item['calendar'] ) . '/events' :
+                'https://graph.microsoft.com/v1.0/me/calendars/' . rawurlencode( $item['calendar'] ) . '/calendarView';
+            $params = $google ?
+                array( 'timeMin'=>$from, 'timeMax'=>$to, 'singleEvents'=>'true', 'showDeleted'=>'false', 'timeZone'=>'UTC', 'maxResults'=>250 ) :
+                array( 'startDateTime'=>$from, 'endDateTime'=>$to, '$top'=>250, '$select'=>'id,start,end,showAs,isCancelled' );
+            $next = $base . '?' . http_build_query( $params, '', '&', PHP_QUERY_RFC3986 );
+            for ( $page=0; $next && $page<6; ++$page ) {
+                $answer = self::api( $provider, $token, 'GET', $next );
+                if ( ! $answer || 200 !== $answer['status'] || ! is_array( $answer['data'] ) ) { return false; }
+                $events = $google ? ( $answer['data']['items'] ?? array() ) : ( $answer['data']['value'] ?? array() );
+                if ( ! is_array( $events ) ) { return false; }
+                foreach ( $events as $event ) {
+                    if ( ! is_array( $event ) || isset( $ignore[ $event['id'] ?? '' ] ) ||
+                        ( $google && ( ( $event['status'] ?? '' ) === 'cancelled' || ( $event['transparency'] ?? '' ) === 'transparent' ) ) ||
+                        ( ! $google && ( ! empty( $event['isCancelled'] ) || ( $event['showAs'] ?? '' ) === 'free' ) ) ) { continue; }
+                    $s = $event['start'] ?? null; $e = $event['end'] ?? null;
+                    if ( ! is_array( $s ) || ! is_array( $e ) ) { return false; }
+                    $sv = $google ? ( $s['dateTime'] ?? ( $s['date'] ?? '' ) ) : ( $s['dateTime'] ?? '' );
+                    $ev = $google ? ( $e['dateTime'] ?? ( $e['date'] ?? '' ) ) : ( $e['dateTime'] ?? '' );
+                    if ( ! is_string( $sv ) || ! is_string( $ev ) || !$sv || !$ev ) { return false; }
+                    try {
+                        $stz = $google && strlen($sv) === 10 ? wp_timezone() : new DateTimeZone('UTC');
+                        $etz = $google && strlen($ev) === 10 ? wp_timezone() : new DateTimeZone('UTC');
+                        $left = (new DateTimeImmutable($sv,$stz))->getTimestamp();
+                        $right = (new DateTimeImmutable($ev,$etz))->getTimestamp();
+                    } catch ( Exception $ex ) { return false; }
+                    if ( $left >= $right ) { return false; }
+                    if ( $left < $finish && $right > $begin ) { $busy[] = array($left,$right); }
+                }
+                $next = '';
+                if ( $google && ! empty( $answer['data']['nextPageToken'] ) ) {
+                    $params['pageToken'] = (string) $answer['data']['nextPageToken'];
+                    $next = $base . '?' . http_build_query( $params, '', '&', PHP_QUERY_RFC3986 );
+                } elseif ( ! $google && ! empty( $answer['data']['@odata.nextLink'] ) ) {
+                    $link = $answer['data']['@odata.nextLink'];
+                    if ( ! is_string( $link ) || 0 !== strpos( $link, $base . '?' ) ) { return false; }
+                    $next = $link;
+                }
+            }
+            if ( $next ) { return false; }
+        }
+        // update_option() returns false on unchanged values: not an error.
+        // Persist token rotation without overwriting the latest event maps.
+        $latest = self::connections();
+        $changed = false;
+        foreach ( $connections as $id => $candidate ) {
+            if ( ! isset( $latest[ $id ] ) ) { continue; }
+            foreach ( array( 'access', 'refresh', 'expires' ) as $field ) {
+                if ( isset( $candidate[ $field ] ) && ( $latest[ $id ][ $field ] ?? null ) !== $candidate[ $field ] ) {
+                    $latest[ $id ][ $field ] = $candidate[ $field ];
+                    $changed = true;
+                }
+            }
+        }
+        if ( $changed && ! self::store( $latest ) ) { return false; }
+        return $busy;
+    }
+
     public static function render_settings() {
         if ( ! current_user_can( 'manage_options' ) ) {
             return;
@@ -584,10 +674,12 @@ final class Dendrila_Calendar_OAuth {
             echo '<div class="notice notice-info inline"><p>' . esc_html( $statuses[ $status ] ) . '</p></div>';
         }
         if ( is_array( $pending ) && ! empty( $pending['calendars'] ) ) {
-            echo '<form action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" method="post" class="dendrila-connect-card">';
+            echo '<div class="dendrila-oauth-stage"><span class="dendrila-stage-count">2 / 3</span><strong>' . esc_html__( 'Account authorized: choose your calendar', 'dendrila-calendar' ) . '</strong><p>' . esc_html__( 'The provider has granted access. Select the destination calendar and confirm the final test.', 'dendrila-calendar' ) . '</p></div>';
+            echo '<form action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" method="post" class="dendrila-connect-card dendrila-oauth-step">';
             echo '<input type="hidden" name="action" value="dendrila_calendar_oauth_confirm">';
             wp_nonce_field( 'dendrila_calendar_oauth_confirm' );
-            echo '<h3>' . esc_html__( 'Choose your destination calendar', 'dendrila-calendar' ) . '</h3>';
+            echo '<div class="dendrila-step-header"><span class="dendrila-step-number">3</span><h3>' . esc_html__( 'Choose your destination calendar', 'dendrila-calendar' ) . '</h3></div>';
+            echo '<p><strong>' . esc_html( 'microsoft' === ( $pending['provider'] ?? '' ) ? 'Microsoft Outlook' : 'Google Calendar' ) . '</strong> · ' . esc_html__( 'Account authorization successful', 'dendrila-calendar' ) . '</p>';
             echo '<label for="dendrila-oauth-calendar">' . esc_html__( 'Calendar', 'dendrila-calendar' ) . '</label>';
             echo '<select name="calendar" id="dendrila-oauth-calendar" required>';
             foreach ( $pending['calendars'] as $id => $name ) {
@@ -597,7 +689,7 @@ final class Dendrila_Calendar_OAuth {
             foreach ( Dendrila_Calendar_Sources::available() as $source => $label ) {
                 echo '<label class="dendrila-source-option"><input type="checkbox" name="sources[]" value="' . esc_attr( $source ) . '" checked> ' . esc_html( $label ) . '</label>';
             }
-            echo '</fieldset><p><button type="submit" class="button button-primary">' . esc_html__( 'Test and connect this calendar', 'dendrila-calendar' ) . '</button></p></form>';
+            echo '</fieldset><p>' . esc_html__( 'A test event is created then removed before automatic synchronization begins.', 'dendrila-calendar' ) . '</p><p><button type="submit" class="button button-primary dendrila-main-action">' . esc_html__( 'Test and connect this calendar', 'dendrila-calendar' ) . '</button></p></form>';
         } else {
             // Optional provider hint from the calendar chooser; display preference only.
             // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only interface selection.
@@ -614,7 +706,7 @@ final class Dendrila_Calendar_OAuth {
                 $locked = defined( $names[0] ) || defined( $names[1] );
                 $saved = get_option( self::CREDENTIALS_OPTION, array() );
                 $entry = is_array( $saved ) && isset( $saved[ $provider ] ) && is_array( $saved[ $provider ] ) ? $saved[ $provider ] : array();
-                echo '<div class="dendrila-connect-card dendrila-oauth-app-setup"><h3>' . esc_html( $label ) . '</h3>';
+                echo '<div class="dendrila-connect-card dendrila-oauth-app-setup"><h3>' . esc_html( $label ) . ' <span class="dendrila-connection-badge ' . ( $configured ? 'is-ready' : '' ) . '">' . esc_html( $configured ? __( 'Ready to connect', 'dendrila-calendar' ) : __( 'Setup required', 'dendrila-calendar' ) ) . '</span></h3>';
                 if ( ! $locked ) {
                     echo '<details' . ( $configured ? '' : ' open' ) . '><summary>' . esc_html__( 'Configure application credentials (administrator)', 'dendrila-calendar' ) . '</summary>';
                     echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" autocomplete="off">';
@@ -646,8 +738,8 @@ final class Dendrila_Calendar_OAuth {
                 esc_html__( 'Use a read-only calendar subscription instead', 'dendrila-calendar' ) . '</a></p>';
         }
         foreach ( self::connections() as $id => $item ) {
-            echo '<div class="dendrila-bridge-connection"><h3>' . esc_html( $item['label'] ) . ' (' . esc_html( $item['provider'] ) . ')</h3>';
-            echo '<p>' . esc_html( $item['last_run'] ?: __( 'Never synchronized', 'dendrila-calendar' ) ) . '</p>';
+            echo '<div class="dendrila-bridge-connection dendrila-status-card"><h3><span class="dendrila-status-dot" aria-hidden="true"></span>' . esc_html( $item['label'] ) . ' (' . esc_html( $item['provider'] ) . ')</h3>';
+            echo '<p>' . esc_html__( 'Last synchronization:', 'dendrila-calendar' ) . ' ' . esc_html( $item['last_run'] ?: __( 'Never synchronized', 'dendrila-calendar' ) ) . '</p>';
             if ( ! empty( $item['last_error'] ) ) {
                 echo '<p class="notice notice-warning inline">' . esc_html( $item['last_error'] ) . '</p>';
             }

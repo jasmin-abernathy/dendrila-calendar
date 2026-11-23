@@ -4,7 +4,7 @@ Tags: calendar, events, bookings, administration
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.0.1
+Stable tag: 0.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ A free unified WordPress calendar for events and bookings from optional plugins.
 
 == Description ==
 
-Development version. Do not publish to WordPress.org before integration testing. Optional experimental CalDAV direct push now exists; Google and Outlook direct OAuth connections are not yet available.
+Development test version. Do not publish to WordPress.org before end-to-end testing and deployment of a publisher-managed OAuth authorization service. Google and Outlook connections work with administrator-configured OAuth applications; CalDAV direct push and private ICS subscriptions are also supported.
 
 Dendrila Calendar is an independent WordPress administration calendar that brings together native events and compatible event and booking plugins. All third-party integrations are optional and read-only. The original plugins remain responsible for reservations, payments and their data. Customer details are not included in the calendar event payload.
 
@@ -44,13 +44,26 @@ ICS Calendar can subscribe to the URL as a destination. Importing remote feeds t
 
 = Does it change appointments? =
 
-No. Imported records are strictly read-only.
+No. Imported records are strictly read-only. When an administrator enables availability protection, the plugin can reject new Easy Appointments booking requests that overlap connected calendar busy times.
+
+= Is Google/Outlook one-click setup available to all sites? =
+
+Not yet. This development build requires Google/Microsoft OAuth apps configured by the site administrator. A secure publisher-operated OAuth broker is required before no-configuration public distribution. Never ship shared OAuth secrets inside a WordPress ZIP.
 
 = Is it public? =
 
 The WordPress administration calendar is restricted to administrators. Private subscription URLs can be accessed by anyone who holds the secret link; these links can be revoked.
 
 == Changelog ==
+
+= 0.0.2 (development; private testing) =
+* Google Calendar and Outlook OAuth account connections, with mobile-friendly administrator credential setup for testing.
+* Optional server-side Google/Outlook busy-time protection for Easy Appointments, checked when a reservation is submitted (fail-closed on provider errors). The slot picker may still show occupied times.
+* Guided post-authorization calendar selection and more distinct connected-account status.
+* Distinct synchronization/clock icon in the WordPress menu and revised responsive settings.
+* Booking-source adapters remain read-only. No external event may edit or cancel an original WordPress booking.
+* OAuth shared-service onboarding is not yet deployed. Publisher verification and end-to-end tests are required before public release.
+
 
 = 0.0.1 (development; first internal test) =
 * Initial unified calendar with local events and optional, read-only source integrations.

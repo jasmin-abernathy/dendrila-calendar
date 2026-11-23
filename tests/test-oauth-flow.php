@@ -64,6 +64,26 @@ function wp_safe_remote_request( $url, $args ) {
     }
     $GLOBALS['calls'][] = array( $url, $args['method'] );
     if ( 'GET' === $args['method'] ) {
+        if ( ! empty( $GLOBALS['busy_should_fail'] ) &&
+             ( strpos( $url, '/events?' ) !== false || strpos( $url, '/calendarView?' ) !== false ) ) {
+            return response( 503, array( 'error' => 'temporarily_unavailable' ) );
+        }
+        if ( strpos( $url, '/calendarView?' ) !== false ) {
+            return response( 200, array( 'value' => array(
+                array( 'id' => 'outlook-busy', 'start' => array( 'dateTime' => '2026-11-24T14:00:00', 'timeZone' => 'UTC' ),
+                    'end' => array( 'dateTime' => '2026-11-24T15:00:00', 'timeZone' => 'UTC' ), 'showAs' => 'busy' ),
+                array( 'id' => 'outlook-free', 'start' => array( 'dateTime' => '2026-11-24T16:00:00', 'timeZone' => 'UTC' ),
+                    'end' => array( 'dateTime' => '2026-11-24T17:00:00', 'timeZone' => 'UTC' ), 'showAs' => 'free' ),
+            ) ) );
+        }
+        if ( strpos( $url, 'googleapis.com' ) !== false && strpos( $url, '/events?' ) !== false ) {
+            return response( 200, array( 'items' => array(
+                array( 'id' => 'google-busy', 'start' => array( 'dateTime' => '2026-11-24T10:00:00Z' ),
+                    'end' => array( 'dateTime' => '2026-11-24T11:00:00Z' ), 'transparency' => 'opaque' ),
+                array( 'id' => 'google-transparent', 'start' => array( 'dateTime' => '2026-11-24T11:00:00Z' ),
+                    'end' => array( 'dateTime' => '2026-11-24T12:00:00Z' ), 'transparency' => 'transparent' ),
+            ) ) );
+        }
         return strpos( $url, 'graph.microsoft.com' ) !== false
             ? response( 200, array( 'value' => array( array( 'id' => 'outlook-1', 'name' => 'Outlook test', 'canEdit' => true ) ) ) )
             : response( 200, array( 'items' => array( array( 'id' => 'primary@example.test', 'summary' => 'Google test', 'accessRole' => 'owner' ) ) ) );

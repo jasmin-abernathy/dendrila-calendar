@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Dendrila Calendar 0.0.1\n"
+"Project-Id-Version: Dendrila Calendar 0.0.2\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 
 msgid "%1$d created, %2$d updated, %3$d cancelled, %4$d failed"
@@ -24,10 +24,19 @@ msgstr ""
 msgid "A synchronization attempt has finished. Review its status below."
 msgstr ""
 
+msgid "A test event is created then removed before automatic synchronization begins."
+msgstr ""
+
 msgid "Account authorization is not configured for this site."
 msgstr ""
 
+msgid "Account authorization successful"
+msgstr ""
+
 msgid "Account authorization was cancelled."
+msgstr ""
+
+msgid "Account authorized: choose your calendar"
 msgstr ""
 
 msgid "Account username or email"
@@ -87,7 +96,13 @@ msgstr ""
 msgid "Booking"
 msgstr ""
 
+msgid "Busy times are checked at booking submission. The Easy Appointments slot picker might still display those times."
+msgstr ""
+
 msgid "Calendar"
+msgstr ""
+
+msgid "Calendar availability is temporarily unavailable. Please try again."
 msgstr ""
 
 msgid "Calendar connected. Automatic direct synchronization is enabled."
@@ -111,7 +126,13 @@ msgstr ""
 msgid "Calendar view"
 msgstr ""
 
+msgid "Cannot verify this appointment time. Please select another slot."
+msgstr ""
+
 msgid "Change source and destination settings"
+msgstr ""
+
+msgid "Check busy times in Google and Outlook before accepting an Easy Appointments booking."
 msgstr ""
 
 msgid "Check the calendar address, credentials and selected sources."
@@ -159,6 +180,9 @@ msgstr ""
 msgid "Connect a CalDAV calendar such as Nextcloud. New and changed WordPress bookings are pushed automatically approximately every five minutes while WordPress cron runs. This is one-way; the destination is never polled for changes."
 msgstr ""
 
+msgid "Connect at least one Google or Outlook calendar first."
+msgstr ""
+
 msgid "Connect this calendar"
 msgstr ""
 
@@ -169,6 +193,9 @@ msgid "Connect your account"
 msgstr ""
 
 msgid "Connect your calendar account"
+msgstr ""
+
+msgid "Connect your calendars, choose the bookings to send and protect your availability."
 msgstr ""
 
 msgid "Connect your Google account securely. Authorization requires a configured Dendrila OAuth application."
@@ -267,6 +294,9 @@ msgstr ""
 msgid "Finish by connecting your calendar account or creating an optional private calendar subscription."
 msgstr ""
 
+msgid "Finish connecting an agenda below. Google and Outlook use account authorization; Nextcloud and iCloud use CalDAV."
+msgstr ""
+
 msgid "Finish connecting my calendar"
 msgstr ""
 
@@ -294,6 +324,9 @@ msgstr ""
 msgid "iCalendar subscription"
 msgstr ""
 
+msgid "If a provider cannot be checked, the new reservation is refused rather than double-booked."
+msgstr ""
+
 msgid "If an active booking plugin is detected but its connector is unusable, saving sends a technical compatibility request for review. This includes only the plugin name, entrypoint, version, reason, WordPress/PHP versions and site URL — never appointments, customer data or passwords. Duplicate requests are suppressed."
 msgstr ""
 
@@ -307,6 +340,9 @@ msgid "Invalid date range"
 msgstr ""
 
 msgid "Keep my appointments inside WordPress only"
+msgstr ""
+
+msgid "Last synchronization:"
 msgstr ""
 
 msgid "Link copied."
@@ -414,7 +450,16 @@ msgstr ""
 msgid "Pick your everyday calendar. We will guide you without technical setup."
 msgstr ""
 
+msgid "Prevent double bookings"
+msgstr ""
+
 msgid "Previous"
+msgstr ""
+
+msgid "Protect Easy Appointments reservations"
+msgstr ""
+
+msgid "Ready to connect"
 msgstr ""
 
 msgid "Redirect URI:"
@@ -430,6 +475,9 @@ msgid "Revoke this subscription? Connected calendars will stop updating."
 msgstr ""
 
 msgid "Save application credentials"
+msgstr ""
+
+msgid "Save availability protection"
 msgstr ""
 
 msgid "Save settings and continue"
@@ -460,6 +508,9 @@ msgid "Select none"
 msgstr ""
 
 msgid "Select your WordPress sources, create a private calendar URL, then subscribe to it in your calendar app. The app refreshes events automatically on its own schedule; this is a read-only subscription, not instant or two-way synchronization."
+msgstr ""
+
+msgid "Setup required"
 msgstr ""
 
 msgid "Show instructions for this application (not a connection)"
@@ -546,6 +597,9 @@ msgstr ""
 msgid "The provider did not confirm that events can be created and removed. No connection was saved."
 msgstr ""
 
+msgid "The provider has granted access. Select the destination calendar and confirm the final test."
+msgstr ""
+
 msgid "The server cannot securely protect the calendar password."
 msgstr ""
 
@@ -562,6 +616,9 @@ msgid "This list contains only events created in Dendrila Calendar. Appointments
 msgstr ""
 
 msgid "This server did not provide a calendar account. Check your service address."
+msgstr ""
+
+msgid "This time is occupied in a connected calendar. Please choose another."
 msgstr ""
 
 msgid "Times use the site timezone: %s. The event is visible only to administrators."
@@ -661,7 +718,4 @@ msgid "Your calendar has been connected and synchronization started."
 msgstr ""
 
 msgid "Your cloud address"
-msgstr ""
-
-msgid "Your external calendar is not connected. Selecting an application in the list below is not enough; complete a CalDAV connection or create and subscribe to a private URL."
 msgstr ""

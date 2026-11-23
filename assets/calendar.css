@@ -116,3 +116,38 @@ a.dendrila-event:hover,a.dendrila-event:focus {background:#d9e9f8; color:#003d71
 .dendrila-oauth-app-setup input[type=text],.dendrila-oauth-app-setup input[type=password] {box-sizing:border-box;width:100%;max-width:540px;min-height:44px;}
 .dendrila-oauth-app-setup .button {min-height:42px;white-space:normal;}
 @media(max-width:600px){.dendrila-oauth-app-setup .button{width:100%;text-align:center;}}
+
+/* Responsive calendar setup: readable steps and touch-friendly controls. */
+.dendrila-settings-page{max-width:1060px}
+.dendrila-settings-page *{box-sizing:border-box}
+.dendrila-settings-lead{line-height:1.6;color:#475569;max-width:70ch;font-size:15px}
+.dendrila-settings-page .dendrila-connection-methods{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:18px 0 24px}
+.dendrila-settings-page .dendrila-connection-methods .button{min-height:48px;height:auto;padding:10px;line-height:1.35;white-space:normal;text-align:center;display:flex;align-items:center;justify-content:center;border-radius:10px;font-weight:600}
+.dendrila-settings-page .dendrila-oauth{max-width:850px}
+.dendrila-settings-page .dendrila-oauth-app-setup{max-width:810px;border-radius:12px;box-shadow:0 2px 8px rgba(20,30,60,.04)}
+.dendrila-oauth-stage{border-left:4px solid #17854c;background:#eaf6ee;border-radius:9px;padding:15px 17px;margin:16px 0}
+.dendrila-stage-count{font-size:12px;color:#155e39;font-weight:750}
+.dendrila-oauth-stage strong{display:block;font-size:1.1rem;margin-top:6px}
+.dendrila-oauth-stage p{line-height:1.5;margin:5px 0}
+.dendrila-step-header{display:flex;gap:12px;align-items:center}
+.dendrila-step-header h3{margin:0}
+.dendrila-step-number{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:#3154ec;color:white;font-weight:700}
+.dendrila-oauth-step fieldset{margin-top:14px}
+.dendrila-oauth-step select{max-width:100%;min-height:48px}
+.dendrila-main-action{min-height:46px!important;white-space:normal}
+.dendrila-connection-badge{display:inline-block;margin-left:8px;font-size:12px;padding:4px 9px;border-radius:100px;background:#fff1d6;color:#82520e;vertical-align:middle}
+.dendrila-connection-badge.is-ready{background:#e3f4e8;color:#11663a}
+.dendrila-status-card{border:1px solid #bedbc8;background:white;border-radius:12px;padding:15px 19px;margin:15px 0;max-width:810px}
+.dendrila-status-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#16814d;margin-right:7px}
+.dendrila-status-card .button{min-height:44px;border-radius:8px}
+.dendrila-availability-panel{background:white;border:1px solid #cbd5e1;border-radius:12px;padding:20px;max-width:840px;margin:22px 0}
+.dendrila-availability-panel h2{font-size:1.35rem;margin:0}
+.dendrila-availability-panel p{line-height:1.55}
+.dendrila-toggle{display:flex;gap:12px;align-items:flex-start;background:#f3f6fb;padding:14px;border-radius:10px;cursor:pointer}
+.dendrila-toggle input{flex:none;width:22px;height:22px;margin:2px 0;accent-color:#3557ee}
+.dendrila-toggle strong,.dendrila-toggle small{display:block}
+.dendrila-toggle small{margin-top:5px;font-size:13px;line-height:1.5;color:#475569}
+.dendrila-availability-panel .button{min-height:44px}
+.dendrila-settings-page .button:focus-visible,.dendrila-settings-page select:focus-visible,.dendrila-settings-page input:focus-visible{outline:3px solid #2944cd;outline-offset:2px}
+@media(max-width:680px){.dendrila-settings-page .dendrila-connection-methods{grid-template-columns:repeat(2,minmax(0,1fr))}.dendrila-availability-panel{padding:14px}.dendrila-oauth-step .button,.dendrila-availability-panel .button{width:100%;white-space:normal;text-align:center}}
+@media(max-width:350px){.dendrila-settings-page .dendrila-connection-methods{grid-template-columns:1fr}}
