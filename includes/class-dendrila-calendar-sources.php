@@ -34,12 +34,8 @@ final class Dendrila_Calendar_Sources {
                 $clean[ $key ] = sanitize_text_field( $label );
             }
         }
-        if ( class_exists( 'Dendrila_Calendar_Setup' ) ) {
-            $selected = Dendrila_Calendar_Setup::selected_sources();
-            if ( null !== $selected ) {
-                $clean = array_intersect_key( $clean, array_flip( $selected ) );
-            }
-        }
+        // Viewing the local calendar is independent of the external destination
+        // configuration; all compatible active sources must remain visible.
         return $clean;
     }
 

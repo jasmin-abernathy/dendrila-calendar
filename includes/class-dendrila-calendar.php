@@ -33,7 +33,7 @@ final class Dendrila_Calendar {
             ),
             'public' => false,
             'show_ui' => true,
-            'show_in_menu' => 'dendrila-calendar',
+            'show_in_menu' => false,
             'show_in_rest' => false,
             'supports' => array( 'title' ),
             'capabilities' => array(
@@ -66,14 +66,14 @@ final class Dendrila_Calendar {
             'dashicons-calendar-alt',
             27
         );
-        // Explicitly name the first submenu so the source-specific post list is not
-        // mistaken for the unified calendar's month/week/list views.
+        // First submenu uses the top-level slug: clicking Dendrila always opens
+        // the unified month/week/list view, never the native post list.
         add_submenu_page(
             'dendrila-calendar',
             __( 'Unified calendar', 'dendrila-calendar' ),
             __( 'Calendar view', 'dendrila-calendar' ),
             'manage_options',
-            'dendrila-calendar-view',
+            'dendrila-calendar',
             array( __CLASS__, 'render' )
         );
         add_submenu_page(
@@ -133,6 +133,7 @@ final class Dendrila_Calendar {
         echo '<input id="dendrila-calendar-start" type="datetime-local" name="dendrila_calendar_start" value="' . esc_attr( $start ) . '" required></p>';
         echo '<p><label for="dendrila-calendar-end">' . esc_html__( 'End', 'dendrila-calendar' ) . '</label> ';
         echo '<input id="dendrila-calendar-end" type="datetime-local" name="dendrila_calendar_end" value="' . esc_attr( $end ) . '" required></p>';
+        echo '<p class="notice notice-info inline">' . esc_html__( 'Local events can be sent to connected external calendars. They do not yet block booking availability in third-party booking plugins. Do not use this form to prevent reservations.', 'dendrila-calendar' ) . '</p>';
         echo '<p class="description">' . esc_html( sprintf(
             /* translators: %s: WordPress site timezone. */
             __( 'Times use the site timezone: %s. The event is visible only to administrators.', 'dendrila-calendar' ),
@@ -170,7 +171,7 @@ final class Dendrila_Calendar {
     }
 
     public static function enqueue( $hook ) {
-        $calendar_screen = in_array( $hook, array( 'toplevel_page_dendrila-calendar', 'dendrila-calendar_page_dendrila-calendar-view' ), true );
+        $calendar_screen = in_array( $hook, array( 'toplevel_page_dendrila-calendar', 'dendrila-calendar_page_dendrila-calendar' ), true );
         $sync_screen = 'dendrila-calendar_page_dendrila-calendar-sync' === $hook;
         $setup_screen = 'dendrila-calendar_page_dendrila-calendar-setup' === $hook;
         if ( ! $calendar_screen && ! $sync_screen && ! $setup_screen ) {
@@ -278,10 +279,11 @@ final class Dendrila_Calendar {
             wp_die( esc_html__( 'You are not allowed to view this calendar.', 'dendrila-calendar' ) );
         }
         echo '<div class="wrap dendrila-calendar-wrap"><h1>' . esc_html__( 'Dendrila Calendar', 'dendrila-calendar' ) . '</h1>';
-        echo '<p>' . esc_html__( 'Your appointments from other plugins are shown here. The Local events submenu lists only events created in Dendrila Calendar.', 'dendrila-calendar' ) . '</p>';
+        echo '<p>' . esc_html__( 'Appointments from all detected booking plugins appear here. External calendar connection is not required to view them.', 'dendrila-calendar' ) . '</p>';
         echo '<div class="dendrila-calendar-intro-actions">';
         echo '<a class="button button-primary" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-sync' ) ) . '">' . esc_html__( 'Synchronize appointments with your external calendar', 'dendrila-calendar' ) . '</a> ';
         echo '<a class="button" href="' . esc_url( admin_url( 'post-new.php?post_type=' . self::POST_TYPE ) ) . '">' . esc_html__( 'Add an event', 'dendrila-calendar' ) . '</a> ';
+        echo '<a class="button" href="' . esc_url( admin_url( 'edit.php?post_type=' . self::POST_TYPE ) ) . '">' . esc_html__( 'Manage local events', 'dendrila-calendar' ) . '</a> ';
         echo '<a class="button" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-setup' ) ) . '">' . esc_html__( 'Configure sources and destination', 'dendrila-calendar' ) . '</a>';
         echo '</div>';
         echo '<div class="dendrila-calendar-toolbar">';
@@ -318,7 +320,7 @@ final class Dendrila_Calendar {
         $events = Dendrila_Calendar_Sources::events( $start, $end, array_keys( $available ) );
         echo '<section class="dendrila-upcoming" aria-labelledby="dendrila-upcoming-heading">';
         echo '<h2 id="dendrila-upcoming-heading">' . esc_html__( 'Upcoming appointments (server view)', 'dendrila-calendar' ) . '</h2>';
-        echo '<p class="description">' . esc_html__( 'This list is loaded directly by WordPress and remains visible when the interactive calendar is unavailable.', 'dendrila-calendar' ) . '</p>';
+        echo '<p class="description">' . esc_html__( 'Actual appointments read from detected booking plugins. Select an appointment in the calendar to open its original booking tool; imported bookings are not editable here.', 'dendrila-calendar' ) . '</p>';
         if ( ! $events ) {
             echo '<p class="notice notice-warning inline">' . esc_html__( 'No events returned by the active source connectors for the next 60 days. Check the source diagnostics below.', 'dendrila-calendar' ) . '</p>';
         } else {
@@ -327,7 +329,12 @@ final class Dendrila_Calendar {
                 $start_date = new DateTimeImmutable( $event['start'] );
                 $date = $start_date->setTimezone( wp_timezone() )->format( 'd/m/Y H:i' );
                 $source = isset( $available[ $event['source'] ] ) ? $available[ $event['source'] ] : $event['source'];
-                echo '<tr><td>' . esc_html( $date ) . '</td><td>' . esc_html( $source ) . '</td><td>' . esc_html( $event['title'] ) . '</td><td>' . esc_html( $event['status'] ) . '</td></tr>';
+                $title = esc_html( $event['title'] );
+                $edit_url = isset( $event['url'] ) ? (string) $event['url'] : '';
+                if ( $edit_url && 0 === strpos( $edit_url, admin_url() ) ) {
+                    $title = '<a href="' . esc_url( $edit_url ) . '">' . $title . '</a>';
+                }
+                echo '<tr><td>' . esc_html( $date ) . '</td><td>' . esc_html( $source ) . '</td><td>' . $title . '</td><td>' . esc_html( $event['status'] ) . '</td></tr>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped title and validated same-origin admin URL.
             }
             echo '</tbody></table>';
         }

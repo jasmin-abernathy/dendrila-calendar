@@ -35,7 +35,7 @@ require dirname( __DIR__ ) . '/includes/class-dendrila-calendar.php';
 require dirname( __DIR__ ) . '/includes/class-dendrila-calendar-subscriptions.php';
 Dendrila_Calendar::enqueue( 'not-the-calendar' );
 if ( ! empty( $GLOBALS['queued_scripts'] ) ) { throw new RuntimeException( 'Calendar assets loaded on unrelated admin screen' ); }
-Dendrila_Calendar::enqueue( 'dendrila-calendar_page_dendrila-calendar-view' );
+Dendrila_Calendar::enqueue( 'toplevel_page_dendrila-calendar' );
 if ( ! isset( $GLOBALS['queued_scripts']['dendrila-calendar-subscriptions'], $GLOBALS['queued_scripts']['dendrila-calendar-admin'] ) ) {
     throw new RuntimeException( 'Subscription or calendar UI asset not enqueued' );
 }

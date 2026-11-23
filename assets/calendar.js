@@ -21,12 +21,12 @@
   const firstDay = Number(config.weekStartsOn) || 0;
   const sources = config.sources || {};
   const i18n = config.i18n || {};
-  const state = { selected: today(), view: 'month', selectedSources: new Set(Object.keys(sources)), request: null, events: [], loaded: false };
   const dayFormatter = new Intl.DateTimeFormat('en-GB', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' });
   const monthFormatter = new Intl.DateTimeFormat(locale, { timeZone: 'UTC', month: 'long', year: 'numeric' });
   const weekdayFormatter = new Intl.DateTimeFormat(locale, { timeZone: 'UTC', weekday: 'short' });
   const fullDayFormatter = new Intl.DateTimeFormat(locale, { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' });
   const timeFormatter = new Intl.DateTimeFormat(locale, { timeZone, hour: '2-digit', minute: '2-digit' });
+  const state = { selected: today(), view: 'month', selectedSources: new Set(Object.keys(sources)), request: null, events: [], loaded: false };
 
   function el(tag, className, text) {
     const element = document.createElement(tag);
