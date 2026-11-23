@@ -42,6 +42,8 @@ function wp_remote_retrieve_body( $response ) { return $response['body']; }
 function wp_remote_retrieve_response_code( $response ) { return $response['status']; }
 function response( $status, $data ) { return array( 'status' => $status, 'body' => json_encode( $data ) ); }
 class RedirectSignal extends RuntimeException {}
+function add_filter( $tag, $callback ) { $GLOBALS['redirect_host_filter'] = $callback; }
+function remove_filter( $tag, $callback ) { unset( $GLOBALS['redirect_host_filter'] ); }
 function wp_redirect( $url, $code = 302, $origin = '' ) { throw new RedirectSignal( $url ); }
 function wp_safe_redirect( $url, $code = 302, $origin = '' ) { throw new RedirectSignal( $url ); }
 function wp_safe_remote_post( $url, $args ) {

@@ -122,8 +122,15 @@ final class Dendrila_Calendar_OAuth {
             $query['access_type'] = 'offline';
             $query['prompt'] = 'consent';
         }
-        // Only a provider endpoint fixed in config() can receive this redirect.
-        wp_redirect( add_query_arg( $query, $config['authorize'] ), 302, 'Dendrila Calendar' );
+        // Allow only this provider's fixed official OAuth host for this one redirect.
+        $host = wp_parse_url( $config['authorize'], PHP_URL_HOST );
+        $allow_host = static function ( $hosts ) use ( $host ) {
+            $hosts[] = $host;
+            return array_unique( $hosts );
+        };
+        add_filter( 'allowed_redirect_hosts', $allow_host );
+        wp_safe_redirect( add_query_arg( $query, $config['authorize'] ), 302, 'Dendrila Calendar' );
+        remove_filter( 'allowed_redirect_hosts', $allow_host );
         exit;
     }
 
