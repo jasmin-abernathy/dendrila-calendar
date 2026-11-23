@@ -18,7 +18,9 @@ function wp_http_validate_url( $url ) {
 }
 function trailingslashit( $url ) { return rtrim( $url, '/' ) . '/'; }
 function sanitize_text_field( $s ) { return trim( strip_tags( $s ) ); }
-function get_current_user_id() { return 9; }
+function get_current_user_id() { return $GLOBALS['test_user_id']; }
+function wp_salt( $scheme ) { return 'discovery-test-salt'; }
+$GLOBALS['test_user_id'] = 9;
 $GLOBALS['test_transients'] = array();
 function get_transient( $key ) { return $GLOBALS['test_transients'][ $key ] ?? false; }
 function set_transient( $key, $value, $ttl ) { $GLOBALS['test_transients'][ $key ] = $value; }
@@ -48,16 +50,69 @@ expect( ! Dendrila_Calendar_Discovery::trusted_url( 'https://icloud.com.example.
 $token = '0123456789abcdef0123456789abcdef';
 $method = new ReflectionMethod( 'Dendrila_Calendar_Discovery', 'transient_key' );
 $key = $method->invoke( null, $token );
-set_transient( $key, array( 'username' => 'alice', 'provider' => 'nextcloud', 'urls' => array( 'https://cloud.example.org/remote.php/dav/calendars/alice/personal/' ) ), 600 );
-expect( Dendrila_Calendar_Discovery::verified_choice( $token, 'https://cloud.example.org/remote.php/dav/calendars/alice/personal/', 'nextcloud', 'alice' ), 'Discovered calendar may be selected' );
-expect( ! Dendrila_Calendar_Discovery::verified_choice( $token, 'https://evil.test/', 'nextcloud', 'alice' ), 'Unlisted destinations must be rejected' );
-expect( ! Dendrila_Calendar_Discovery::verified_choice( $token, 'https://cloud.example.org/remote.php/dav/calendars/alice/personal/', 'nextcloud', 'mallory' ), 'Discovery belongs to a particular account' );
+set_transient( $key, array( 'username' => 'alice', 'proof' => hash_hmac( 'sha256', 'password', wp_salt( 'auth' ) . $token ), 'provider' => 'nextcloud', 'urls' => array( 'https://cloud.example.org/remote.php/dav/calendars/alice/personal/' ) ), 600 );
+expect( Dendrila_Calendar_Discovery::verified_choice( $token, 'https://cloud.example.org/remote.php/dav/calendars/alice/personal/', 'nextcloud', 'alice', 'password' ), 'Discovered calendar may be selected' );
+expect( ! Dendrila_Calendar_Discovery::verified_choice( $token, 'https://evil.test/', 'nextcloud', 'alice', 'password' ), 'Unlisted destinations must be rejected' );
+expect( ! Dendrila_Calendar_Discovery::verified_choice( $token, 'https://cloud.example.org/remote.php/dav/calendars/alice/personal/', 'nextcloud', 'mallory', 'password' ), 'Discovery belongs to a particular account' );
+expect( ! Dendrila_Calendar_Discovery::verified_choice( $token, 'https://cloud.example.org/remote.php/dav/calendars/alice/personal/', 'nextcloud', 'alice', 'changed' ), 'Discovery is bound to the application password' );
+$GLOBALS['test_user_id'] = 10;
+expect( ! Dendrila_Calendar_Discovery::verified_choice( $token, 'https://cloud.example.org/remote.php/dav/calendars/alice/personal/', 'nextcloud', 'alice', 'password' ), 'Discovery belongs to the WordPress administrator who requested it' );
+$GLOBALS['test_user_id'] = 9;
 Dendrila_Calendar_Discovery::consume_choice( $token );
-expect( ! Dendrila_Calendar_Discovery::verified_choice( $token, 'https://cloud.example.org/remote.php/dav/calendars/alice/personal/', 'nextcloud', 'alice' ), 'Discovery token is one-time' );
-if ( class_exists( 'DOMDocument' ) ) {
-    $fixture = '<?xml version="1.0"?><d:multistatus xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:caldav"><d:response><d:href>/remote.php/dav/calendars/alice/personal/</d:href><d:propstat><d:prop><d:displayname>Personal</d:displayname><d:resourcetype><d:collection/><c:calendar/></d:resourcetype></d:prop></d:propstat></d:response></d:multistatus>';
-    $parsed = Dendrila_Calendar_Discovery::parse_dav( $fixture );
-    expect( count( $parsed['calendars'] ) === 1 && $parsed['calendars'][0]['name'] === 'Personal', 'Calendar collection found via DAV XML' );
-    expect( ! Dendrila_Calendar_Discovery::parse_dav( '<!DOCTYPE evil><x/>' ), 'Reject DOCTYPE external entities' );
+expect( ! Dendrila_Calendar_Discovery::verified_choice( $token, 'https://cloud.example.org/remote.php/dav/calendars/alice/personal/', 'nextcloud', 'alice', 'password' ), 'Discovery token is consumed after connection' );
+
+function wp_safe_remote_request( $url, $options ) {
+    $expected = array_shift( $GLOBALS['dav_requests'] );
+    expect( $expected && $url === $expected[0], 'Unexpected PROPFIND destination' );
+    expect( 'PROPFIND' === $options['method'] && 0 === $options['redirection'] && $options['sslverify'], 'PROPFIND must validate TLS and handle redirects explicitly' );
+    expect( $expected[1] === (int) $options['headers']['Depth'], 'Incorrect PROPFIND depth' );
+    expect( 'Basic ' . base64_encode( 'alice:password' ) === $options['headers']['Authorization'], 'Expected CalDAV application credentials' );
+    return array( 'response' => array( 'code' => $expected[2] ), 'body' => $expected[3], 'headers' => $expected[4] ?? array() );
 }
-echo "Guided CalDAV discovery: HTTPS, same-origin, account binding, token expiry and XML safety passed\n";
+function wp_remote_retrieve_response_code( $response ) { return $response['response']['code']; }
+function wp_remote_retrieve_body( $response ) { return $response['body']; }
+function wp_remote_retrieve_header( $response, $header ) { return $response['headers'][ $header ] ?? ''; }
+
+function dav_response( $href, $properties, $status = 200 ) {
+    return '<d:response><d:href>' . $href . '</d:href><d:propstat><d:prop>' . $properties
+        . '</d:prop><d:status>HTTP/1.1 ' . $status . ' Status</d:status></d:propstat></d:response>';
+}
+function dav_multistatus( ...$responses ) {
+    return '<?xml version="1.0" encoding="utf-8"?><d:multistatus xmlns:d="DAV:" xmlns:cal="urn:ietf:params:xml:ns:caldav" xmlns:cs="http://calendarserver.org/ns/">'
+        . implode( '', $responses ) . '</d:multistatus>';
+}
+
+$principal = '/remote.php/dav/principals/users/alice/';
+$home = '/remote.php/dav/calendars/alice/';
+$calendar_type = '<d:resourcetype><d:collection/><cal:calendar/></d:resourcetype>';
+$GLOBALS['dav_requests'] = array(
+    array( $base, 0, 207, dav_multistatus( dav_response( '/remote.php/dav/', '<d:current-user-principal><d:href>' . $principal . '</d:href></d:current-user-principal>' ) ) ),
+    array( 'https://cloud.example.org' . $principal, 0, 207, dav_multistatus( dav_response( $principal, '<cal:calendar-home-set><d:href>' . $home . '</d:href></cal:calendar-home-set>' ) ) ),
+    array( 'https://cloud.example.org' . $home, 1, 207, dav_multistatus(
+        dav_response( $home, '<d:resourcetype><d:collection/></d:resourcetype>' ),
+        dav_response( $home . 'personal/', $calendar_type . '<d:displayname>Personnel &amp; famille</d:displayname>' ),
+        dav_response( $home . 'subscriptions/', '<d:resourcetype><d:collection/><cs:subscribed/></d:resourcetype>' ),
+        dav_response( $home . 'unavailable/', $calendar_type, 404 ),
+        dav_response( $home . 'foreign-namespace/', '<d:resourcetype><cs:calendar/></d:resourcetype>' )
+    ) ),
+);
+expect( array( array( 'url' => 'https://cloud.example.org' . $home . 'personal/', 'name' => 'Personnel & famille' ) ) ===
+    Dendrila_Calendar_Discovery::discover( 'nextcloud', 'cloud.example.org', 'alice', 'password' ), 'Nextcloud-style discovery must return only successful CalDAV collections' );
+expect( ! $GLOBALS['dav_requests'], 'Nextcloud discovery should complete all three DAV stages' );
+
+$apple = 'https://p100-caldav.icloud.com';
+$GLOBALS['dav_requests'] = array(
+    array( 'https://caldav.icloud.com/', 0, 207, dav_multistatus( dav_response( '/', '<d:current-user-principal><d:href>' . $apple . '/123/principal/</d:href></d:current-user-principal>' ) ) ),
+    array( $apple . '/123/principal/', 0, 207, dav_multistatus( dav_response( '/123/principal/', '<cal:calendar-home-set><d:href>/123/calendars/</d:href></cal:calendar-home-set>' ) ) ),
+    array( $apple . '/123/calendars/', 1, 207, dav_multistatus( dav_response( '/123/calendars/home/', $calendar_type . '<d:displayname>Home</d:displayname>' ) ) ),
+);
+expect( array( array( 'url' => $apple . '/123/calendars/home/', 'name' => 'Home' ) ) ===
+    Dendrila_Calendar_Discovery::discover( 'icloud', '', 'alice', 'password' ), 'Apple-style discovery must support the account-specific CalDAV host' );
+expect( ! Dendrila_Calendar_Discovery::trusted_url( $apple . ':8443/', 'https://caldav.icloud.com/', 'icloud' ), 'Apple credentials must stay on the HTTPS default port' );
+
+$GLOBALS['dav_requests'] = array( array( $base, 0, 302, '', array( 'location' => 'https://elsewhere.example.org/dav/' ) ) );
+expect( is_wp_error( Dendrila_Calendar_Discovery::discover( 'nextcloud', 'cloud.example.org', 'alice', 'password' ) ), 'A foreign redirect must stop before the next request' );
+expect( ! Dendrila_Calendar_Discovery::parse_dav( '<!DOCTYPE evil><x/>' ), 'Reject DOCTYPE external entities' );
+expect( ! Dendrila_Calendar_Discovery::parse_dav( ' ' ), 'An empty DAV result must not cause a DOM fatal error' );
+expect( ! Dendrila_Calendar_Discovery::parse_dav( '<multistatus/>' ), 'Malformed or non-DAV replies must be rejected' );
+echo "CalDAV discovery: account binding, DAV XML, Nextcloud and iCloud response fixtures, and redirect policy passed\n";

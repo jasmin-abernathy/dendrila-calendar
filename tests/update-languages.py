@@ -10,6 +10,14 @@ old_po = (language_dir / 'dendrila-calendar-fr_FR.po').read_text(encoding='utf-8
 entries = dict(re.findall(r'^msgid "([^"\\]*(?:\\.[^"\\]*)*)"\nmsgstr "([^"\\]*(?:\\.[^"\\]*)*)"$', old_po, re.M))
 entries = {json.loads('"'+k+'"'):json.loads('"'+v+'"') for k,v in entries.items() if k}
 entries.update({
+    'Continue': 'Continuer',
+    'Back': 'Retour',
+    'The calendar service could not be reached securely.': 'La connexion sécurisée au service de calendrier a échoué.',
+    'Select at least one appointment source.': 'Sélectionnez au moins une source de rendez-vous.',
+    'We will add and remove a temporary event to test the connection.': 'Un événement temporaire sera ajouté puis supprimé pour vérifier la connexion.',
+    'The calendar write test failed. Check the application password and make sure you can add and delete events in this calendar.': 'Le test d’écriture a échoué. Vérifiez le mot de passe d’application et vos droits d’ajout et de suppression dans cet agenda.',
+    'The calendar connection could not be saved. Please try again.': 'Impossible d’enregistrer la connexion à cet agenda. Réessayez.',
+
     'The subscription could not be saved. Try again.': 'L’abonnement n’a pas pu être enregistré. Réessayez.',
     'Upcoming appointments (server view)': 'Rendez-vous à venir (vue serveur)',
     'This list is loaded directly by WordPress and remains visible when the interactive calendar is unavailable.': 'Cette liste est chargée directement par WordPress et reste visible si le calendrier interactif est indisponible.',

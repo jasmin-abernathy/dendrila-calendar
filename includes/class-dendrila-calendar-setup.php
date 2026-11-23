@@ -282,9 +282,10 @@ final class Dendrila_Calendar_Setup {
         if ( $reports_failed ) {
             echo '<div class="notice notice-warning inline"><p>' . esc_html__( 'A compatibility request could not be submitted. Check your WordPress email delivery settings.', 'dendrila-calendar' ) . '</p></div>';
         }
-        echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
+        echo '<form method="post" id="dendrila-calendar-setup-form" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
         echo '<input type="hidden" name="action" value="dendrila_calendar_setup_save">';
         wp_nonce_field( 'dendrila_calendar_setup' );
+        echo '<section id="dendrila-setup-sources">';
         echo '<h2>' . esc_html__( 'Step 1 — Detected appointment sources', 'dendrila-calendar' ) . '</h2>';
         echo '<p>' . esc_html__( 'Compatible active plugins are preselected. You may deselect them. Inactive or unsupported plugins cannot be synchronized.', 'dendrila-calendar' ) . '</p>';
         echo '<fieldset><label><input type="checkbox" name="sources[]" value="native" ' . checked( in_array( 'native', $selected, true ), true, false ) . '> ' . esc_html__( 'Dendrila local events', 'dendrila-calendar' ) . '</label></fieldset>';
@@ -304,6 +305,9 @@ final class Dendrila_Calendar_Setup {
             }
             echo '</div>';
         }
+        echo '<p><button type="button" class="button button-primary" id="dendrila-setup-next" hidden>' . esc_html__( 'Continue', 'dendrila-calendar' ) . '</button></p>';
+        echo '<p id="dendrila-setup-feedback" role="status"></p></section>';
+        echo '<section id="dendrila-setup-destination">';
         echo '<h2>' . esc_html__( 'Step 2 — Your destination calendar', 'dendrila-calendar' ) . '</h2>';
         echo '<p>' . esc_html__( 'Choose how appointments reach the calendar you already use.', 'dendrila-calendar' ) . '</p>';
         $choices = array(
@@ -320,10 +324,10 @@ final class Dendrila_Calendar_Setup {
         }
         echo '</fieldset>';
         echo '<p class="description">' . esc_html__( 'Google and Outlook do not have one-click access yet. They use an optional read-only subscription until direct authorization is ready.', 'dendrila-calendar' ) . '</p>';
-        echo '<h2>' . esc_html__( 'Step 3 — Confirm the setup', 'dendrila-calendar' ) . '</h2>';
         echo '<p class="description">' . esc_html__( 'If an active booking plugin is detected but its connector is unusable, saving sends a technical compatibility request for review. This includes only the plugin name, entrypoint, version, reason, WordPress/PHP versions and site URL — never appointments, customer data or passwords. Duplicate requests are suppressed.', 'dendrila-calendar' ) . '</p>';
         submit_button( __( 'Save settings and continue', 'dendrila-calendar' ) );
-        echo '</form>';
+        echo '<p><button type="button" class="button" id="dendrila-setup-back" hidden>' . esc_html__( 'Back', 'dendrila-calendar' ) . '</button></p>';
+        echo '</section></form>';
         if ( ! self::complete() && ! empty( $saved['mode'] ) && 'local' !== $saved['mode'] ) {
             echo '<p class="notice notice-warning inline">' . esc_html__( 'No external destination connected yet. Complete the connection on the Synchronization page.', 'dendrila-calendar' ) . '</p>';
             echo '<p><a href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-sync' ) ) . '" class="button button-primary">' . esc_html__( 'Finish connecting my calendar', 'dendrila-calendar' ) . '</a></p>';

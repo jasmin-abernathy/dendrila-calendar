@@ -62,6 +62,9 @@ msgstr "Synchronisation automatique des calendriers"
 msgid "Automatic synchronization"
 msgstr "Synchronisation automatique"
 
+msgid "Back"
+msgstr "Retour"
+
 msgid "Back to calendar"
 msgstr "Retour au calendrier"
 
@@ -89,17 +92,11 @@ msgstr "Service d’agenda"
 msgid "Calendar view"
 msgstr "Vue calendrier"
 
-msgid "Cannot connect to that CalDAV calendar. Verify its calendar URL and application password."
-msgstr "Connexion à cet agenda CalDAV impossible. Vérifiez son adresse et le mot de passe d’application."
-
 msgid "Change source and destination settings"
 msgstr "Modifier les sources et la destination"
 
 msgid "Check the calendar address, credentials and selected sources."
 msgstr "Vérifiez l’adresse du calendrier, les identifiants et les sources sélectionnées."
-
-msgid "Choose a calendar below, then confirm the connection."
-msgstr "Choisissez un agenda ci-dessous, puis confirmez la connexion."
 
 msgid "Choose how appointments reach the calendar you already use."
 msgstr "Choisissez comment les rendez-vous rejoindront votre agenda habituel."
@@ -145,6 +142,9 @@ msgstr "Méthode de connexion"
 
 msgid "Connection name"
 msgstr "Nom de la connexion"
+
+msgid "Continue"
+msgstr "Continuer"
 
 msgid "Copy link"
 msgstr "Copier le lien"
@@ -350,6 +350,9 @@ msgstr "Tout sélectionner"
 msgid "Select and copy the link manually."
 msgstr "Sélectionnez et copiez le lien manuellement."
 
+msgid "Select at least one appointment source."
+msgstr "Sélectionnez au moins une source de rendez-vous."
+
 msgid "Select at least one available source and a valid destination."
 msgstr "Choisissez au moins une source disponible et une destination valide."
 
@@ -386,9 +389,6 @@ msgstr "Étape 1 — Sources de rendez-vous détectées"
 msgid "Step 2 — Your destination calendar"
 msgstr "Étape 2 — Votre agenda de destination"
 
-msgid "Step 3 — Confirm the setup"
-msgstr "Étape 3 — Confirmer la configuration"
-
 msgid "Subscribe your personal calendar"
 msgstr "Synchroniser votre agenda personnel"
 
@@ -416,14 +416,23 @@ msgstr "Synchroniser les rendez-vous avec votre agenda externe"
 msgid "Synchronize now"
 msgstr "Synchroniser maintenant"
 
+msgid "The calendar connection could not be saved. Please try again."
+msgstr "Impossible d’enregistrer la connexion à cet agenda. Réessayez."
+
 msgid "The calendar server redirected to an unsafe address."
 msgstr "La connexion a été redirigée vers une adresse non autorisée."
+
+msgid "The calendar service could not be reached securely."
+msgstr "La connexion sécurisée au service de calendrier a échoué."
 
 msgid "The calendar service did not accept the connection ("
 msgstr "Le service d’agenda a refusé la connexion ("
 
 msgid "The calendar service returned an unreadable response. PHP DOM/XML may be unavailable."
 msgstr "Réponse illisible du service. Le module XML de PHP peut être manquant."
+
+msgid "The calendar write test failed. Check the application password and make sure you can add and delete events in this calendar."
+msgstr "Le test d’écriture a échoué. Vérifiez le mot de passe d’application et vos droits d’ajout et de suppression dans cet agenda."
 
 msgid "The full link is displayed only once after creation. If it is lost, revoke it and create a new one."
 msgstr "Le lien complet ne s’affiche qu’une fois après sa création. S’il est perdu, révoquez-le et créez-en un autre."
@@ -502,6 +511,9 @@ msgstr "Utilisez votre adresse de compte Apple et un mot de passe spécifique à
 
 msgid "View"
 msgstr "Vue"
+
+msgid "We will add and remove a temporary event to test the connection."
+msgstr "Un événement temporaire sera ajouté puis supprimé pour vérifier la connexion."
 
 msgid "We will guide you through the connection. You do not need an API key or a technical calendar address."
 msgstr "La connexion est guidée. Aucune clé API ni adresse technique de calendrier n’est nécessaire."

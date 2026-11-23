@@ -3,6 +3,7 @@
 error_reporting( E_ALL );
 define( 'ABSPATH', __DIR__ );
 define( 'MINUTE_IN_SECONDS', 60 );
+define( 'DAY_IN_SECONDS', 86400 );
 $GLOBALS['values'] = array();
 $GLOBALS['calls'] = array();
 $GLOBALS['locks'] = array();
@@ -11,6 +12,7 @@ class WP_Error {
     public function __construct( $code, $message ) {}
 }
 function __( $string, $domain = null ) { return $string; }
+function wp_generate_uuid4() { return '63938b36-d9b8-4efe-8c97-829469b8a202'; }
 function wp_salt( $context ) { return 'unit-test-salt-for-encryption'; }
 function wp_parse_url( $url ) { return parse_url( $url ); }
 function wp_http_validate_url( $url ) { return false === stripos( $url, 'localhost' ) ? $url : false; }
@@ -20,6 +22,9 @@ function wp_remote_retrieve_response_code( $response ) { return $response['respo
 function wp_remote_retrieve_body( $response ) { return $response['body']; }
 function wp_safe_remote_request( $url, $args ) {
     $GLOBALS['calls'][] = array( $url, $args['method'], $args['body'] );
+    if ( isset( $GLOBALS['response_override'] ) ) {
+        return array( 'response' => array( 'code' => array_shift( $GLOBALS['response_override'] ) ), 'body' => '' );
+    }
     $status = 'PROPFIND' === $args['method'] ? 207 : ( 'PUT' === $args['method'] ? 201 : 204 );
     return array( 'response' => array( 'code' => $status ), 'body' => 'PROPFIND' === $args['method'] ? '<cal:calendar xmlns:cal="urn:ietf:params:xml:ns:caldav"/>' : '' );
 }
@@ -52,6 +57,14 @@ require_test( false === Dendrila_Calendar_Bridge::validate_endpoint( 'https://lo
 require_test( false === Dendrila_Calendar_Bridge::validate_endpoint( 'https://example.org/calendar/?password=x' ), 'Secret-bearing URL accepted' );
 require_test( 'https://example.org/calendars/user/default/' === Dendrila_Calendar_Bridge::validate_endpoint( 'https://example.org/calendars/user/default/' ), 'Calendar URL failed validation' );
 require_test( true === Dendrila_Calendar_Bridge::probe( 'https://example.org/calendars/user/default/', 'alice', 'password' ), 'CalDAV probe failed' );
+require_test( array( 'PUT', 'DELETE' ) === array_column( $GLOBALS['calls'], 1 ), 'Probe must add and remove a temporary event' );
+require_test( $GLOBALS['calls'][0][0] === $GLOBALS['calls'][1][0], 'Probe must clean up only its own event' );
+$GLOBALS['response_override'] = array( 403 );
+require_test( ! Dendrila_Calendar_Bridge::probe( 'https://example.org/calendars/user/default/', 'alice', 'password' ), 'Read-only calendar cannot pass the write test' );
+$GLOBALS['response_override'] = array( 201, 403 );
+require_test( ! Dendrila_Calendar_Bridge::probe( 'https://example.org/calendars/user/default/', 'alice', 'password' ), 'Unsuccessful cleanup cannot pass the write test' );
+unset( $GLOBALS['response_override'] );
+$GLOBALS['calls'] = array();
 $start = ( new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) ) )->modify( '+1 day' )->format( 'Y-m-d\TH:i:s\Z' );
 $end = ( new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) ) )->modify( '+1 day +1 hour' )->format( 'Y-m-d\TH:i:s\Z' );
 $event = array( 'source' => 'easy_appointments', 'id' => 'ea-1', 'title' => 'Prestation test', 'start' => $start, 'end' => $end, 'status' => 'pending', 'all_day' => false );
@@ -63,16 +76,16 @@ update_option( Dendrila_Calendar_Bridge::OPTION, array( 'first' => array(
 ) ) );
 Dendrila_Calendar_Bridge::run_one( 'first' );
 $first = $GLOBALS['calls'];
-require_test( count( $first ) === 2 && 'PUT' === $first[1][1], 'First sync should add one remote event' );
-require_test( 0 === substr_compare( $first[1][0], '.ics', -4 ), 'CalDAV resource URL must end with .ics (no slash)' );
-require_test( false === strpos( $first[1][2], 'alice' ), 'Identity exposed in event content' );
+require_test( count( $first ) === 1 && 'PUT' === $first[0][1], 'First sync should add one remote event' );
+require_test( 0 === substr_compare( $first[0][0], '.ics', -4 ), 'CalDAV resource URL must end with .ics (no slash)' );
+require_test( false === strpos( $first[0][2], 'alice' ), 'Identity exposed in event content' );
 Dendrila_Calendar_Bridge::run_one( 'first' );
-require_test( count( $GLOBALS['calls'] ) === 2, 'Unmodified event should not be pushed twice' );
+require_test( count( $GLOBALS['calls'] ) === 1, 'Unmodified event should not be pushed twice' );
 $GLOBALS['test_events'][0]['title'] = 'Prestation test modifiée';
 Dendrila_Calendar_Bridge::run_one( 'first' );
-require_test( count( $GLOBALS['calls'] ) === 3 && 'PUT' === $GLOBALS['calls'][2][1] && $first[1][0] === $GLOBALS['calls'][2][0], 'Changed event must update the same CalDAV resource' );
+require_test( count( $GLOBALS['calls'] ) === 2 && 'PUT' === $GLOBALS['calls'][1][1] && $first[0][0] === $GLOBALS['calls'][1][0], 'Changed event must update the same CalDAV resource' );
 $GLOBALS['test_events'][0]['status'] = 'cancelled';
 Dendrila_Calendar_Bridge::run_one( 'first' );
-require_test( count( $GLOBALS['calls'] ) === 4 && 'DELETE' === $GLOBALS['calls'][3][1], 'Explicit cancellation must remove previously synced resource' );
+require_test( count( $GLOBALS['calls'] ) === 3 && 'DELETE' === $GLOBALS['calls'][2][1], 'Explicit cancellation must remove previously synced resource' );
 require_test( empty( get_option( Dendrila_Calendar_Bridge::OPTION )['first']['map'] ), 'Cancelled resource remains mapped' );
 echo "Direct CalDAV sync: encrypted credentials, idempotent creation, update, cancellation and SSRF guard passed\n";

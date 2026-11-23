@@ -133,11 +133,29 @@ final class Dendrila_Calendar_Bridge {
     }
 
     public static function probe( $url, $user, $password ) {
-        $body = '<?xml version="1.0" encoding="utf-8"?><d:propfind xmlns:d="DAV:"><d:prop><d:resourcetype/></d:prop></d:propfind>';
-        $result = self::request( $url, $user, $password, 'PROPFIND', $body, array( 'Depth' => '0', 'Content-Type' => 'application/xml; charset=utf-8' ) );
-        // A successful CalDAV calendar collection responds with 207 Multi-Status.
-        return ! is_wp_error( $result ) && 207 === (int) wp_remote_retrieve_response_code( $result ) &&
-            false !== stripos( (string) wp_remote_retrieve_body( $result ), 'calendar' );
+        $uid = 'dc-test-' . wp_generate_uuid4();
+        $resource = trailingslashit( $url ) . $uid . '.ics';
+        $stamp = gmdate( 'Ymd\THis\Z' );
+        $start = gmdate( 'Ymd\THis\Z', time() + DAY_IN_SECONDS );
+        $end = gmdate( 'Ymd\THis\Z', time() + DAY_IN_SECONDS + MINUTE_IN_SECONDS );
+        $body = implode( "\r\n", array(
+            'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Dendrila Calendar//Connection test//EN',
+            'BEGIN:VEVENT', 'UID:' . $uid, 'DTSTAMP:' . $stamp,
+            'DTSTART:' . $start, 'DTEND:' . $end, 'SUMMARY:Dendrila Calendar test',
+            'END:VEVENT', 'END:VCALENDAR', '',
+        ) );
+        $put = self::request( $resource, $user, $password, 'PUT', $body, array(
+            'Content-Type' => 'text/calendar; charset=utf-8',
+            'If-None-Match' => '*',
+        ) );
+        $status = is_wp_error( $put ) ? 0 : (int) wp_remote_retrieve_response_code( $put );
+        if ( 0 !== $status && ! in_array( $status, array( 200, 201, 204 ), true ) ) {
+            return false;
+        }
+        // Try cleanup even if the response was lost after the server accepted the test event.
+        $delete = self::request( $resource, $user, $password, 'DELETE' );
+        $removed = is_wp_error( $delete ) ? 0 : (int) wp_remote_retrieve_response_code( $delete );
+        return 0 !== $status && in_array( $removed, array( 200, 204, 404 ), true );
     }
 
     private static function permitted() {
@@ -155,24 +173,32 @@ final class Dendrila_Calendar_Bridge {
     public static function connect() {
         self::permitted();
         $items = self::connections();
-        if ( count( $items ) >= self::MAX_CONNECTIONS ) {
-            self::redirect( 'limit' );
-        }
         $url = isset( $_POST['calendar_url'] ) && is_string( $_POST['calendar_url'] ) ? self::validate_endpoint( esc_url_raw( wp_unslash( $_POST['calendar_url'] ) ) ) : false;
         $username = isset( $_POST['username'] ) && is_string( $_POST['username'] ) ? sanitize_text_field( wp_unslash( $_POST['username'] ) ) : '';
         $password = isset( $_POST['app_password'] ) && is_string( $_POST['app_password'] ) ? wp_unslash( $_POST['app_password'] ) : '';
         $label = isset( $_POST['label'] ) && is_string( $_POST['label'] ) ? sanitize_text_field( wp_unslash( $_POST['label'] ) ) : 'CalDAV';
-        $provider = isset( $_POST['provider'] ) ? sanitize_key( wp_unslash( $_POST['provider'] ) ) : 'caldav';
+        $provider = isset( $_POST['provider'] ) && is_string( $_POST['provider'] ) ? sanitize_key( wp_unslash( $_POST['provider'] ) ) : 'caldav';
         $token = isset( $_POST['discovery_token'] ) && is_string( $_POST['discovery_token'] ) ? sanitize_text_field( wp_unslash( $_POST['discovery_token'] ) ) : '';
         if ( ! class_exists( 'Dendrila_Calendar_Discovery' ) ||
             ! in_array( $provider, array( 'nextcloud', 'caldav', 'icloud' ), true ) ||
-            ! Dendrila_Calendar_Discovery::verified_choice( $token, $url, $provider, $username ) ) {
+            '' === $password || strlen( $password ) > 4096 ||
+            ! Dendrila_Calendar_Discovery::verified_choice( $token, $url, $provider, $username, $password ) ) {
             self::redirect( 'invalid' );
         }
         $selected = isset( $_POST['sources'] ) && is_array( $_POST['sources'] ) ? wp_unslash( $_POST['sources'] ) : array();
         $sources = Dendrila_Calendar_Subscriptions::allowed_sources( $selected, Dendrila_Calendar_Sources::available() );
         if ( ! $url || ! $sources || '' === trim( $username ) || '' === $password || strlen( $password ) > 4096 ) {
             self::redirect( 'invalid' );
+        }
+        $id = null;
+        foreach ( $items as $existing_id => $item ) {
+            if ( $url === $item['url'] && $username === $item['username'] ) {
+                $id = $existing_id;
+                break;
+            }
+        }
+        if ( null === $id && count( $items ) >= self::MAX_CONNECTIONS ) {
+            self::redirect( 'limit' );
         }
         $encrypted = self::protect( $password );
         if ( false === $encrypted ) {
@@ -181,7 +207,8 @@ final class Dendrila_Calendar_Bridge {
         if ( ! self::probe( $url, $username, $password ) ) {
             self::redirect( 'probe' );
         }
-        $id = bin2hex( random_bytes( 8 ) );
+        $was_connected = null !== $id;
+        $id = $id ?? bin2hex( random_bytes( 8 ) );
         $items[ $id ] = array(
             'label' => wp_html_excerpt( $label ?: 'CalDAV', 60, '' ),
             'provider' => $provider,
@@ -189,11 +216,13 @@ final class Dendrila_Calendar_Bridge {
             'username' => $username,
             'password' => $encrypted,
             'sources' => $sources,
-            'map' => array(),
+            'map' => $was_connected ? ( $items[ $id ]['map'] ?? array() ) : array(),
             'last_run' => '',
             'last_error' => '',
         );
-        self::save( $items );
+        if ( ! self::save( $items ) ) {
+            self::redirect( 'save' );
+        }
         Dendrila_Calendar_Discovery::consume_choice( $token );
         // Run once immediately so a successful connection has meaningful status.
         self::run_one( $id );
@@ -346,7 +375,8 @@ final class Dendrila_Calendar_Bridge {
             'synced' => __( 'Synchronization attempt finished. Review the status below.', 'dendrila-calendar' ),
             'removed' => __( 'Calendar disconnected. Previously created external events were not deleted.', 'dendrila-calendar' ),
             'invalid' => __( 'Check the calendar address, credentials and selected sources.', 'dendrila-calendar' ),
-            'probe' => __( 'Cannot connect to that CalDAV calendar. Verify its calendar URL and application password.', 'dendrila-calendar' ),
+            'probe' => __( 'The calendar write test failed. Check the application password and make sure you can add and delete events in this calendar.', 'dendrila-calendar' ),
+            'save' => __( 'The calendar connection could not be saved. Please try again.', 'dendrila-calendar' ),
             'crypto' => __( 'The server cannot securely protect the calendar password.', 'dendrila-calendar' ),
             'limit' => __( 'Too many connected calendars.', 'dendrila-calendar' ),
         );
@@ -356,11 +386,12 @@ final class Dendrila_Calendar_Bridge {
         if ( isset( $labels[ $status ] ) ) {
             echo '<div class="notice notice-info inline"><p>' . esc_html( $labels[ $status ] ) . '</p></div>';
         }
-        echo '<div class="dendrila-connect-card"><h3>' . esc_html__( '1. Choose your calendar service', 'dendrila-calendar' ) . '</h3>';
+        echo '<div class="dendrila-connect-card" id="dendrila-connect-service"><h3>' . esc_html__( '1. Choose your calendar service', 'dendrila-calendar' ) . '</h3>';
         echo '<p>' . esc_html__( 'We will guide you through the connection. You do not need an API key or a technical calendar address.', 'dendrila-calendar' ) . '</p>';
         echo '<label for="dendrila-connect-provider">' . esc_html__( 'Calendar service', 'dendrila-calendar' ) . '</label> ';
         echo '<select id="dendrila-connect-provider"><option value="nextcloud">Nextcloud</option><option value="icloud">Apple iCloud</option><option value="caldav">' . esc_html__( 'Other CalDAV service', 'dendrila-calendar' ) . '</option><option value="google">Google Calendar</option><option value="microsoft">Microsoft Outlook</option></select>';
         echo '<p id="dendrila-connect-provider-help" class="description"></p>';
+        echo '<p><button class="button button-primary" type="button" id="dendrila-connect-next">' . esc_html__( 'Continue', 'dendrila-calendar' ) . '</button></p>';
         echo '</div>';
         echo '<form method="post" id="dendrila-direct-connect-form" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
         echo '<input type="hidden" name="action" value="dendrila_calendar_bridge_connect">';
@@ -368,7 +399,7 @@ final class Dendrila_Calendar_Bridge {
         echo '<input type="hidden" name="calendar_url" id="dendrila-bridge-url" value="">';
         echo '<input type="hidden" name="discovery_token" id="dendrila-discovery-token" value="">';
         wp_nonce_field( 'dendrila_calendar_direct_connection' );
-        echo '<div class="dendrila-connect-card" id="dendrila-connect-account">';
+        echo '<div class="dendrila-connect-card" id="dendrila-connect-account" hidden>';
         echo '<h3>' . esc_html__( '2. Connect your account', 'dendrila-calendar' ) . '</h3>';
         echo '<p id="dendrila-server-field"><label for="dendrila-bridge-server">' . esc_html__( 'Your cloud address', 'dendrila-calendar' ) . '</label> ';
         echo '<input id="dendrila-bridge-server" type="text" inputmode="url" autocomplete="url" placeholder="cloud.example.org"></p>';
@@ -378,7 +409,7 @@ final class Dendrila_Calendar_Bridge {
         echo '<input id="dendrila-bridge-password" type="password" name="app_password" autocomplete="new-password" required></p>';
         echo '<p class="description">' . esc_html__( 'Use an application-specific password if your service requires one. Your password is encrypted before it is saved.', 'dendrila-calendar' ) . '</p>';
         echo '<p><button class="button button-primary" type="button" id="dendrila-discover-calendars">' . esc_html__( 'Find my calendars', 'dendrila-calendar' ) . '</button></p>';
-        echo '<p id="dendrila-discovery-feedback" role="status" aria-live="polite"></p>';
+        echo '<p><button class="button" type="button" id="dendrila-account-back">' . esc_html__( 'Back', 'dendrila-calendar' ) . '</button></p>';
         echo '</div>';
         echo '<div class="dendrila-connect-card" id="dendrila-calendar-choice" hidden>';
         echo '<h3>' . esc_html__( '3. Choose where to add appointments', 'dendrila-calendar' ) . '</h3>';
@@ -393,12 +424,15 @@ final class Dendrila_Calendar_Bridge {
             echo '<label class="dendrila-source-option"><input type="checkbox" name="sources[]" value="' . esc_attr( $name ) . '" ' . checked( $selected, true, false ) . '> ' . esc_html( $source_label ) . '</label> ';
         }
         echo '</fieldset>';
-        echo '<p><button class="button button-primary" type="submit" id="dendrila-confirm-calendar">' . esc_html__( 'Connect this calendar', 'dendrila-calendar' ) . '</button></p>';
-        echo '</div></form>';
+        echo '<p>' . esc_html__( 'We will add and remove a temporary event to test the connection.', 'dendrila-calendar' ) . '</p>';
+        echo '<p><button class="button button-primary" type="submit" id="dendrila-confirm-calendar">' . esc_html__( 'Connect this calendar', 'dendrila-calendar' ) . '</button> ';
+        echo '<button class="button" type="button" id="dendrila-calendar-back">' . esc_html__( 'Back', 'dendrila-calendar' ) . '</button></p>';
+        echo '</div><p id="dendrila-discovery-feedback" role="status" aria-live="polite"></p></form>';
         echo '<div id="dendrila-oauth-unavailable" class="dendrila-connect-card" hidden>';
         echo '<h3>' . esc_html__( 'Connect your account', 'dendrila-calendar' ) . '</h3>';
         echo '<p>' . esc_html__( 'Direct account authorization is not available yet for this service. Dendrila cannot connect to your account just by selecting its name.', 'dendrila-calendar' ) . '</p>';
-        echo '<p><a class="button" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-sync&dendrila_method=subscription' ) ) . '">' . esc_html__( 'Use a read-only calendar subscription instead', 'dendrila-calendar' ) . '</a></p></div>';
+        echo '<p><a class="button" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-sync&dendrila_method=subscription' ) ) . '">' . esc_html__( 'Use a read-only calendar subscription instead', 'dendrila-calendar' ) . '</a></p>';
+        echo '<p><button class="button" type="button" id="dendrila-oauth-back">' . esc_html__( 'Back', 'dendrila-calendar' ) . '</button></p></div>';
         foreach ( self::connections() as $id => $item ) {
             echo '<div class="dendrila-bridge-connection"><h3>' . esc_html( $item['label'] ) . '</h3>';
             echo '<p>' . esc_html( implode( ', ', $item['sources'] ) ) . ' — ' . esc_html( $item['last_run'] ?: __( 'Never synchronized', 'dendrila-calendar' ) ) . ' UTC</p>';

@@ -60,6 +60,9 @@ msgstr ""
 msgid "Automatic synchronization"
 msgstr ""
 
+msgid "Back"
+msgstr ""
+
 msgid "Back to calendar"
 msgstr ""
 
@@ -87,16 +90,10 @@ msgstr ""
 msgid "Calendar view"
 msgstr ""
 
-msgid "Cannot connect to that CalDAV calendar. Verify its calendar URL and application password."
-msgstr ""
-
 msgid "Change source and destination settings"
 msgstr ""
 
 msgid "Check the calendar address, credentials and selected sources."
-msgstr ""
-
-msgid "Choose a calendar below, then confirm the connection."
 msgstr ""
 
 msgid "Choose how appointments reach the calendar you already use."
@@ -142,6 +139,9 @@ msgid "Connection method"
 msgstr ""
 
 msgid "Connection name"
+msgstr ""
+
+msgid "Continue"
 msgstr ""
 
 msgid "Copy link"
@@ -348,6 +348,9 @@ msgstr ""
 msgid "Select and copy the link manually."
 msgstr ""
 
+msgid "Select at least one appointment source."
+msgstr ""
+
 msgid "Select at least one available source and a valid destination."
 msgstr ""
 
@@ -384,9 +387,6 @@ msgstr ""
 msgid "Step 2 — Your destination calendar"
 msgstr ""
 
-msgid "Step 3 — Confirm the setup"
-msgstr ""
-
 msgid "Subscribe your personal calendar"
 msgstr ""
 
@@ -414,13 +414,22 @@ msgstr ""
 msgid "Synchronize now"
 msgstr ""
 
+msgid "The calendar connection could not be saved. Please try again."
+msgstr ""
+
 msgid "The calendar server redirected to an unsafe address."
+msgstr ""
+
+msgid "The calendar service could not be reached securely."
 msgstr ""
 
 msgid "The calendar service did not accept the connection ("
 msgstr ""
 
 msgid "The calendar service returned an unreadable response. PHP DOM/XML may be unavailable."
+msgstr ""
+
+msgid "The calendar write test failed. Check the application password and make sure you can add and delete events in this calendar."
 msgstr ""
 
 msgid "The full link is displayed only once after creation. If it is lost, revoke it and create a new one."
@@ -499,6 +508,9 @@ msgid "Use your Apple Account email and an app-specific password. Connection may
 msgstr ""
 
 msgid "View"
+msgstr ""
+
+msgid "We will add and remove a temporary event to test the connection."
 msgstr ""
 
 msgid "We will guide you through the connection. You do not need an API key or a technical calendar address."

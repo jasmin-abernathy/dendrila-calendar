@@ -54,7 +54,8 @@ final class Dendrila_Calendar_Discovery {
         }
         if ( 'icloud' === $provider ) {
             $host = strtolower( $target['host'] ?? '' );
-            return 'caldav.icloud.com' === $host || (bool) preg_match( '/^[a-z0-9-]+-caldav\.icloud\.com$/D', $host );
+            return 443 === (int) ( $target['port'] ?? 443 ) &&
+                ( 'caldav.icloud.com' === $host || (bool) preg_match( '/^p[0-9]+-caldav\.icloud\.com$/D', $host ) );
         }
         return strtolower( $target['host'] ?? '' ) === strtolower( $source['host'] ?? '' ) &&
             (int) ( $target['port'] ?? 443 ) === (int) ( $source['port'] ?? 443 );
@@ -62,8 +63,8 @@ final class Dendrila_Calendar_Discovery {
 
     /** Resolve DAV hrefs; validate every resolved URL before sending authentication. */
     public static function resolve_href( $href, $base, $origin, $provider ) {
-        $href = html_entity_decode( (string) $href, ENT_QUOTES | ENT_XML1, 'UTF-8' );
-        if ( '' === $href || strlen( $href ) > 1500 || 0 === strpos( $href, '//' ) || preg_match( '/[\x00-\x1f]/', $href ) ) {
+        $href = is_string( $href ) ? $href : '';
+        if ( '' === $href || strlen( $href ) > 1500 || 0 === strpos( $href, '//' ) || preg_match( '/[\x00-\x20\x7f]/', $href ) || false !== strpos( $href, chr( 92 ) ) ) {
             return false;
         }
         if ( preg_match( '~^https://~i', $href ) ) {
@@ -73,7 +74,7 @@ final class Dendrila_Calendar_Discovery {
             $authority = $parts['host'] . ( isset( $parts['port'] ) ? ':' . $parts['port'] : '' );
             $url = 'https://' . $authority . $href;
         } elseif ( false === strpos( $href, ':' ) && false === strpos( $href, '?' ) && false === strpos( $href, '#' ) ) {
-            $url = trailingslashit( $base ) . $href;
+            $url = substr( $base, 0, strrpos( $base, '/' ) + 1 ) . $href;
         } else {
             return false;
         }
@@ -83,28 +84,39 @@ final class Dendrila_Calendar_Discovery {
     /** Extract DAV XML without resolving external entities or treating untrusted hrefs as URLs yet. */
     public static function parse_dav( $xml ) {
         if ( ! class_exists( 'DOMDocument' ) || ! class_exists( 'DOMXPath' ) || ! is_string( $xml ) ||
-             strlen( $xml ) > self::RESPONSE_BYTES || false !== stripos( $xml, '<!DOCTYPE' ) ) {
+             '' === trim( $xml ) || strlen( $xml ) > self::RESPONSE_BYTES || false !== stripos( $xml, '<!DOCTYPE' ) ) {
             return false;
         }
         $doc = new DOMDocument();
         $old = libxml_use_internal_errors( true );
         try {
             $valid = $doc->loadXML( $xml, LIBXML_NONET | LIBXML_NOERROR | LIBXML_NOWARNING );
-            if ( ! $valid ) {
+            if ( ! $valid || $doc->doctype ) {
                 return false;
             }
             $xp = new DOMXPath( $doc );
-            $principal = trim( (string) $xp->evaluate( 'string(//*[local-name()="current-user-principal"]/*[local-name()="href"][1])' ) );
-            $home = trim( (string) $xp->evaluate( 'string(//*[local-name()="calendar-home-set"]/*[local-name()="href"][1])' ) );
+            $xp->registerNamespace( 'd', 'DAV:' );
+            $xp->registerNamespace( 'c', 'urn:ietf:params:xml:ns:caldav' );
+            if ( ! $xp->evaluate( 'boolean(/d:multistatus)' ) ) {
+                return false;
+            }
+            $principal = '';
+            $home = '';
             $calendars = array();
-            foreach ( $xp->query( '//*[local-name()="response"]' ) as $response ) {
-                $is_calendar = $xp->query( './/*[local-name()="resourcetype"]/*[local-name()="calendar"]', $response );
-                if ( ! $is_calendar || ! $is_calendar->length ) {
+            foreach ( $xp->query( '/d:multistatus/d:response' ) as $response ) {
+                $properties = 'd:propstat[substring(normalize-space(d:status), 10, 3) = "200"]/d:prop';
+                if ( '' === $principal ) {
+                    $principal = trim( $xp->evaluate( 'string(' . $properties . '/d:current-user-principal/d:href)', $response ) );
+                }
+                if ( '' === $home ) {
+                    $home = trim( $xp->evaluate( 'string(' . $properties . '/c:calendar-home-set/d:href)', $response ) );
+                }
+                if ( ! $xp->evaluate( 'boolean(' . $properties . '/d:resourcetype/c:calendar)', $response ) ) {
                     continue;
                 }
-                $href = trim( (string) $xp->evaluate( 'string(./*[local-name()="href"][1])', $response ) );
-                $label = trim( (string) $xp->evaluate( 'string(.//*[local-name()="displayname"][1])', $response ) );
-                if ( $href ) {
+                $href = trim( $xp->evaluate( 'string(d:href)', $response ) );
+                $label = trim( $xp->evaluate( 'string(' . $properties . '/d:displayname)', $response ) );
+                if ( '' !== $href ) {
                     $calendars[] = array( 'href' => $href, 'name' => $label );
                 }
             }
@@ -116,13 +128,12 @@ final class Dendrila_Calendar_Discovery {
     }
 
     private static function propfind( $url, $origin, $provider, $user, $password, $depth, $elements ) {
-        $requested = array( 'url' => $url, 'redirects' => 0 );
         for ( $attempt = 0; $attempt < 3; ++$attempt ) {
-            if ( ! self::trusted_url( $requested['url'], $origin, $provider ) ) {
+            if ( ! self::trusted_url( $url, $origin, $provider ) ) {
                 return new WP_Error( 'dendrila_unsafe_dav', __( 'The calendar server redirected to an unsafe address.', 'dendrila-calendar' ) );
             }
             $body = '<?xml version="1.0" encoding="utf-8"?><d:propfind xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:caldav"><d:prop>' . $elements . '</d:prop></d:propfind>';
-            $response = wp_safe_remote_request( $requested['url'], array(
+            $response = wp_safe_remote_request( $url, array(
                 'method' => 'PROPFIND',
                 'timeout' => 15,
                 'redirection' => 0,
@@ -137,16 +148,15 @@ final class Dendrila_Calendar_Discovery {
                 'limit_response_size' => self::RESPONSE_BYTES,
             ) );
             if ( is_wp_error( $response ) ) {
-                return $response;
+                return new WP_Error( 'dendrila_dav_transport', __( 'The calendar service could not be reached securely.', 'dendrila-calendar' ) );
             }
             $status = (int) wp_remote_retrieve_response_code( $response );
             if ( in_array( $status, array( 301, 302, 307, 308 ), true ) ) {
                 $location = wp_remote_retrieve_header( $response, 'location' );
-                $url = self::resolve_href( $location, $requested['url'], $origin, $provider );
+                $url = self::resolve_href( $location, $url, $origin, $provider );
                 if ( ! $url ) {
                     return new WP_Error( 'dendrila_untrusted_dav_redirect', __( 'Calendar discovery was redirected to another service.', 'dendrila-calendar' ) );
                 }
-                $requested['url'] = $url;
                 continue;
             }
             if ( 207 !== $status ) {
@@ -156,7 +166,7 @@ final class Dendrila_Calendar_Discovery {
             if ( false === $parsed ) {
                 return new WP_Error( 'dendrila_dav_xml', __( 'The calendar service returned an unreadable response. PHP DOM/XML may be unavailable.', 'dendrila-calendar' ) );
             }
-            $parsed['response_url'] = $requested['url'];
+            $parsed['response_url'] = $url;
             return $parsed;
         }
         return new WP_Error( 'dendrila_dav_redirects', __( 'Too many calendar redirects.', 'dendrila-calendar' ) );
@@ -194,7 +204,7 @@ final class Dendrila_Calendar_Discovery {
             return $listed;
         }
         $calendars = array();
-        foreach ( array_slice( $listed['calendars'], 0, self::MAX_RESULTS ) as $entry ) {
+        foreach ( $listed['calendars'] as $entry ) {
             $url = self::resolve_href( $entry['href'], $listed['response_url'], $origin, $provider );
             if ( ! $url ) {
                 continue;
@@ -202,9 +212,13 @@ final class Dendrila_Calendar_Discovery {
             $label = sanitize_text_field( $entry['name'] );
             if ( '' === $label ) {
                 $path = trim( (string) wp_parse_url( $url, PHP_URL_PATH ), '/' );
-                $label = rawurldecode( basename( $path ) );
+                $label = sanitize_text_field( rawurldecode( basename( $path ) ) );
             }
-            $calendars[ $url ] = array( 'url' => trailingslashit( $url ), 'name' => $label );
+            $url = trailingslashit( $url );
+            $calendars[ $url ] = array( 'url' => $url, 'name' => $label );
+            if ( count( $calendars ) >= self::MAX_RESULTS ) {
+                break;
+            }
         }
         if ( ! $calendars ) {
             return new WP_Error( 'dendrila_dav_empty', __( 'No calendar was found in this account.', 'dendrila-calendar' ) );
@@ -216,13 +230,14 @@ final class Dendrila_Calendar_Discovery {
         return 'dendrila_dav_' . get_current_user_id() . '_' . substr( hash( 'sha256', $token ), 0, 30 );
     }
 
-    public static function verified_choice( $token, $url, $provider, $username ) {
+    public static function verified_choice( $token, $url, $provider, $username, $password ) {
         if ( ! is_string( $token ) || ! preg_match( '/^[a-f0-9]{32}$/D', $token ) ) {
             return false;
         }
         $data = get_transient( self::transient_key( $token ) );
         return is_array( $data ) && ( $data['provider'] ?? '' ) === $provider &&
             hash_equals( (string) ( $data['username'] ?? '' ), (string) $username ) &&
+            hash_equals( (string) ( $data['proof'] ?? '' ), hash_hmac( 'sha256', $password, wp_salt( 'auth' ) . $token ) ) &&
             in_array( $url, $data['urls'] ?? array(), true );
     }
 
@@ -260,6 +275,7 @@ final class Dendrila_Calendar_Discovery {
         set_transient( self::transient_key( $token ), array(
             'provider' => $provider,
             'username' => $username,
+            'proof' => hash_hmac( 'sha256', $password, wp_salt( 'auth' ) . $token ),
             'urls' => array_column( $calendars, 'url' ),
         ), self::TOKEN_LIFETIME );
         wp_send_json_success( array( 'calendars' => $calendars, 'token' => $token ) );
