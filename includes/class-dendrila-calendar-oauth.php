@@ -394,7 +394,7 @@ final class Dendrila_Calendar_OAuth {
             $body['transactionId'] = wp_generate_uuid4();
         }
         $created = self::api( $item['provider'], $access, 'POST', self::calendar_url( $item ), $body );
-        if ( ! $created || 201 !== $created['status'] || empty( $created['data']['id'] ) ) {
+        if ( ! $created || ! in_array( $created['status'], 'google' === $item['provider'] ? array( 200, 201 ) : array( 201 ), true ) || empty( $created['data']['id'] ) ) {
             return false;
         }
         $deleted = self::api( $item['provider'], $access, 'DELETE', self::calendar_url( $item, $created['data']['id'] ) );
