@@ -23,11 +23,23 @@ msgstr "Impossible de transmettre une demande de compatibilité. Vérifiez l’e
 msgid "A connector compatibility request was submitted for review."
 msgstr "Une demande de compatibilité de connecteur a été transmise pour examen."
 
+msgid "A synchronization attempt has finished. Review its status below."
+msgstr "Une tentative de synchronisation est terminée. Consultez son état ci-dessous."
+
+msgid "Account authorization is not configured for this site."
+msgstr "La connexion à ce compte n’est pas encore activée sur ce site."
+
+msgid "Account authorization was cancelled."
+msgstr "L’autorisation du compte a été annulée."
+
 msgid "Account connection is not yet available for this service. You can use a calendar subscription instead."
 msgstr "La connexion directe n’est pas encore disponible pour ce service. Vous pouvez utiliser un abonnement."
 
 msgid "Account username or email"
 msgstr "Identifiant ou adresse e-mail"
+
+msgid "Actual appointments read from detected booking plugins. Select an appointment in the calendar to open its original booking tool; imported bookings are not editable here."
+msgstr "Rendez-vous réellement récupérés depuis les extensions détectées. Sélectionnez un rendez-vous dans le calendrier pour ouvrir son extension d’origine ; les réservations importées ne sont pas modifiables ici."
 
 msgid "Add an event"
 msgstr "Ajouter un événement"
@@ -50,11 +62,20 @@ msgstr "Mot de passe d’application"
 msgid "Appointment"
 msgstr "Rendez-vous"
 
+msgid "Appointments from all detected booking plugins appear here. External calendar connection is not required to view them."
+msgstr "Les rendez-vous de toutes les extensions compatibles détectées s’affichent ici. Aucun agenda externe n’est nécessaire pour les consulter."
+
 msgid "Appointments to send"
 msgstr "Rendez-vous à transmettre"
 
 msgid "Approved"
 msgstr "Approuvé"
+
+msgid "Authorize your Google account when this service is enabled."
+msgstr "Autorisez votre compte Google lorsque ce service sera activé."
+
+msgid "Authorize your Microsoft account when this service is enabled."
+msgstr "Autorisez votre compte Microsoft lorsque ce service sera activé."
 
 msgid "Automatic calendar synchronization"
 msgstr "Synchronisation automatique des calendriers"
@@ -77,6 +98,9 @@ msgstr "Agenda"
 msgid "Calendar connected. Automatic direct synchronization is enabled."
 msgstr "Agenda connecté. La synchronisation directe est activée."
 
+msgid "Calendar disconnected. Existing remote events were not removed."
+msgstr "Agenda déconnecté. Les événements déjà transmis n’ont pas été supprimés."
+
 msgid "Calendar disconnected. Previously created external events were not deleted."
 msgstr "Agenda déconnecté. Les événements déjà créés à l’extérieur sont conservés."
 
@@ -98,20 +122,29 @@ msgstr "Modifier les sources et la destination"
 msgid "Check the calendar address, credentials and selected sources."
 msgstr "Vérifiez l’adresse du calendrier, les identifiants et les sources sélectionnées."
 
+msgid "Choose Google or Microsoft to authorize Dendrila Calendar, then select the calendar that will receive your appointments."
+msgstr "Choisissez Google ou Microsoft pour autoriser Dendrila Calendar, puis sélectionnez l’agenda qui recevra vos rendez-vous."
+
+msgid "Choose a calendar and at least one source."
+msgstr "Choisissez un agenda et au moins une source."
+
+msgid "Choose an agenda"
+msgstr "Choisir un agenda"
+
 msgid "Choose how appointments reach the calendar you already use."
 msgstr "Choisissez comment les rendez-vous rejoindront votre agenda habituel."
 
 msgid "Choose month"
 msgstr "Choisir le mois"
 
+msgid "Choose your destination calendar"
+msgstr "Choisissez votre agenda de destination"
+
 msgid "Choosing an app only changes the instructions. Create an actual private link below and add it in that app."
 msgstr "Choisir une application ne change que les instructions. Créez un véritable lien privé ci-dessous et ajoutez-le dans cette application."
 
 msgid "Compatible active plugins are preselected. You may deselect them. Inactive or unsupported plugins cannot be synchronized."
 msgstr "Les extensions actives compatibles sont présélectionnées. Vous pouvez les décocher. Les extensions inactives ou non prises en charge ne peuvent pas être synchronisées."
-
-msgid "Complete setup by connecting and validating a CalDAV destination below."
-msgstr "Terminez la configuration en connectant et en validant un agenda CalDAV ci-dessous."
 
 msgid "Configuration"
 msgstr "Configuration"
@@ -128,14 +161,17 @@ msgstr "Configurer les sources et la destination"
 msgid "Connect a CalDAV calendar such as Nextcloud. New and changed WordPress bookings are pushed automatically approximately every five minutes while WordPress cron runs. This is one-way; the destination is never polled for changes."
 msgstr "Connectez un agenda CalDAV, par exemple Nextcloud. Les nouveaux rendez-vous et leurs modifications sont envoyés environ toutes les cinq minutes lorsque les tâches programmées WordPress fonctionnent. La synchronisation est unidirectionnelle."
 
-msgid "Connect an existing calendar"
-msgstr "Connecter un agenda existant"
-
 msgid "Connect this calendar"
 msgstr "Connecter cet agenda"
 
+msgid "Connect with %s"
+msgstr "Se connecter avec %s"
+
 msgid "Connect your account"
 msgstr "Connecter votre compte"
+
+msgid "Connect your calendar account"
+msgstr "Connecter votre compte d’agenda"
 
 msgid "Connection method"
 msgstr "Méthode de connexion"
@@ -148,6 +184,9 @@ msgstr "Continuer"
 
 msgid "Copy link"
 msgstr "Copier le lien"
+
+msgid "Create a private read-only subscription link."
+msgstr "Créez un lien d’abonnement privé en lecture seule."
 
 msgid "Create subscription link"
 msgstr "Créer un lien d’abonnement"
@@ -173,6 +212,9 @@ msgstr "Événements locaux Dendrila"
 msgid "Direct account authorization is not available yet for this service. Dendrila cannot connect to your account just by selecting its name."
 msgstr "La connexion directe à ce service n’est pas encore disponible. Sélectionner son nom ne suffit pas pour établir une connexion."
 
+msgid "Direct authorization requires the publisher to configure the Dendrila OAuth application once. Users do not need developer credentials."
+msgstr "La connexion directe doit être activée une fois par l’éditeur de Dendrila. Vous n’avez pas besoin de compte développeur."
+
 msgid "Direct synchronization into an existing calendar"
 msgstr "Synchronisation directe avec un agenda existant"
 
@@ -197,6 +239,9 @@ msgstr "Saisissez votre identifiant et votre mot de passe d’application."
 msgid "Enter your calendar service address and account details."
 msgstr "Saisissez l’adresse de votre service d’agenda, puis vos identifiants."
 
+msgid "Enter your cloud address and choose an agenda."
+msgstr "Saisissez l’adresse de votre cloud et choisissez un agenda."
+
 msgid "Event"
 msgstr "Événement"
 
@@ -209,6 +254,9 @@ msgstr "Rechercher des événements"
 msgid "Find my calendars"
 msgstr "Trouver mes calendriers"
 
+msgid "Finish by connecting your calendar account or creating an optional private calendar subscription."
+msgstr "Terminez en connectant votre compte d’agenda ou en créant un abonnement privé facultatif."
+
 msgid "Finish connecting my calendar"
 msgstr "Terminer la connexion de mon agenda"
 
@@ -218,14 +266,17 @@ msgstr "Terminez la configuration de Dendrila Calendar pour activer les sources 
 msgid "Forbidden"
 msgstr "Accès refusé"
 
-msgid "Google Calendar (read-only subscription for now)"
-msgstr "Google Agenda (abonnement en lecture seule pour le moment)"
+msgid "Google / Outlook"
+msgstr "Google / Outlook"
+
+msgid "Google Calendar"
+msgstr "Google Agenda"
 
 msgid "Google Calendar and Outlook need OAuth account authorization and are not connected by this CalDAV form. Existing URL subscriptions remain available separately."
 msgstr "Google Agenda et Outlook nécessitent une connexion OAuth, indisponible avec ce formulaire CalDAV. Les abonnements par URL restent disponibles séparément."
 
-msgid "Google and Outlook do not have one-click access yet. They use an optional read-only subscription until direct authorization is ready."
-msgstr "La connexion directe à Google et Outlook n’est pas encore disponible. Vous pouvez provisoirement choisir un abonnement en lecture seule."
+msgid "Google and Outlook can authorize access when the Dendrila OAuth application is enabled by the publisher. Otherwise a read-only calendar subscription remains available."
+msgstr "Google et Outlook peuvent autoriser l’accès lorsque l’application OAuth Dendrila est activée par son éditeur. Sinon, un abonnement en lecture seule reste disponible."
 
 msgid "HTTPS is required for private calendar subscriptions."
 msgstr "Le protocole HTTPS est obligatoire pour les abonnements privés."
@@ -257,8 +308,14 @@ msgstr "Chargement des événements…"
 msgid "Local events"
 msgstr "Événements locaux"
 
+msgid "Local events can be sent to connected external calendars. They do not yet block booking availability in third-party booking plugins. Do not use this form to prevent reservations."
+msgstr "Les événements locaux peuvent être envoyés aux agendas externes connectés. Ils ne bloquent pas encore les disponibilités dans les extensions de réservation. Ne les utilisez pas pour empêcher une réservation."
+
 msgid "Looking for your calendars…"
 msgstr "Recherche de vos agendas…"
+
+msgid "Manage local events"
+msgstr "Gérer les événements locaux"
 
 msgid "Maximum number of subscriptions reached. Revoke an old link first."
 msgstr "Nombre maximal d’abonnements atteint. Révoquez d’abord un ancien lien."
@@ -278,6 +335,9 @@ msgstr "Suivant"
 msgid "Nextcloud (direct connection)"
 msgstr "Nextcloud (connexion directe)"
 
+msgid "Nextcloud / iCloud"
+msgstr "Nextcloud / iCloud"
+
 msgid "No calendar was found in this account."
 msgstr "Aucun calendrier trouvé dans ce compte."
 
@@ -292,6 +352,9 @@ msgstr "Aucune destination externe n’est encore connectée. Terminez la connex
 
 msgid "No supported appointment plugin was detected. You can start with local events and return to setup later."
 msgstr "Aucune extension de réservation compatible n’a été détectée. Vous pouvez commencer avec les événements locaux et revenir ensuite dans l’assistant."
+
+msgid "No writable calendar was found in this account."
+msgstr "Aucun agenda modifiable n’a été trouvé sur ce compte."
 
 msgid "Not authorized."
 msgstr "Accès refusé."
@@ -317,17 +380,17 @@ msgstr "Ouvrir le calendrier unifié"
 msgid "Other CalDAV service"
 msgstr "Autre service CalDAV"
 
-msgid "Outlook / Microsoft 365 (read-only subscription for now)"
-msgstr "Outlook / Microsoft 365 (abonnement en lecture seule pour le moment)"
+msgid "Outlook / Microsoft 365"
+msgstr "Outlook / Microsoft 365"
 
 msgid "Pending"
 msgstr "En attente"
 
+msgid "Pick your everyday calendar. We will guide you without technical setup."
+msgstr "Choisissez votre agenda habituel. Nous vous guiderons sans réglages techniques."
+
 msgid "Previous"
 msgstr "Précédent"
-
-msgid "Read-only subscription"
-msgstr "Abonnement en lecture seule"
 
 msgid "Reserved day"
 msgstr "Journée réservée"
@@ -416,6 +479,9 @@ msgstr "Synchroniser les rendez-vous avec votre agenda externe"
 msgid "Synchronize now"
 msgstr "Synchroniser maintenant"
 
+msgid "Test and connect this calendar"
+msgstr "Tester et connecter cet agenda"
+
 msgid "The calendar connection could not be saved. Please try again."
 msgstr "Impossible d’enregistrer la connexion à cet agenda. Réessayez."
 
@@ -434,8 +500,17 @@ msgstr "Réponse illisible du service. Le module XML de PHP peut être manquant.
 msgid "The calendar write test failed. Check the application password and make sure you can add and delete events in this calendar."
 msgstr "Le test d’écriture a échoué. Vérifiez le mot de passe d’application et vos droits d’ajout et de suppression dans cet agenda."
 
+msgid "The connection could not be completed. Try again."
+msgstr "La connexion n’a pas pu aboutir. Réessayez."
+
+msgid "The connection expired. Try again."
+msgstr "La connexion a expiré. Réessayez."
+
 msgid "The full link is displayed only once after creation. If it is lost, revoke it and create a new one."
 msgstr "Le lien complet ne s’affiche qu’une fois après sa création. S’il est perdu, révoquez-le et créez-en un autre."
+
+msgid "The provider did not confirm that events can be created and removed. No connection was saved."
+msgstr "Le service n’a pas confirmé les droits de création et de suppression d’événements. Aucune connexion n’a été enregistrée."
 
 msgid "The server cannot securely protect the calendar password."
 msgstr "Le serveur ne peut pas protéger de manière sûre le mot de passe du calendrier."
@@ -451,9 +526,6 @@ msgstr "Cet assistant détecte les extensions de réservation actives et vous gu
 
 msgid "This list contains only events created in Dendrila Calendar. Appointments imported from Easy Appointments and other plugins appear in the unified calendar."
 msgstr "Cette liste contient uniquement les événements créés dans Dendrila Calendar. Les rendez-vous importés depuis Easy Appointments et les autres extensions apparaissent dans le calendrier unifié."
-
-msgid "This list is loaded directly by WordPress and remains visible when the interactive calendar is unavailable."
-msgstr "Cette liste est chargée directement par WordPress et reste visible si le calendrier interactif est indisponible."
 
 msgid "This server did not provide a calendar account. Check your service address."
 msgstr "Le service n’a pas fourni de compte de calendrier. Vérifiez son adresse."
@@ -503,6 +575,9 @@ msgstr "Rendez-vous à venir (vue serveur)"
 msgid "Use a read-only calendar subscription instead"
 msgstr "Utiliser plutôt un abonnement de calendrier en lecture seule"
 
+msgid "Use an Apple app password to connect your iCloud calendar."
+msgstr "Utilisez un mot de passe d’application Apple pour connecter votre agenda iCloud."
+
 msgid "Use an application-specific password if your service requires one. Your password is encrypted before it is saved."
 msgstr "Utilisez un mot de passe spécifique à l’application si le service le demande. Votre mot de passe sera chiffré avant son enregistrement."
 
@@ -527,6 +602,12 @@ msgstr "Où souhaitez-vous voir vos rendez-vous ?"
 msgid "Where will you use your calendar?"
 msgstr "Dans quel agenda souhaitez-vous afficher vos événements ?"
 
+msgid "Which appointments should be sent?"
+msgstr "Quels rendez-vous envoyer ?"
+
+msgid "Which calendar do you use?"
+msgstr "Quel agenda utilisez-vous ?"
+
 msgid "You are not allowed to configure Dendrila Calendar."
 msgstr "Vous ne pouvez pas configurer Dendrila Calendar."
 
@@ -536,14 +617,20 @@ msgstr "Vous ne pouvez pas gérer les connexions des agendas."
 msgid "You are not allowed to view this calendar."
 msgstr "Vous n’avez pas le droit de consulter ce calendrier."
 
+msgid "You cannot manage calendar connections."
+msgstr "Vous ne pouvez pas gérer les connexions des agendas."
+
 msgid "You cannot manage calendar subscriptions."
 msgstr "Vous ne pouvez pas gérer les abonnements du calendrier."
 
-msgid "Your appointments from other plugins are shown here. The Local events submenu lists only events created in Dendrila Calendar."
-msgstr "Les rendez-vous des autres extensions s’affichent ici. Le sous-menu « Événements locaux » répertorie uniquement ceux créés dans Dendrila Calendar."
+msgid "Your calendar has been connected and synchronization started."
+msgstr "Votre agenda est connecté et la synchronisation a démarré."
 
 msgid "Your cloud address"
 msgstr "Adresse de votre cloud"
 
 msgid "Your external calendar is not connected. Selecting an application in the list below is not enough; complete a CalDAV connection or create and subscribe to a private URL."
 msgstr "Votre agenda externe n’est pas connecté. Sélectionner une application dans la liste ne suffit pas : terminez une connexion CalDAV ou créez un lien privé et abonnez-vous à ce lien."
+
+msgid "iCalendar subscription"
+msgstr "Abonnement iCalendar"
