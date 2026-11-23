@@ -341,6 +341,7 @@ final class Dendrila_Calendar_OAuth {
         }
         $provider = $pending['provider'];
         $calendar = isset( $_POST['calendar'] ) && is_string( $_POST['calendar'] ) ? sanitize_text_field( wp_unslash( $_POST['calendar'] ) ) : '';
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Input array is filtered to strings, sanitized and matched to allowlisted source IDs.
         $submitted = isset( $_POST['sources'] ) && is_array( $_POST['sources'] ) ? wp_unslash( $_POST['sources'] ) : array();
         $requested = array_map( 'sanitize_key', array_filter( $submitted, 'is_string' ) );
         $sources = Dendrila_Calendar_Subscriptions::allowed_sources( $requested, Dendrila_Calendar_Sources::available() );
@@ -533,7 +534,7 @@ final class Dendrila_Calendar_OAuth {
                 echo '<input type="hidden" name="provider" value="' . esc_attr( $provider ) . '">';
                 wp_nonce_field( 'dendrila_calendar_oauth_start' );
                 echo '<button class="button button-primary" type="submit" ' . disabled( ! self::ready( $provider ), true, false ) . '>' .
-                    esc_html( sprintf( __( 'Connect with %s', 'dendrila-calendar' ), $label ) ) . '</button>';
+                    esc_html( sprintf( /* translators: %s: calendar provider name, such as Google Calendar. */ __( 'Connect with %s', 'dendrila-calendar' ), $label ) ) . '</button>';
                 if ( ! self::ready( $provider ) ) {
                     echo '<p class="description">' . esc_html__( 'Direct authorization requires the publisher to configure the Dendrila OAuth application once. Users do not need developer credentials.', 'dendrila-calendar' ) . '</p>';
                 }
