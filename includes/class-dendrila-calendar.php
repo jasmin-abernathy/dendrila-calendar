@@ -259,6 +259,7 @@ final class Dendrila_Calendar {
         if ( class_exists( 'Dendrila_Calendar_Setup' ) && ! Dendrila_Calendar_Setup::complete() ) {
             echo '<div class="notice notice-warning inline"><p>' . esc_html__( 'Your external calendar is not connected. Selecting an application in the list below is not enough; complete a CalDAV connection or create and subscribe to a private URL.', 'dendrila-calendar' ) . '</p></div>';
         }
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only tab selection; no state change.
         $method = isset( $_GET['dendrila_method'] ) ? sanitize_key( wp_unslash( $_GET['dendrila_method'] ) ) : 'direct';
         echo '<nav class="dendrila-connection-methods" aria-label="' . esc_attr__( 'Connection method', 'dendrila-calendar' ) . '">';
         echo '<a class="button ' . ( 'direct' === $method ? 'button-primary' : '' ) . '" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-sync' ) ) . '">' . esc_html__( 'Connect an existing calendar', 'dendrila-calendar' ) . '</a> ';

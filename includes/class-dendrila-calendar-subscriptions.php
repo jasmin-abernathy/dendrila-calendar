@@ -66,6 +66,7 @@ final class Dendrila_Calendar_Subscriptions {
             wp_send_json_error( array( 'message' => __( 'HTTPS is required for private calendar subscriptions.', 'dendrila-calendar' ) ), 400 );
         }
         $available = Dendrila_Calendar_Sources::available();
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Subsequent sanitize_key() and allowed_sources() enforce a strict allowlist.
         $submitted = isset( $_POST['sources'] ) && is_array( $_POST['sources'] ) ? wp_unslash( $_POST['sources'] ) : array();
         $requested = array_map( 'sanitize_key', array_filter( $submitted, 'is_string' ) );
         $sources = self::allowed_sources( $requested, $available );
@@ -275,9 +276,11 @@ final class Dendrila_Calendar_Subscriptions {
             // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- Standard cache-plugin compatibility constant, not a plugin-defined API.
             define( 'DONOTCACHEPAGE', true );
         }
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- This GET parameter IS the private bearer token.
+        // Public external calendars cannot supply WordPress nonces: their secret URL token is checked cryptographically below.
+        // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Authenticated bearer-token read, not a WordPress form.
         $token = isset( $_GET['dendrila_calendar_feed'] ) && is_string( $_GET['dendrila_calendar_feed'] ) ?
             sanitize_text_field( wp_unslash( $_GET['dendrila_calendar_feed'] ) ) : '';
+        // phpcs:enable WordPress.Security.NonceVerification.Recommended
         $subscription = self::lookup_token( $token, self::subscriptions() );
         if ( ! $subscription ) {
             self::error_response( 404 );

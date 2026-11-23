@@ -89,6 +89,7 @@ final class Dendrila_Calendar_Setup {
         if ( in_array( $pagenow, array( 'admin-post.php', 'admin-ajax.php' ), true ) ) {
             return;
         }
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin-only navigation slug, sanitized and used only for routing/notices.
         $page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
         if ( 'dendrila-calendar-setup' === $page ) {
             delete_option( self::REDIRECT_OPTION );
@@ -110,11 +111,16 @@ final class Dendrila_Calendar_Setup {
         if ( ! current_user_can( 'manage_options' ) ) {
             return;
         }
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin-only navigation slug, sanitized and used only for routing/notices.
         $page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
         if ( 'dendrila-calendar-sync' === $page && ! self::complete() ) {
             echo '<div class="notice notice-info"><p>' . esc_html__( 'Complete setup by connecting and validating a CalDAV destination below.', 'dendrila-calendar' ) . '</p></div>';
-            $reports_sent = isset( $_GET['reports_sent'] ) ? absint( $_GET['reports_sent'] ) : 0;
-            $reports_failed = isset( $_GET['reports_failed'] ) ? absint( $_GET['reports_failed'] ) : 0;
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only report counter; absint() sanitized.
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Informational notice only; absint() sanitized.
+        $reports_sent = isset( $_GET['reports_sent'] ) ? absint( $_GET['reports_sent'] ) : 0;
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only report counter; absint() sanitized.
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Informational notice only; absint() sanitized.
+        $reports_failed = isset( $_GET['reports_failed'] ) ? absint( $_GET['reports_failed'] ) : 0;
             if ( $reports_sent ) {
                 echo '<div class="notice notice-info"><p>' . esc_html__( 'A connector compatibility request was submitted for review.', 'dendrila-calendar' ) . '</p></div>';
             }
@@ -206,6 +212,7 @@ final class Dendrila_Calendar_Setup {
         check_admin_referer( 'dendrila_calendar_setup' );
         $detected = Dendrila_Calendar_Detector::discover();
         $ready = self::ready_sources( $detected );
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each submitted source is sanitize_key()'d and intersected with installed, ready adapters.
         $submitted = isset( $_POST['sources'] ) && is_array( $_POST['sources'] ) ? wp_unslash( $_POST['sources'] ) : array();
         $requested = array_map( 'sanitize_key', array_filter( $submitted, 'is_string' ) );
         $selected = array_values( array_unique( array_intersect( $requested, $ready ) ) );
@@ -266,6 +273,7 @@ final class Dendrila_Calendar_Setup {
         $selected = ! empty( $saved['sources'] ) ? $saved['sources'] : $ready;
         $mode = ! empty( $saved['mode'] ) ? $saved['mode'] : 'caldav';
         $calendar_service = ! empty( $saved['calendar_service'] ) ? $saved['calendar_service'] : ( 'subscription' === $mode ? 'google' : ( 'local' === $mode ? 'local' : 'nextcloud' ) );
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only setup notice, sanitized and checked against known values.
         $status = isset( $_GET['setup_status'] ) ? sanitize_key( wp_unslash( $_GET['setup_status'] ) ) : '';
         echo '<div class="wrap dendrila-calendar-setup"><h1>' . esc_html__( 'Configure Dendrila Calendar', 'dendrila-calendar' ) . '</h1>';
         echo '<p>' . esc_html__( 'This assistant detects active appointment plugins and guides external synchronization. You can view the local calendar before connecting an external destination.', 'dendrila-calendar' ) . '</p>';

@@ -253,6 +253,7 @@ final class Dendrila_Calendar_Discovery {
         $provider = isset( $_POST['provider'] ) && is_string( $_POST['provider'] ) ? sanitize_key( wp_unslash( $_POST['provider'] ) ) : 'nextcloud';
         $address = isset( $_POST['server_url'] ) && is_string( $_POST['server_url'] ) ? sanitize_text_field( wp_unslash( $_POST['server_url'] ) ) : '';
         $username = isset( $_POST['username'] ) && is_string( $_POST['username'] ) ? sanitize_text_field( wp_unslash( $_POST['username'] ) ) : '';
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- App password is a secret; sanitization would corrupt it. The connector enforces type/length, HTTPS and never returns/stores plaintext.
         $password = isset( $_POST['app_password'] ) && is_string( $_POST['app_password'] ) ? wp_unslash( $_POST['app_password'] ) : '';
         if ( ! in_array( $provider, array( 'nextcloud', 'caldav', 'icloud' ), true ) ) {
             wp_send_json_error( array( 'message' => __( 'Unsupported calendar service.', 'dendrila-calendar' ) ), 400 );

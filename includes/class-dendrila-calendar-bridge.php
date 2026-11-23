@@ -187,6 +187,7 @@ final class Dendrila_Calendar_Bridge {
             ! Dendrila_Calendar_Discovery::verified_choice( $token, $url, $provider, $username, $password ) ) {
             self::redirect( 'invalid' );
         }
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Collection is immediately restricted to strings, sanitize_key()'d and allowlisted.
         $requested = isset( $_POST['sources'] ) && is_array( $_POST['sources'] ) ? wp_unslash( $_POST['sources'] ) : array();
         $selected = array_map( 'sanitize_key', array_filter( $requested, 'is_string' ) );
         $sources = Dendrila_Calendar_Subscriptions::allowed_sources( $selected, Dendrila_Calendar_Sources::available() );
