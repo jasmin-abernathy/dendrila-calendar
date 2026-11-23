@@ -63,7 +63,7 @@ jobs:
           cp -R assets includes languages build/dendrila-calendar/
           cd build
           zip -q -r dendrila-calendar-0.0.2-installable.zip dendrila-calendar
-          unzip -t dendrila-calendar-0.0.1-installable.zip
+          unzip -t dendrila-calendar-0.0.2-installable.zip
       - name: Upload installable plugin ZIP
         uses: actions/upload-artifact@v4
         with:
