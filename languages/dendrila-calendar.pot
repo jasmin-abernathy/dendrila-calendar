@@ -213,7 +213,7 @@ msgstr ""
 msgid "Connection name"
 msgstr ""
 
-msgid "Consolidate duplicate connection"
+msgid "Connections grouped. No calendar events were deleted."
 msgstr ""
 
 msgid "Continue"
@@ -259,9 +259,6 @@ msgid "Direct synchronization into an existing calendar"
 msgstr ""
 
 msgid "Disconnect"
-msgstr ""
-
-msgid "Duplicate connection consolidated. Remote calendar events were not removed."
 msgstr ""
 
 msgid "Edit calendar event"
@@ -325,6 +322,9 @@ msgid "Google Calendar"
 msgstr ""
 
 msgid "Google Calendar and Outlook need OAuth account authorization and are not connected by this CalDAV form. Existing URL subscriptions remain available separately."
+msgstr ""
+
+msgid "Group"
 msgstr ""
 
 msgid "HTTPS is required for private calendar subscriptions."
@@ -627,10 +627,10 @@ msgstr ""
 msgid "This assistant detects active appointment plugins and guides external synchronization. You can view the local calendar before connecting an external destination."
 msgstr ""
 
-msgid "This calendar was already connected. Authorization and selected sources were updated without creating a duplicate."
+msgid "This calendar is connected more than once. Group the connections without deleting calendar events."
 msgstr ""
 
-msgid "This calendar was already connected. You can consolidate this duplicate without deleting any remote events."
+msgid "This calendar was already connected. Authorization and selected sources were updated without creating a duplicate."
 msgstr ""
 
 msgid "This list contains only events created in Dendrila Calendar. Appointments imported from Easy Appointments and other plugins appear in the unified calendar."

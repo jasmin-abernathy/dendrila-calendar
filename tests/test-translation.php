@@ -33,4 +33,10 @@ foreach ( array_keys( $expected ) as $english ) {
 if ( count( $messages ) !== count( $expected ) ) {
     throw new RuntimeException( 'Translation catalog does not match source strings' );
 }
+if ( ( $messages['Group'] ?? '' ) !== 'Regrouper' ||
+     isset( $messages['Consolidate duplicate connection'] ) ||
+     ( $messages['Connections grouped. No calendar events were deleted.'] ?? '' ) !==
+         'Connexions regroupées. Aucun événement de l’agenda n’a été supprimé.' ) {
+    throw new RuntimeException( 'Duplicate-connection action must use simple French wording.' );
+}
 echo count( $messages ) . " French translations verified against PHP source\n";

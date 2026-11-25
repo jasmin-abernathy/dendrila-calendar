@@ -215,8 +215,8 @@ msgstr "Méthode de connexion"
 msgid "Connection name"
 msgstr "Nom de la connexion"
 
-msgid "Consolidate duplicate connection"
-msgstr "Consolider la connexion en double"
+msgid "Connections grouped. No calendar events were deleted."
+msgstr "Connexions regroupées. Aucun événement de l’agenda n’a été supprimé."
 
 msgid "Continue"
 msgstr "Continuer"
@@ -262,9 +262,6 @@ msgstr "Synchronisation directe avec un agenda existant"
 
 msgid "Disconnect"
 msgstr "Déconnecter"
-
-msgid "Duplicate connection consolidated. Remote calendar events were not removed."
-msgstr "Connexion en double consolidée. Aucun événement distant n’a été supprimé."
 
 msgid "Edit calendar event"
 msgstr "Modifier l’événement"
@@ -328,6 +325,9 @@ msgstr "Google Agenda"
 
 msgid "Google Calendar and Outlook need OAuth account authorization and are not connected by this CalDAV form. Existing URL subscriptions remain available separately."
 msgstr "Google Agenda et Outlook nécessitent une connexion OAuth, indisponible avec ce formulaire CalDAV. Les abonnements par URL restent disponibles séparément."
+
+msgid "Group"
+msgstr "Regrouper"
 
 msgid "HTTPS is required for private calendar subscriptions."
 msgstr "Le protocole HTTPS est obligatoire pour les abonnements privés."
@@ -629,11 +629,11 @@ msgstr "Aucun calendrier accessible trouvé pour ce compte."
 msgid "This assistant detects active appointment plugins and guides external synchronization. You can view the local calendar before connecting an external destination."
 msgstr "Cet assistant détecte les extensions de réservation actives et vous guide pour synchroniser un agenda externe. Vous pouvez consulter le calendrier local avant de connecter une destination."
 
+msgid "This calendar is connected more than once. Group the connections without deleting calendar events."
+msgstr "Cet agenda est connecté plusieurs fois. Regroupez les connexions sans supprimer d’événements."
+
 msgid "This calendar was already connected. Authorization and selected sources were updated without creating a duplicate."
 msgstr "Cet agenda était déjà connecté. L’autorisation et les sources ont été mises à jour sans créer de doublon."
-
-msgid "This calendar was already connected. You can consolidate this duplicate without deleting any remote events."
-msgstr "Cet agenda est déjà connecté. Vous pouvez regrouper cette connexion en double sans supprimer d’événements distants."
 
 msgid "This list contains only events created in Dendrila Calendar. Appointments imported from Easy Appointments and other plugins appear in the unified calendar."
 msgstr "Cette liste contient uniquement les événements créés dans Dendrila Calendar. Les rendez-vous importés depuis Easy Appointments et les autres extensions apparaissent dans le calendrier unifié."

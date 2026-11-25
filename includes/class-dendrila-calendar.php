@@ -16,6 +16,7 @@ final class Dendrila_Calendar {
         add_action( 'save_post_' . self::POST_TYPE, array( __CLASS__, 'save_event' ) );
         add_action( 'admin_menu', array( __CLASS__, 'admin_menu' ) );
         add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
+        add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_menu_icon_style' ) );
         add_action( 'admin_notices', array( __CLASS__, 'local_events_notice' ) );
         add_action( 'wp_ajax_dendrila_calendar_events', array( __CLASS__, 'ajax_events' ) );
     }
@@ -57,6 +58,18 @@ final class Dendrila_Calendar {
     }
 
 
+    /**
+     * WordPress native sync icon, slightly larger and more legible in the admin
+     * sidebar. Keep the standard WordPress menu icon box (no custom giant SVG).
+     */
+    public static function enqueue_menu_icon_style() {
+        wp_enqueue_style( 'dashicons' );
+        wp_add_inline_style(
+            'dashicons',
+            '#adminmenu #toplevel_page_dendrila-calendar .wp-menu-image:before { color: #f0f6fc; font-size: 22px; }'
+        );
+    }
+
     public static function admin_menu() {
         add_menu_page(
             __( 'Dendrila Calendar', 'dendrila-calendar' ),
@@ -64,7 +77,7 @@ final class Dendrila_Calendar {
             'manage_options',
             'dendrila-calendar',
             array( __CLASS__, 'render' ),
-            'dashicons-backup',
+            'dashicons-update',
             27
         );
         // First submenu uses the top-level slug: clicking Dendrila always opens

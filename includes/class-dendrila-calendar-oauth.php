@@ -745,7 +745,7 @@ final class Dendrila_Calendar_OAuth {
             'limit' => __( 'Too many connected calendars.', 'dendrila-calendar' ),
             'connected' => __( 'Your calendar has been connected and synchronization started.', 'dendrila-calendar' ),
             'updated' => __( 'This calendar was already connected. Authorization and selected sources were updated without creating a duplicate.', 'dendrila-calendar' ),
-            'deduped' => __( 'Duplicate connection consolidated. Remote calendar events were not removed.', 'dendrila-calendar' ),
+            'deduped' => __( 'Connections grouped. No calendar events were deleted.', 'dendrila-calendar' ),
             'synced' => __( 'A synchronization attempt has finished. Review its status below.', 'dendrila-calendar' ),
             'disconnected' => __( 'Calendar disconnected. Existing remote events were not removed.', 'dendrila-calendar' ),
             'no_calendars' => __( 'No writable calendar was found in this account.', 'dendrila-calendar' ),
@@ -836,12 +836,12 @@ final class Dendrila_Calendar_OAuth {
             }
             if ( $duplicate ) {
                 echo '<p class="notice notice-warning inline">' .
-                    esc_html__( 'This calendar was already connected. You can consolidate this duplicate without deleting any remote events.', 'dendrila-calendar' ) . '</p>';
+                    esc_html__( 'This calendar is connected more than once. Group the connections without deleting calendar events.', 'dendrila-calendar' ) . '</p>';
                 echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
                 echo '<input type="hidden" name="action" value="dendrila_calendar_oauth_dedupe">';
                 echo '<input type="hidden" name="connection_id" value="' . esc_attr( $id ) . '">';
                 wp_nonce_field( 'dendrila_calendar_oauth_dedupe' );
-                echo '<button class="button" type="submit">' . esc_html__( 'Consolidate duplicate connection', 'dendrila-calendar' ) . '</button></form>';
+                echo '<button class="button" type="submit">' . esc_html__( 'Group', 'dendrila-calendar' ) . '</button></form>';
             }
             foreach ( array(
                 'sync' => __( 'Synchronize now', 'dendrila-calendar' ),

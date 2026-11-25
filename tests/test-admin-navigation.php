@@ -11,6 +11,8 @@ function current_user_can( $role ) { return $role === 'manage_options'; }
 function get_current_screen() { return (object) array( 'id' => $GLOBALS['fake_screen'] ); }
 function load_plugin_textdomain( $domain, $deprecated, $path ) {}
 function register_post_type( $type, $args ) { $GLOBALS['post_type_args'] = $args; }
+function wp_enqueue_style( $handle ) { $GLOBALS['enqueued_styles'][] = $handle; }
+function wp_add_inline_style( $handle, $css ) { $GLOBALS['inline_styles'][ $handle ] = $css; }
 function add_menu_page( $title, $menu, $cap, $slug, $callback, $icon, $order ) { $GLOBALS['menu_slug'] = $slug; $GLOBALS['menu_icon'] = $icon; }
 function add_submenu_page( $parent, $title, $menu, $cap, $slug, $callback ) {
     $GLOBALS['submenus'][] = compact( 'parent', 'title', 'menu', 'cap', 'slug' );
@@ -22,8 +24,14 @@ if ( $GLOBALS['post_type_args']['labels']['menu_name'] !== 'Local events' ||
     throw new RuntimeException( 'Local-event admin list must be clearly labeled.' );
 }
 Dendrila_Calendar::admin_menu();
+Dendrila_Calendar::enqueue_menu_icon_style();
+if ( ! in_array( 'dashicons', $GLOBALS['enqueued_styles'] ?? array(), true ) ||
+     strpos( $GLOBALS['inline_styles']['dashicons'] ?? '', 'font-size: 22px' ) === false ||
+     strpos( $GLOBALS['inline_styles']['dashicons'] ?? '', 'color: #f0f6fc' ) === false ) {
+    throw new RuntimeException( 'Calendar sidebar icon must remain native-sized and readable.' );
+}
 if ( $GLOBALS['menu_slug'] !== 'dendrila-calendar' ||
-    $GLOBALS['menu_icon'] !== 'dashicons-backup' ||
+    $GLOBALS['menu_icon'] !== 'dashicons-update' ||
     $GLOBALS['submenus'][0]['menu'] !== 'Calendar view' ||
     $GLOBALS['submenus'][0]['slug'] !== 'dendrila-calendar' ||
     $GLOBALS['submenus'][1]['menu'] !== 'Synchronization' ||
