@@ -352,7 +352,7 @@ final class Dendrila_Calendar_Subscriptions {
         echo '<input id="dendrila-subscription-label" name="label" type="text" maxlength="60" value="" placeholder="' . esc_attr__( 'My calendar', 'dendrila-calendar' ) . '"></p>';
         echo '<fieldset><legend>' . esc_html__( 'Sources to synchronize', 'dendrila-calendar' ) . '</legend>';
         foreach ( $sources as $id => $label ) {
-            echo '<label class="dendrila-source-option"><input type="checkbox" name="sources[]" value="' . esc_attr( $id ) . '" checked> ' . esc_html( $label ) . '</label> ';
+            echo '<label class="dendrila-source-option"><input type="checkbox" name="sources[]" value="' . esc_attr( $id ) . '"' . checked( in_array( $id, array( 'native', 'bookings' ), true ), true, false ) . '> ' . esc_html( $label ) . '</label> ';
         }
         echo '</fieldset><p><button type="submit" class="button button-primary">' . esc_html__( 'Create subscription link', 'dendrila-calendar' ) . '</button></p></form>';
         echo '<div id="dendrila-subscription-result" role="status" aria-live="polite"></div>';

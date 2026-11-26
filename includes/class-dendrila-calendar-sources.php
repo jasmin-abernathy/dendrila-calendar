@@ -12,7 +12,7 @@ final class Dendrila_Calendar_Sources {
     }
 
     public static function available() {
-        $sources = array( 'native' => __( 'Dendrila events', 'dendrila-calendar' ) );
+        $sources = array( 'native' => __( 'Personal events', 'dendrila-calendar' ) );
         $detected = Dendrila_Calendar_Detector::discover();
         foreach ( array( 'oryx', 'tec' ) as $id ) {
             if ( isset( $detected[ $id ] ) && $detected[ $id ]['ready'] ) {

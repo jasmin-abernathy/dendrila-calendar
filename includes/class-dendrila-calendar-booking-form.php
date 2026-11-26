@@ -41,7 +41,7 @@ class Dendrila_Calendar_Booking_Form {
         if ( ! class_exists( 'Dendrila_Calendar_Booking' ) ) {
             return '<p class="dendrila-booking-unavailable">' . esc_html__( 'Online booking is not available at the moment.', 'dendrila-calendar' ) . '</p>';
         }
-        $attributes = shortcode_atts( array( 'service' => '', 'service_id' => '' ), $attributes, 'dendrila_booking' );
+        $attributes = shortcode_atts( array( 'service' => '', 'service_id' => '', 'style' => '' ), $attributes, 'dendrila_booking' );
         $fixed = '' !== (string) $attributes['service'] || '' !== (string) $attributes['service_id'];
         $requested = absint( '' !== (string) $attributes['service'] ? $attributes['service'] : $attributes['service_id'] );
         $candidates = $fixed ? array( $requested ) : Dendrila_Calendar_Booking::public_services();
@@ -62,6 +62,7 @@ class Dendrila_Calendar_Booking_Form {
         $url = plugin_dir_url( $base . '/dendrila-calendar.php' );
         wp_enqueue_style( 'dendrila-calendar-booking', $url . 'assets/calendar-booking.css', array(), (string) filemtime( $base . '/assets/calendar-booking.css' ) );
         wp_enqueue_script( 'dendrila-calendar-booking', $url . 'assets/calendar-booking.js', array(), (string) filemtime( $base . '/assets/calendar-booking.js' ), true );
+        $appearance = '' !== $attributes['style'] ? Dendrila_Calendar_Appearance::normalize( $attributes['style'] ) : Dendrila_Calendar_Appearance::selected();
         $id = wp_unique_id( 'dendrila-booking-' );
         $privacy_url = get_privacy_policy_url();
         $config = array(
@@ -74,7 +75,7 @@ class Dendrila_Calendar_Booking_Form {
 
         ob_start();
         ?>
-        <section class="dendrila-booking" data-dendrila-booking aria-labelledby="<?php echo esc_attr( $id ); ?>-title">
+        <section class="dendrila-booking dendrila-booking--<?php echo esc_attr( $appearance ); ?>" style="<?php echo esc_attr( Dendrila_Calendar_Appearance::variables( $appearance ) ); ?>" data-dendrila-booking aria-labelledby="<?php echo esc_attr( $id ); ?>-title">
             <div class="dc-booking-heading">
                 <p class="dc-booking-eyebrow"><?php esc_html_e( 'Online booking', 'dendrila-calendar' ); ?></p>
                 <h2 id="<?php echo esc_attr( $id ); ?>-title"><?php esc_html_e( 'Choose a time that works for you', 'dendrila-calendar' ); ?></h2>

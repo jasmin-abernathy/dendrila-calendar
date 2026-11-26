@@ -3,7 +3,7 @@
  * Plugin Name: Dendrila Calendar
  * Plugin URI: https://github.com/jasmin-abernathy/dendrila-calendar
  * Description: Calendar, appointment booking and Google/Outlook synchronization for WordPress, with optional WooCommerce payments.
- * Version: 0.0.4
+ * Version: 0.0.6
  * Requires at least: 6.5
  * Requires PHP: 7.4
  * Author: Le Potager du Web
@@ -34,6 +34,7 @@ require_once __DIR__ . '/includes/class-dendrila-calendar-schedule-admin.php';
 require_once __DIR__ . '/includes/class-dendrila-calendar-booking.php';
 require_once __DIR__ . '/includes/class-dendrila-calendar-booking-form.php';
 require_once __DIR__ . '/includes/class-dendrila-calendar-woo-service.php';
+require_once __DIR__ . '/includes/class-dendrila-calendar-appearance.php';
 
 add_action( 'plugins_loaded', array( 'Dendrila_Calendar', 'boot' ) );
 add_action( 'plugins_loaded', array( 'Dendrila_Calendar_Subscriptions', 'boot' ) );
@@ -50,4 +51,5 @@ add_action( 'plugins_loaded', array( 'Dendrila_Calendar_Booking', 'boot' ) );
 add_action( 'plugins_loaded', array( 'Dendrila_Calendar_Booking_Form', 'boot' ) );
 add_action( 'plugins_loaded', array( 'Dendrila_Calendar_Woo', 'boot' ) );
 add_action( 'plugins_loaded', array( 'Dendrila_Calendar_Woo_Service', 'boot' ) );
+add_action( 'plugins_loaded', array( 'Dendrila_Calendar_Appearance', 'boot' ) );
 add_action( 'dendrila_calendar_reconcile_order', array( 'Dendrila_Calendar_Booking', 'reconcile_order' ) );

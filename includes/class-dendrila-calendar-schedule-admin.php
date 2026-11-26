@@ -147,14 +147,14 @@ final class Dendrila_Calendar_Schedule_Admin {
         echo '</template><p class="screen-reader-text" role="status" aria-live="polite" data-schedule-status></p></div>';
     }
 
-    public static function render_rules( $post, $show_shortcodes = true, $include_nonce = true ) {
+    public static function render_rules( $post, $show_shortcodes = true, $include_nonce = true, $prefill_enabled = false ) {
         if ( ! current_user_can( 'manage_options' ) ) { return; }
         $settings = Dendrila_Calendar_Schedule::rules( $post->ID );
         if ( $include_nonce ) {
             wp_nonce_field( 'dendrila_calendar_schedule_rules_' . $post->ID, 'dendrila_calendar_schedule_rules_nonce' );
         }
         echo '<div class="dendrila-schedule-admin" data-dendrila-schedule="rules">';
-        self::checkbox( 'dendrila-rules-enabled', self::RULES_FIELD . '[enabled]', $settings['enabled'], __( 'Enable booking for this service', 'dendrila-calendar' ) );
+        self::checkbox( 'dendrila-rules-enabled', self::RULES_FIELD . '[enabled]', $settings['enabled'] || $prefill_enabled, __( 'Enable booking for this service', 'dendrila-calendar' ) );
         $profile_id = absint( get_post_meta( $post->ID, '_dendrila_booking_profile_id', true ) );
         echo '<p>' . esc_html__( 'This service uses its responsible profile’s weekly hours, date exceptions and time zone.', 'dendrila-calendar' );
         if ( $profile_id && 'dendrila_profile' === get_post_type( $profile_id ) ) {

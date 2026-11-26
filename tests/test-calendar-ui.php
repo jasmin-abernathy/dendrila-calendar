@@ -48,8 +48,8 @@ if ( $GLOBALS['queued_scripts']['dendrila-calendar-admin']['deps'] !== array() )
 if ( $GLOBALS['queued_scripts']['dendrila-calendar-admin']['version'] !== (string) filemtime( dirname( __DIR__ ) . '/assets/calendar.js' ) ) {
     throw new RuntimeException( 'Calendar asset version must reflect its file modification time' );
 }
-if ( Dendrila_Calendar::VERSION !== '0.0.4' ) {
-    throw new RuntimeException( 'Plugin version does not match the 0.0.4 test release' );
+if ( Dendrila_Calendar::VERSION !== '0.0.6' ) {
+    throw new RuntimeException( 'Plugin version does not match the 0.0.6 test build' );
 }
 ob_start();
 Dendrila_Calendar::render();

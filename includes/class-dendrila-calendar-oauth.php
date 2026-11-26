@@ -930,7 +930,7 @@ final class Dendrila_Calendar_OAuth {
             }
             echo '</select><fieldset><legend>' . esc_html__( 'Which appointments should be sent?', 'dendrila-calendar' ) . '</legend>';
             foreach ( Dendrila_Calendar_Sources::available() as $source => $label ) {
-                echo '<label class="dendrila-source-option"><input type="checkbox" name="sources[]" value="' . esc_attr( $source ) . '" checked> ' . esc_html( $label ) . '</label>';
+                echo '<label class="dendrila-source-option"><input type="checkbox" name="sources[]" value="' . esc_attr( $source ) . '"' . checked( in_array( $source, array( 'native', 'bookings' ), true ), true, false ) . '> ' . esc_html( $label ) . '</label>';
             }
             echo '</fieldset><input type="hidden" name="two_way_calendar" id="dendrila-oauth-mode-calendar" value="' . esc_attr( $initial_calendar ) . '">';
             echo '<p><label><input type="checkbox" name="two_way" id="dendrila-oauth-two-way" value="1"' . ( $initial_two_way ? ' checked' : '' ) . '> ' . esc_html__( 'Synchronize local events in both directions', 'dendrila-calendar' ) . '</label></p>';

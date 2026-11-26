@@ -9,6 +9,8 @@
   const message = document.getElementById('dendrila-message');
   const viewSelect = document.getElementById('dendrila-view');
   const monthPicker = document.getElementById('dendrila-month');
+  const previousButton = document.getElementById('dendrila-prev');
+  const nextButton = document.getElementById('dendrila-next');
   const toggles = document.getElementById('dendrila-source-toggles');
   const search = document.getElementById('dendrila-search');
   const dayDetails = document.getElementById('dendrila-day-details');
@@ -27,7 +29,26 @@
   const weekdayFormatter = new Intl.DateTimeFormat(locale, { timeZone: 'UTC', weekday: 'short' });
   const fullDayFormatter = new Intl.DateTimeFormat(locale, { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' });
   const timeFormatter = new Intl.DateTimeFormat(locale, { timeZone, hour: '2-digit', minute: '2-digit' });
-  const state = { selected: today(), selectedDay: siteKey(new Date()), view: 'month', selectedSources: new Set(Object.keys(sources)), request: null, events: [], loaded: false };
+  const primarySources = Object.keys(sources).filter(source => (config.primarySources || ['native', 'bookings']).includes(source));
+  // Persist only source slugs (never event/customer details or credentials) so a
+  // previously selected optional integration stays selected after returning.
+  const storageKey = 'dendrila-calendar-sources:' + new URL(config.ajaxUrl, window.location.href).pathname;
+  function restoreSources() {
+    try {
+      const raw = window.localStorage.getItem(storageKey);
+      if (raw === null) return primarySources;
+      const values = JSON.parse(raw);
+      if (Array.isArray(values) && values.every(item => typeof item === 'string')) {
+        return values.filter(item => Object.prototype.hasOwnProperty.call(sources, item));
+      }
+    } catch (_) { /* Storage may be disabled by the browser. */ }
+    return primarySources;
+  }
+  function rememberSources(selected) {
+    try { window.localStorage.setItem(storageKey, JSON.stringify(Array.from(selected))); }
+    catch (_) { /* Calendar still works without localStorage. */ }
+  }
+  const state = { selected: today(), selectedDay: siteKey(new Date()), view: 'month', selectedSources: new Set(restoreSources()), request: null, events: [], loaded: false };
 
   function el(tag, className, text) {
     const element = document.createElement(tag);
@@ -101,6 +122,11 @@
     const month = state.view === 'month';
     root.className = `dendrila-grid dendrila-grid--${state.view}`;
     viewSelect.value = state.view;
+    const periodUnit = state.view === 'week' ? 'Week' : 'Month';
+    const prevLabel = i18n['previous' + periodUnit] || i18n.previous || 'Previous';
+    const nextLabel = i18n['next' + periodUnit] || i18n.next || 'Next';
+    if (previousButton) { previousButton.setAttribute('aria-label', prevLabel); previousButton.title = prevLabel; }
+    if (nextButton) { nextButton.setAttribute('aria-label', nextLabel); nextButton.title = nextLabel; }
     if (monthPicker) monthPicker.value = key(state.selected).slice(0, 7);
     if (state.view === 'week') {
       period.textContent = `${fullDayFormatter.format(start)} – ${fullDayFormatter.format(addDays(start, 6))}`;
@@ -191,6 +217,8 @@
     message.textContent = i18n.loading || 'Loading…';
     state.events = [];
     state.loaded = false;
+    // Update the displayed month immediately, even when the network later fails.
+    display([]);
     const url = new URL(config.ajaxUrl);
     url.searchParams.set('action', 'dendrila_calendar_events');
     url.searchParams.set('nonce', config.nonce);
@@ -220,29 +248,46 @@
       message.textContent = `${i18n.failed || 'Unable to load events.'} (${error.message || 'Request failed'})`;
     }
   }
+  const otherSources = Object.keys(sources).filter(slug => !primarySources.includes(slug));
+  const optional = otherSources.length ? el('details', 'dendrila-optional-sources') : null;
+  const optionalList = optional ? el('div', 'dendrila-optional-source-options') : null;
+  if (optional) {
+    optional.append(el('summary', '', i18n.optionalSources || 'Other booking plugins (optional)'));
+    optional.append(el('p', 'description', i18n.optionalSourceHelp || 'Dendrila works without other booking plugins.'));
+    optional.append(optionalList);
+  }
   Object.entries(sources).forEach(([slug, title]) => {
     const label = el('label', 'dendrila-source-option');
     const checkbox = el('input');
     checkbox.type = 'checkbox';
-    checkbox.checked = true;
+    checkbox.checked = state.selectedSources.has(slug);
     checkbox.value = slug;
     checkbox.addEventListener('change', () => {
       if (checkbox.checked) state.selectedSources.add(slug); else state.selectedSources.delete(slug);
+      rememberSources(state.selectedSources);
       load();
     });
     label.append(checkbox, document.createTextNode(' ' + title));
-    toggles.append(label);
+    if (optional && !primarySources.includes(slug)) optionalList.append(label);
+    else toggles.append(label);
   });
+  if (optional) toggles.append(optional);
   if (search) search.addEventListener('input', () => { if (state.loaded) renderFiltered(); });
   const setAllSources = selected => {
-    toggles.querySelectorAll('input[type=checkbox]').forEach(box => { box.checked = selected; });
-    state.selectedSources = new Set(selected ? Object.keys(sources) : []);
+    // Select all/none is limited to core Dendrila sources. Legacy integrations
+    // remain opt-in even when the optional details section is collapsed.
+    toggles.querySelectorAll('input[type=checkbox]').forEach(box => {
+      if (primarySources.includes(box.value)) box.checked = selected;
+    });
+    state.selectedSources = new Set(Array.from(state.selectedSources).filter(id => !primarySources.includes(id)));
+    if (selected) primarySources.forEach(id => state.selectedSources.add(id));
+    rememberSources(state.selectedSources);
     load();
   };
   document.getElementById('dendrila-sources-all')?.addEventListener('click', () => setAllSources(true));
   document.getElementById('dendrila-sources-none')?.addEventListener('click', () => setAllSources(false));
-  document.getElementById('dendrila-prev').addEventListener('click', () => navigate(-1));
-  document.getElementById('dendrila-next').addEventListener('click', () => navigate(1));
+  previousButton.addEventListener('click', () => navigate(-1));
+  nextButton.addEventListener('click', () => navigate(1));
   document.getElementById('dendrila-today').addEventListener('click', () => { state.selected = today(); state.selectedDay = key(state.selected); load(); });
   viewSelect.addEventListener('change', () => { state.view = viewSelect.value; load(); });
   // A direct month selector prevents users having to click previous/next repeatedly.
@@ -255,6 +300,39 @@
     state.selectedDay = key(state.selected);
     load();
   });
+  // Touch navigation is limited to deliberate horizontal gestures on the month grid.
+  // Never preventDefault: vertical scrolling and taps must keep their native behavior.
+  let touchOrigin = null;
+  let suppressTapUntil = 0;
+  // A swipe may begin on a day number, but must never activate that day as a tap.
+  root.addEventListener('click', event => {
+    if (Date.now() < suppressTapUntil && event.target instanceof Element && event.target.closest('.dendrila-day-date')) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      suppressTapUntil = 0;
+    }
+  }, true);
+  root.addEventListener('touchstart', event => {
+    touchOrigin = null;
+    if (state.view !== 'month' || event.touches.length !== 1) return;
+    const target = event.target;
+    if (target instanceof Element && target.closest('button:not(.dendrila-day-date), a, input, select, textarea, summary, [role="button"]')) return;
+    const touch = event.touches[0];
+    touchOrigin = { x: touch.clientX, y: touch.clientY, at: Date.now() };
+  }, { passive: true });
+  root.addEventListener('touchend', event => {
+    if (!touchOrigin || state.view !== 'month' || event.changedTouches.length !== 1) { touchOrigin = null; return; }
+    const origin = touchOrigin;
+    touchOrigin = null;
+    const touch = event.changedTouches[0];
+    const dx = touch.clientX - origin.x;
+    const dy = touch.clientY - origin.y;
+    if (Date.now() - origin.at > 1400 || Math.abs(dx) < 55 || Math.abs(dx) < Math.abs(dy) * 1.45) return;
+    suppressTapUntil = Date.now() + 500;
+    navigate(dx < 0 ? 1 : -1);
+  }, { passive: true });
+  root.addEventListener('touchcancel', () => { touchOrigin = null; }, { passive: true });
+
   function navigate(delta) {
     if (state.view === 'week') state.selected = addDays(state.selected, 7 * delta);
     else state.selected = new Date(Date.UTC(state.selected.getUTCFullYear(), state.selected.getUTCMonth() + delta, 15, 12));

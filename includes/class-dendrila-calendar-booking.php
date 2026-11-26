@@ -391,7 +391,7 @@ final class Dendrila_Calendar_Booking {
     }
 
     public static function add_source( $sources ) {
-        $sources['bookings'] = __( 'Dendrila bookings', 'dendrila-calendar' );
+        $sources['bookings'] = __( 'Your appointments', 'dendrila-calendar' );
         return $sources;
     }
 

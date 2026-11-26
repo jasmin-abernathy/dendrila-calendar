@@ -4,7 +4,7 @@ Tags: calendar, events, bookings, administration
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.0.4
+Stable tag: 0.0.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -14,13 +14,13 @@ Calendar, appointment booking and Google/Outlook synchronization for WordPress, 
 
 Development test version. Do not publish to WordPress.org before end-to-end testing and deployment of a publisher-managed OAuth authorization service. Google and Outlook connections work with administrator-configured OAuth applications; CalDAV direct push and private ICS subscriptions are also supported.
 
-Dendrila Calendar provides native profiles, schedules, services and a public booking form. Weekly hours, date exceptions, timezone, notice, booking horizon, intervals, buffers and shared/service limits apply again under a database lock when reserving. Paid services are edited in a WooCommerce product tab and use WooCommerce orders and the official order-payment page.
+Dendrila Calendar provides native profiles, schedules, services and a public booking form. Administrators can choose a booking calendar design (Classic, Cards, Minimal or High contrast), customize the selected design's colors, open a permanent WooCommerce booking guide, and start a bookable product directly with Products > Add a service. Weekly hours, date exceptions, timezone, notice, booking horizon, intervals, buffers and shared/service limits apply again under a database lock when reserving. Paid services are edited in a WooCommerce product tab and use WooCommerce orders and the official order-payment page.
 
 Dendrila Calendar is also an independent WordPress administration calendar that brings together native events and compatible event and booking plugins. All third-party integrations are optional and read-only. The original plugins remain responsible for reservations, payments and their data. Customer details are not included in the calendar event payload.
 
 = Sources =
 
-* Dendrila events: manually created private WordPress events.
+* Personal events: manually created private WordPress events (or individual events imported via optional two-way synchronization).
 * Event sources: Event Organiser, Events Manager and The Events Calendar (published single events only).
 * Booking sources: Amelia, Booking Calendar, Bookly, Easy Appointments, FluentBooking, Oryx Bookings and Simply Schedule Appointments.
 * Ten external sources in total, all optional and read-only.
@@ -36,7 +36,7 @@ ICS Calendar can subscribe to the URL as a destination. Importing remote feeds t
 == Installation ==
 
 1. Install the Dendrila Calendar plugin directory and activate it.
-2. Follow the required Configuration assistant. Supported active plugins are detected and preselected automatically.
+2. Follow the Configuration assistant, then its booking guide (always available under Dendrila Calendar > Booking guide). Dendrila's own events and appointments are selected by default; other plugin integrations are optional.
 3. Choose the appointment sources to synchronize.
 4. Choose the calendar service you use (Nextcloud, iCloud, Google, Outlook or another service), or local-only mode.
 5. For Nextcloud and compatible services, enter the cloud URL, account login and application password. Select a calendar from the discovered list; the setup only completes when the connection succeeds.
@@ -44,8 +44,10 @@ ICS Calendar can subscribe to the URL as a destination. Importing remote feeds t
 
 == Native bookings and WooCommerce ==
 
+* Choose the public booking design at Dendrila Calendar > Appearance and customize its accent, text and background colors with a live preview. Each model remembers its own palette. Override the model on a page using [dendrila_booking style="cards"].
+
 * Create and publish a profile under Dendrila Calendar > Profiles, then enable availability and enter its weekly hours, exceptions and timezone.
-* For a paid appointment, create a simple WooCommerce product and open Appointment booking. Keep name, description and price in the normal Woo fields; choose a responsible profile, duration, buffers and booking rules. Dendrila maintains the linked service automatically and makes the product virtual.
+* For a paid appointment, use Products > Add a service (near Add new product), or edit an existing simple WooCommerce product and open Appointment booking. Keep name, description and price in the normal Woo fields; choose a responsible profile, duration, buffers and booking rules. Dendrila maintains the linked service automatically and makes the product virtual.
 * The product page offers time selection instead of ordinary Add to cart. Direct cart purchases without a selected appointment are blocked, including through the Store API.
 * Free services can also be created directly under Dendrila Calendar > Services. Add [dendrila_booking] to a page, or use the service-specific shortcode shown by its editor.
 * Shared profile locks, fresh database reads and idempotency prevent concurrent bookings and duplicate orders. Profile and service day/week/month limits are enforced at confirmation.
@@ -70,6 +72,23 @@ Not yet. This development build requires Google/Microsoft OAuth apps configured 
 The WordPress administration calendar is restricted to administrators. Enabled booking forms are public and do not require a WordPress account; reservation records and contact details remain private. Private subscription URLs can be accessed by anyone who holds the secret link; these links can be revoked.
 
 == Changelog ==
+
+= 0.0.6 (development: Google/Outlook two-way query encoding) =
+* Test UX without version bump: renamed the native booking source to Your appointments (Vos rendez-vous in French), clarified personal events, and moved third-party integrations behind optional sections.
+* Four booking designs now support individually saved accent, foreground, background and highlight colors, with live previews, strict hex validation, contrast checks and a reset button.
+* Simplified service creation: one primary WooCommerce product entry, with free native services as an optional secondary path; existing links are preserved.
+* Correct RFC3986 encoding of Google events.list timeMin/timeMax and Google nextPageToken; offset +00:00 was parsed as a space by the provider, producing HTTP_400 on calendar reads.
+* Apply the same encoding to Microsoft calendarView start/end dates and query fields, while leaving Graph nextLink URLs unchanged.
+* Keep all 0.0.5 booking designs, WooCommerce service shortcut, setup guide, event mappings and existing connection credentials intact.
+* Real provider read/import round trip still needs verification with a dedicated test calendar.
+
+
+= 0.0.5 (development: booking designs and guided WooCommerce setup) =
+* Four booking-form designs (Classic, Cards, Minimal and High contrast) under Dendrila Calendar > Appearance, now with individually saved color palettes and live previews; optional per-shortcode style override.
+* Step-by-step booking guide linked from initial setup and permanently available under Dendrila Calendar > Booking guide.
+* Products > Add a service now sits immediately after Add new product; a new-service product starts with booking settings enabled and a clear panel-opening button.
+* Existing products can be enabled from Product data > Appointment booking without creating a duplicate product.
+* Includes the previous Google/Outlook diagnostic codes and timezone-aware Google export; real two-way provider round trip remains to be verified.
 
 = 0.0.4 (development: native availability and WooCommerce appointments) =
 * Weekly schedules, overrides, timezone/DST, booking notice/horizon, start intervals, buffers and shared/service limits.

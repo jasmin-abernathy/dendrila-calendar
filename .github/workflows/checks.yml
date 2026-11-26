@@ -18,6 +18,8 @@ jobs:
       - name: JavaScript syntax
         run: |
           node --check assets/calendar.js
+          node --check assets/calendar-product-admin.js
+          node --check assets/calendar-appearance-admin.js
           node --check assets/calendar-subscriptions.js
           node --check assets/calendar-connect.js
           node --check assets/calendar-booking.js
@@ -44,6 +46,7 @@ jobs:
           php tests/test-oauth-flow.php
           php tests/test-two-way.php
           php tests/test-two-way-query-encoding.php
+          php tests/test-admin-services-ux.php
           php tests/test-availability.php
           php tests/test-native-bookings.php
           php tests/test-native-schedule.php
@@ -62,6 +65,9 @@ jobs:
           test -s languages/dendrila-calendar-fr_FR.l10n.php
           test -s docs/INTEGRATIONS.md
           test -s assets/calendar.js
+          test -s assets/calendar-product-admin.js
+          test -s assets/calendar-appearance-admin.css
+          test -s includes/class-dendrila-calendar-appearance.php
           test -s assets/calendar-subscriptions.js
           test -f includes/class-dendrila-calendar-subscriptions.php
           test -s includes/class-dendrila-calendar-bridge.php
@@ -94,12 +100,12 @@ jobs:
           cp dendrila-calendar.php readme.txt build/dendrila-calendar/
           cp -R assets includes languages build/dendrila-calendar/
           cd build
-          zip -q -r dendrila-calendar-0.0.4-installable.zip dendrila-calendar
-          unzip -t dendrila-calendar-0.0.4-installable.zip
+          zip -q -r dendrila-calendar-0.0.6-installable.zip dendrila-calendar
+          unzip -t dendrila-calendar-0.0.6-installable.zip
       - name: Upload installable plugin ZIP
         uses: actions/upload-artifact@v4
         with:
-          name: dendrila-calendar-0.0.4-installable
-          path: build/dendrila-calendar-0.0.4-installable.zip
+          name: dendrila-calendar-0.0.6-installable
+          path: build/dendrila-calendar-0.0.6-installable.zip
           if-no-files-found: error
           retention-days: 7
