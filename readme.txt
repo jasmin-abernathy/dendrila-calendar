@@ -12,6 +12,8 @@ Calendar, appointment booking and Google/Outlook synchronization for WordPress, 
 
 == Description ==
 
+Manage existing services directly under Services, with one edit link to the source product or native service. Use the arrows to browse the calendar by month or week, or swipe horizontally in the month grid on a phone.
+
 Development test version. Do not publish to WordPress.org before end-to-end testing and deployment of a publisher-managed OAuth authorization service. Google and Outlook connections work with administrator-configured OAuth applications; CalDAV direct push and private ICS subscriptions are also supported.
 
 Dendrila Calendar provides native profiles, schedules, services and a public booking form. Administrators can choose a booking calendar design (Classic, Cards, Minimal or High contrast), customize the selected design's colors, open a permanent WooCommerce booking guide, and start a bookable product directly with Products > Add a service. Weekly hours, date exceptions, timezone, notice, booking horizon, intervals, buffers and shared/service limits apply again under a database lock when reserving. Paid services are edited in a WooCommerce product tab and use WooCommerce orders and the official order-payment page.

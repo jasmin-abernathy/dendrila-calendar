@@ -38,7 +38,7 @@ final class Dendrila_Calendar_Two_Way {
             $response = Dendrila_Calendar_OAuth::api( $item['provider'], $access, 'GET', $url );
             $rows = $response['data'][ $google ? 'items' : 'value' ] ?? null;
             $status = (int) ( $response['status'] ?? 0 );
-            if ( 200 !== $status ) { throw new RuntimeException( 'calendar_http', $status ); }
+            if ( 200 !== $status ) { throw new RuntimeException( 'calendar_http', (int) $status ); }
             if ( ! is_array( $rows ) ) { throw new RuntimeException( 'calendar_bad_response' ); }
             foreach ( $rows as $row ) {
                 if ( is_array( $row ) && isset( $row['id'] ) && is_string( $row['id'] ) && '' !== $row['id'] ) {

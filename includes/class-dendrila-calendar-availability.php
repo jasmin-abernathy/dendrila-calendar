@@ -95,8 +95,8 @@ final class Dendrila_Calendar_Availability {
             return;
         }
         $table = $wpdb->prefix . 'ea_services';
-        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery -- Own registered Easy Appointments service table.
-        $row = $wpdb->get_row( $wpdb->prepare( "SELECT duration, block_before, block_after FROM {$table} WHERE id = %d", $service ), ARRAY_A );
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Read the current duration from the Easy Appointments service table.
+        $row = $wpdb->get_row( $wpdb->prepare( 'SELECT duration, block_before, block_after FROM %i WHERE id = %d', $table, $service ), ARRAY_A );
         if ( ! is_array( $row ) || empty( $row['duration'] ) ) {
             return; // Let EA handle an unknown service or invalid parameters.
         }

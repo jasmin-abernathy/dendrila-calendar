@@ -71,7 +71,7 @@ final class Dendrila_Calendar_Native {
         ) );
         register_post_type( self::BOOKING, array(
             'labels' => array(
-                'name' => __( 'Native bookings', 'dendrila-calendar' ),
+                'name' => __( 'Your appointments', 'dendrila-calendar' ),
                 'singular_name' => __( 'Native booking', 'dendrila-calendar' ),
             ),
             'public' => false,
@@ -103,7 +103,7 @@ final class Dendrila_Calendar_Native {
         );
         add_submenu_page(
             'dendrila-calendar',
-            __( 'Native bookings', 'dendrila-calendar' ),
+            __( 'Your appointments', 'dendrila-calendar' ),
             __( 'Bookings', 'dendrila-calendar' ),
             'manage_options',
             'dendrila-calendar-bookings',
@@ -374,7 +374,7 @@ final class Dendrila_Calendar_Native {
             }
             $product_ready = $product && method_exists( $product, 'exists' ) && $product->exists() &&
                 method_exists( $product, 'get_status' ) && 'publish' === $product->get_status();
-            if ( $product_ready && method_exists( $product, 'get_name' ) ) {
+            if ( $product && method_exists( $product, 'get_name' ) ) {
                 $title = $product->get_name();
             }
             if ( ! $product_ready ) {
@@ -410,10 +410,10 @@ final class Dendrila_Calendar_Native {
         $status = $active ? __( 'Active', 'dendrila-calendar' ) : __( 'Disabled — bookings closed', 'dendrila-calendar' );
         $editing_id = $product_id ? $product_id : $id;
         $can_edit = current_user_can( 'edit_post', $editing_id );
-        $edit = $can_edit && ( ! $product_id || $product_ready ) ? get_edit_post_link( $editing_id, '' ) : '';
+        $edit = $can_edit && ( ! $product_id || $product ) ? get_edit_post_link( $editing_id, 'raw' ) : '';
         if ( $edit && $product_id ) {
             // Intent only: this never modifies a product until WooCommerce verifies its save nonce.
-            $edit = add_query_arg( 'dendrila_edit_service', '1', $edit );
+            $edit = add_query_arg( 'dendrila_edit_service', '1', $edit ) . '#dendrila-product-booking';
         }
 
         echo '<article class="dendrila-service-card">';
@@ -427,6 +427,7 @@ final class Dendrila_Calendar_Native {
         echo '<div><dt>' . esc_html__( 'Responsible profile', 'dendrila-calendar' ) . '</dt><dd>' .
             esc_html( $profile ? $profile->post_title : __( 'No published profile', 'dendrila-calendar' ) ) . '</dd></div>';
         echo '<div><dt>' . esc_html__( 'Duration', 'dendrila-calendar' ) . '</dt><dd>' .
+            /* translators: %d: appointment duration in minutes. */
             esc_html( $duration ? sprintf( __( '%d minutes', 'dendrila-calendar' ), $duration ) : __( 'Not configured', 'dendrila-calendar' ) ) . '</dd></div>';
         echo '<div><dt>' . esc_html__( 'Price', 'dendrila-calendar' ) . '</dt><dd>';
         if ( ! $price_known ) {
@@ -436,7 +437,7 @@ final class Dendrila_Calendar_Native {
         } else {
             // WooCommerce is the price authority, including sale prices and tax formatting.
             $html = method_exists( $product, 'get_price_html' ) ? $product->get_price_html() : '';
-            echo $html ? wp_kses_post( $html ) : esc_html__( 'Price unavailable', 'dendrila-calendar' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+            echo $html ? wp_kses_post( $html ) : esc_html__( 'Price unavailable', 'dendrila-calendar' );
         }
         echo '</dd></div></dl>';
         if ( $warnings ) {
@@ -448,6 +449,7 @@ final class Dendrila_Calendar_Native {
         }
         if ( $edit ) {
             echo '<div class="dendrila-service-actions"><a class="button" href="' . esc_url( $edit ) . '" aria-label="' .
+                /* translators: %s: service name. */
                 esc_attr( sprintf( __( 'Edit %s', 'dendrila-calendar' ), $title ) ) . '">' . esc_html__( 'Edit', 'dendrila-calendar' ) . '</a></div>';
         } elseif ( $can_edit && $product_id && ! $product_ready ) {
             echo '<p class="dendrila-service-note">' . esc_html__( 'Editing is unavailable until the linked product is restored.', 'dendrila-calendar' ) . '</p>';
@@ -459,43 +461,27 @@ final class Dendrila_Calendar_Native {
     }
 
     public static function render_services() {
-        self::head(
-            __( 'Services', 'dendrila-calendar' ),
-            __( 'Manage your appointments here. WooCommerce remains the source of product names and prices.', 'dendrila-calendar' )
-        );
-        echo '<div class="dendrila-service-creation">';
-        if ( ! self::has_profile() ) {
-            echo '<p class="dendrila-service-warning" role="status">' .
-                esc_html__( 'No published profile. Bookings are closed until a profile is assigned.', 'dendrila-calendar' ) .
-                ' <a href="' . esc_url( admin_url( 'post-new.php?post_type=' . self::PROFILE ) ) . '">' .
-                esc_html__( 'Create a profile', 'dendrila-calendar' ) . '</a></p>';
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_die( esc_html__( 'You cannot manage Dendrila booking profiles.', 'dendrila-calendar' ) );
         }
-        if ( class_exists( 'Dendrila_Calendar_Woo' ) && Dendrila_Calendar_Woo::available() ) {
-            echo '<a class="button button-primary dendrila-service-create" href="' . esc_url( admin_url( 'admin.php?page=dendrila-add-service' ) ) . '">' .
-                esc_html__( 'Add a service', 'dendrila-calendar' ) . '</a>';
-            echo '<details class="dendrila-optional-services"><summary>' . esc_html__( 'Free service without WooCommerce (optional)', 'dendrila-calendar' ) . '</summary>';
-            echo '<p>' . esc_html__( 'For a free appointment without a WooCommerce order, use the native service form.', 'dendrila-calendar' ) . '</p>';
-            echo '<a class="button" href="' . esc_url( admin_url( 'post-new.php?post_type=' . self::SERVICE ) ) . '">' .
-                esc_html__( 'Create a free service', 'dendrila-calendar' ) . '</a></details>';
-        } else {
-            echo '<a class="button button-primary dendrila-service-create" href="' . esc_url( admin_url( 'post-new.php?post_type=' . self::SERVICE ) ) . '">' .
-                esc_html__( 'Add a service', 'dendrila-calendar' ) . '</a>';
-        }
-        echo ' <a class="dendrila-service-guide-link" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-guide' ) ) . '">' .
-            esc_html__( 'Booking guide', 'dendrila-calendar' ) . '</a></div>';
-
+        $native_url = admin_url( 'post-new.php?post_type=' . self::SERVICE );
+        $woo = Dendrila_Calendar_Woo::available() && current_user_can( 'edit_products' );
+        $add_url = $woo ? admin_url( 'edit.php?post_type=product&page=dendrila-add-service' ) : $native_url;
+        echo '<div class="wrap dendrila-native dendrila-calendar-services"><header class="dendrila-calendar-services-head"><h1>' . esc_html__( 'Services', 'dendrila-calendar' ) . '</h1>';
+        echo '<a class="button button-primary" href="' . esc_url( $add_url ) . '">' . esc_html__( 'Add a service', 'dendrila-calendar' ) . '</a></header><hr class="wp-header-end">';
         // Read-only pagination, no direct SQL or edits. Drafts are shown so disabled offers can be repaired.
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only navigation.
         $page = isset( $_GET['dc_services_page'] ) ? max( 1, absint( wp_unslash( $_GET['dc_services_page'] ) ) ) : 1;
         $query = new WP_Query( array(
             'post_type' => self::SERVICE,
             'post_status' => array( 'publish', 'draft', 'pending', 'private', 'future' ),
-            'posts_per_page' => 16, 'paged' => $page, 'orderby' => 'title', 'order' => 'ASC',
-            'no_found_rows' => false, 'suppress_filters' => true,
+            'posts_per_page' => 20, 'paged' => $page, 'orderby' => array( 'title' => 'ASC', 'ID' => 'ASC' ),
+            'update_post_term_cache' => false,
         ) );
         echo '<section class="dendrila-services-panel" aria-labelledby="dendrila-services-title">';
         echo '<div class="dendrila-services-heading"><div><h2 id="dendrila-services-title">' . esc_html__( 'Your services', 'dendrila-calendar' ) . '</h2>';
         echo '<p>' . esc_html__( 'Active does not guarantee a free time slot. Availability also depends on hours and existing bookings.', 'dendrila-calendar' ) . '</p></div>';
+        /* translators: %d: total number of offers. */
         echo '<span class="dendrila-services-count">' . esc_html( sprintf( __( '%d registered services', 'dendrila-calendar' ), (int) $query->found_posts ) ) . '</span></div>';
         if ( $query->posts ) {
             echo '<div class="dendrila-services-list">';
@@ -507,12 +493,13 @@ final class Dendrila_Calendar_Native {
             echo '<div class="dendrila-services-empty"><strong>' . esc_html__( 'No services yet.', 'dendrila-calendar' ) . '</strong><p>' .
                 esc_html__( 'Add your first service to offer online appointments.', 'dendrila-calendar' ) . '</p></div>';
         }
-        if ( (int) $query->max_num_pages > 1 ) {
+        if ( (int) $query->max_num_pages > 1 || $page > 1 ) {
             echo '<nav class="dendrila-services-pagination" aria-label="' . esc_attr__( 'Services pages', 'dendrila-calendar' ) . '">';
             if ( $page > 1 ) {
-                echo '<a class="button" href="' . esc_url( add_query_arg( 'dc_services_page', $page - 1, admin_url( 'admin.php?page=dendrila-calendar-services' ) ) ) . '">' .
+                echo '<a class="button" href="' . esc_url( add_query_arg( 'dc_services_page', max( 1, min( $page - 1, (int) $query->max_num_pages ) ), admin_url( 'admin.php?page=dendrila-calendar-services' ) ) ) . '">' .
                     esc_html__( 'Previous page', 'dendrila-calendar' ) . '</a>';
             }
+            /* translators: 1: current page, 2: number of pages. */
             echo '<span>' . esc_html( sprintf( __( 'Page %1$d of %2$d', 'dendrila-calendar' ), $page, (int) $query->max_num_pages ) ) . '</span>';
             if ( $page < (int) $query->max_num_pages ) {
                 echo '<a class="button" href="' . esc_url( add_query_arg( 'dc_services_page', $page + 1, admin_url( 'admin.php?page=dendrila-calendar-services' ) ) ) . '">' .
@@ -520,12 +507,21 @@ final class Dendrila_Calendar_Native {
             }
             echo '</nav>';
         }
-        echo '</section></div>';
+        echo '</section>';
+        if ( ! self::has_profile() ) {
+            echo '<p class="notice notice-warning inline">' . esc_html__( 'No published profile. Bookings are closed until a profile is assigned.', 'dendrila-calendar' ) .
+                ' <a href="' . esc_url( admin_url( 'post-new.php?post_type=' . self::PROFILE ) ) . '">' . esc_html__( 'Create a profile', 'dendrila-calendar' ) . '</a></p>';
+        }
+        if ( $woo ) {
+            echo '<details class="dendrila-optional-services"><summary>' . esc_html__( 'Free service without WooCommerce (optional)', 'dendrila-calendar' ) . '</summary><p><a class="button" href="' .
+                esc_url( $native_url ) . '">' . esc_html__( 'Create a free service', 'dendrila-calendar' ) . '</a></p></details>';
+        }
+        echo '<p><a href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-guide' ) ) . '">' . esc_html__( 'Booking guide', 'dendrila-calendar' ) . '</a></p></div>';
     }
 
     public static function render_bookings() {
         self::head(
-            __( 'Native bookings', 'dendrila-calendar' ),
+            __( 'Your appointments', 'dendrila-calendar' ),
             __( 'Reservations are linked to a service and its profile. Free bookings are confirmed immediately; paid bookings follow their WooCommerce order. Add [dendrila_booking] to a page to offer your enabled services.', 'dendrila-calendar' )
         );
         echo '<p><a class="button" href="' . esc_url( admin_url( 'edit.php?post_type=' . self::BOOKING ) ) . '">' .

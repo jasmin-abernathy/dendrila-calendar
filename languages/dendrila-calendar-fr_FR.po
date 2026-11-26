@@ -329,11 +329,11 @@ msgstr "Cartes"
 msgid "Change source and destination settings"
 msgstr "Modifier les sources et la destination"
 
-msgid "Check busy times in all connected Google and Outlook calendars"
-msgstr "Vérifier les périodes occupées dans tous les agendas Google et Outlook connectés"
-
 msgid "Check busy times in Google and Outlook before accepting an Easy Appointments booking."
 msgstr "Vérifier les plages occupées dans Google et Outlook avant de confirmer une réservation Easy Appointments."
+
+msgid "Check busy times in all connected Google and Outlook calendars"
+msgstr "Vérifier les périodes occupées dans tous les agendas Google et Outlook connectés"
 
 msgid "Check the appointment fields. Previous booking settings were kept."
 msgstr "Vérifiez les champs du rendez-vous. Les réglages de réservation précédents ont été conservés."
@@ -352,6 +352,9 @@ msgstr "Vérifiez les informations de votre réservation."
 
 msgid "Checking available times…"
 msgstr "Vérification des horaires disponibles…"
+
+msgid "Choose Google or Microsoft to authorize Dendrila Calendar, then select the calendar that will receive your appointments."
+msgstr "Choisissez Google ou Microsoft pour autoriser Dendrila Calendar, puis sélectionnez l’agenda qui recevra vos rendez-vous."
 
 msgid "Choose a calendar and at least one source."
 msgstr "Choisissez un agenda et au moins une source."
@@ -410,9 +413,6 @@ msgstr "Choisissez un horaire disponible ci-dessous."
 msgid "Choose colors with sufficient contrast between text, background and buttons."
 msgstr "Choisissez des couleurs suffisamment contrastées entre le texte, le fond et les boutons."
 
-msgid "Choose Google or Microsoft to authorize Dendrila Calendar, then select the calendar that will receive your appointments."
-msgstr "Choisissez Google ou Microsoft pour autoriser Dendrila Calendar, puis sélectionnez l’agenda qui recevra vos rendez-vous."
-
 msgid "Choose how appointments reach the calendar you already use."
 msgstr "Choisissez comment les rendez-vous rejoindront votre agenda habituel."
 
@@ -449,11 +449,11 @@ msgstr "Configuration"
 msgid "Configuration saved."
 msgstr "Configuration enregistrée."
 
-msgid "Configure application credentials (administrator)"
-msgstr "Configurer les identifiants de l’application (administration)"
-
 msgid "Configure Dendrila Calendar"
 msgstr "Configurer Dendrila Calendar"
+
+msgid "Configure application credentials (administrator)"
+msgstr "Configurer les identifiants de l’application (administration)"
 
 msgid "Configure sources and destination"
 msgstr "Configurer les sources et la destination"
@@ -476,6 +476,12 @@ msgstr "Connecter cet agenda"
 msgid "Connect with %s"
 msgstr "Se connecter avec %s"
 
+msgid "Connect your Google account securely. Authorization requires a configured Dendrila OAuth application."
+msgstr "Connectez votre compte Google de manière sécurisée. L’application OAuth Dendrila doit être configurée."
+
+msgid "Connect your Microsoft account securely. Authorization requires a configured Dendrila OAuth application."
+msgstr "Connectez votre compte Microsoft de manière sécurisée. L’application OAuth Dendrila doit être configurée."
+
 msgid "Connect your account"
 msgstr "Connecter votre compte"
 
@@ -484,12 +490,6 @@ msgstr "Connecter votre compte d’agenda"
 
 msgid "Connect your calendars, choose the bookings to send and protect your availability."
 msgstr "Connectez vos agendas, choisissez les rendez-vous à envoyer et protégez vos disponibilités."
-
-msgid "Connect your Google account securely. Authorization requires a configured Dendrila OAuth application."
-msgstr "Connectez votre compte Google de manière sécurisée. L’application OAuth Dendrila doit être configurée."
-
-msgid "Connect your Microsoft account securely. Authorization requires a configured Dendrila OAuth application."
-msgstr "Connectez votre compte Microsoft de manière sécurisée. L’application OAuth Dendrila doit être configurée."
 
 msgid "Connected calendars"
 msgstr "Agendas connectés"
@@ -542,11 +542,11 @@ msgstr "Créez et publiez au moins un profil avant de proposer une prestation."
 msgid "Create subscription link"
 msgstr "Créer un lien d’abonnement"
 
-msgid "Create the first profile"
-msgstr "Créer le premier profil"
-
 msgid "Create the WooCommerce product"
 msgstr "Créer le produit WooCommerce"
+
+msgid "Create the first profile"
+msgstr "Créer le premier profil"
 
 msgid "Customer"
 msgstr "Client"
@@ -575,17 +575,17 @@ msgstr "Exceptions par date"
 msgid "Date range is too large"
 msgstr "La période demandée est trop longue"
 
-msgid "Dendrila appointment booking"
-msgstr "Réservation de rendez-vous Dendrila"
-
-msgid "Dendrila appointments and personal events are shown here. Events from other booking plugins can be displayed on request; their records remain managed by their original extension."
-msgstr "Vos rendez-vous et événements personnels apparaissent ici. Les événements des autres extensions peuvent être affichés sur demande ; leur gestion reste assurée par leur extension d’origine."
-
 msgid "Dendrila Calendar"
 msgstr "Dendrila Calendar"
 
 msgid "Dendrila Calendar setup"
 msgstr "Configuration de Dendrila Calendar"
+
+msgid "Dendrila appointment booking"
+msgstr "Réservation de rendez-vous Dendrila"
+
+msgid "Dendrila appointments and personal events are shown here. Events from other booking plugins can be displayed on request; their records remain managed by their original extension."
+msgstr "Vos rendez-vous et événements personnels apparaissent ici. Les événements des autres extensions peuvent être affichés sur demande ; leur gestion reste assurée par leur extension d’origine."
 
 msgid "Dendrila could not prepare this booking payment."
 msgstr "Dendrila n’a pas pu préparer le paiement de cette réservation."
@@ -692,6 +692,9 @@ msgstr "Fin"
 msgid "End (UTC)"
 msgstr "Fin (UTC)"
 
+msgid "Enter a valid HTTPS address for your calendar service."
+msgstr "Saisissez une adresse HTTPS valide pour votre agenda."
+
 msgid "Enter a valid appointment duration and preparation/recovery times."
 msgstr "Indiquez une durée de rendez-vous et des temps de préparation et de récupération valides."
 
@@ -700,9 +703,6 @@ msgstr "Indiquez une période de réservation valide."
 
 msgid "Enter a valid client ID and secret. No credentials were changed."
 msgstr "Saisissez un identifiant client et un secret valides. Aucun identifiant n’a été modifié."
-
-msgid "Enter a valid HTTPS address for your calendar service."
-msgstr "Saisissez une adresse HTTPS valide pour votre agenda."
 
 msgid "Enter hours for the date exception or select Closed all day."
 msgstr "Indiquez les horaires de cette date ou cochez « Fermé toute la journée »."
@@ -740,14 +740,14 @@ msgstr "Chaque nouvelle réservation native doit être liée à un profil. Ajout
 msgid "Export to calendar"
 msgstr "Export vers l’agenda"
 
+msgid "Find Subscribe by URL, Internet calendar, or iCalendar subscription in your calendar application. Paste the link rather than importing a one-time ICS file."
+msgstr "Recherchez S’abonner par URL, Agenda Internet ou Abonnement iCalendar dans votre application. Collez le lien au lieu d’importer une seule fois un fichier ICS."
+
 msgid "Find events"
 msgstr "Rechercher des événements"
 
 msgid "Find my calendars"
 msgstr "Trouver mes calendriers"
-
-msgid "Find Subscribe by URL, Internet calendar, or iCalendar subscription in your calendar application. Paste the link rather than importing a one-time ICS file."
-msgstr "Recherchez S’abonner par URL, Agenda Internet ou Abonnement iCalendar dans votre application. Collez le lien au lieu d’importer une seule fois un fichier ICS."
 
 msgid "Finish by connecting your calendar account or creating an optional private calendar subscription."
 msgstr "Terminez en connectant votre compte d’agenda ou en créant un abonnement privé facultatif."
@@ -766,9 +766,6 @@ msgstr "Première date réservable"
 
 msgid "For a closed date, leave Closed all day checked. To remove an exception, clear its date and times."
 msgstr "Pour fermer une date, laissez « Fermé toute la journée » coché. Pour supprimer une exception, effacez sa date et ses horaires."
-
-msgid "For a free appointment without a WooCommerce order, use the native service form."
-msgstr "Pour proposer un rendez-vous gratuit sans commande WooCommerce, utilisez le formulaire Dendrila."
 
 msgid "For all-day events, use midnight for both times. The end date is the first day after the event."
 msgstr "Pour une journée entière, indiquez minuit aux deux horaires. La date de fin correspond au premier jour après l’événement."
@@ -797,29 +794,26 @@ msgstr "Indiquez une date valide et différente pour chaque exception."
 msgid "Google / Outlook"
 msgstr "Google / Outlook"
 
-msgid "Google and Outlook can authorize access when the Dendrila OAuth application is enabled by the publisher. Otherwise a read-only calendar subscription remains available."
-msgstr "Google et Outlook peuvent autoriser l’accès lorsque l’application OAuth Dendrila est activée par son éditeur. Sinon, un abonnement en lecture seule reste disponible."
-
 msgid "Google Calendar"
 msgstr "Google Agenda"
 
 msgid "Google Calendar and Outlook need OAuth account authorization and are not connected by this CalDAV form. Existing URL subscriptions remain available separately."
 msgstr "Google Agenda et Outlook nécessitent une connexion OAuth, indisponible avec ce formulaire CalDAV. Les abonnements par URL restent disponibles séparément."
 
+msgid "Google and Outlook can authorize access when the Dendrila OAuth application is enabled by the publisher. Otherwise a read-only calendar subscription remains available."
+msgstr "Google et Outlook peuvent autoriser l’accès lorsque l’application OAuth Dendrila est activée par son éditeur. Sinon, un abonnement en lecture seule reste disponible."
+
 msgid "Group"
 msgstr "Regrouper"
-
-msgid "High contrast"
-msgstr "Contraste renforcé"
 
 msgid "HTTPS is required for private calendar subscriptions."
 msgstr "Le protocole HTTPS est obligatoire pour les abonnements privés."
 
+msgid "High contrast"
+msgstr "Contraste renforcé"
+
 msgid "I agree that my name and email address may be used to manage this booking."
 msgstr "J’accepte que mon nom et mon adresse e-mail soient utilisés pour gérer cette réservation."
-
-msgid "iCalendar subscription"
-msgstr "Abonnement iCalendar"
 
 msgid "If a provider cannot be checked, the new reservation is refused rather than double-booked."
 msgstr "Si un agenda ne peut pas être vérifié, la réservation est refusée pour éviter un doublon."
@@ -902,9 +896,6 @@ msgstr "Chargement des événements…"
 msgid "Loading the booking form…"
 msgstr "Chargement du formulaire de réservation…"
 
-msgid "Local events"
-msgstr "Événements locaux"
-
 msgid "Local events can be sent to connected external calendars. They do not yet block booking availability in third-party booking plugins. Do not use this form to prevent reservations."
 msgstr "Les événements locaux peuvent être envoyés aux agendas externes connectés. Ils ne bloquent pas encore les disponibilités dans les extensions de réservation. Ne les utilisez pas pour empêcher une réservation."
 
@@ -925,9 +916,6 @@ msgstr "Gérer les profils"
 
 msgid "Manage profiles and weekly hours"
 msgstr "Gérer les profils et leurs horaires hebdomadaires"
-
-msgid "Manage your appointments here. WooCommerce remains the source of product names and prices."
-msgstr "Retrouvez et modifiez vos prestations ici. WooCommerce reste la référence pour leur nom et leur prix."
 
 msgid "Maximum number of subscriptions reached. Revoke an old link first."
 msgstr "Nombre maximal d’abonnements atteint. Révoquez d’abord un ancien lien."
@@ -961,9 +949,6 @@ msgstr "Configuration des réservations natives — commencez par créer un prof
 
 msgid "Native booking setup: create at least one profile before offering services or taking reservations."
 msgstr "Configuration des réservations natives : créez au moins un profil avant de proposer des prestations ou d’accepter des réservations."
-
-msgid "Native bookings"
-msgstr "Réservations natives"
 
 msgid "Never synchronized"
 msgstr "Jamais synchronisé"
@@ -1076,6 +1061,9 @@ msgstr "Seul le rendez-vous doit tenir dans ces horaires. Les temps de préparat
 msgid "Open Apple Calendar subscription"
 msgstr "Ouvrir l’abonnement dans Calendrier Apple"
 
+msgid "Open WooCommerce order"
+msgstr "Ouvrir la commande WooCommerce"
+
 msgid "Open appointment settings"
 msgstr "Ouvrir les réglages de rendez-vous"
 
@@ -1088,29 +1076,23 @@ msgstr "Ouvrir l’assistant de configuration"
 msgid "Open products"
 msgstr "Ouvrir les produits"
 
-msgid "Open the booking setup guide"
-msgstr "Ouvrir le guide de réservation"
-
 msgid "Open the Product data box, select the Appointment booking tab, tick Use this product as an appointment service, choose a published responsible profile and set the duration."
 msgstr "Ouvrez le bloc « Données produit », sélectionnez l’onglet « Prise de rendez-vous », cochez « Utiliser ce produit comme prestation de rendez-vous », choisissez un profil responsable publié et définissez la durée."
+
+msgid "Open the booking setup guide"
+msgstr "Ouvrir le guide de réservation"
 
 msgid "Open unified calendar"
 msgstr "Ouvrir le calendrier unifié"
 
-msgid "Open WooCommerce order"
-msgstr "Ouvrir la commande WooCommerce"
-
-msgid "opens in a new tab"
-msgstr "s’ouvre dans un nouvel onglet"
-
 msgid "Optional date limits"
 msgstr "Dates limites facultatives"
 
-msgid "Other booking plugins (optional)"
-msgstr "Autres extensions de réservation (facultatif)"
-
 msgid "Other CalDAV service"
 msgstr "Autre service CalDAV"
+
+msgid "Other booking plugins (optional)"
+msgstr "Autres extensions de réservation (facultatif)"
 
 msgid "Outlook / Microsoft 365"
 msgstr "Outlook / Microsoft 365"
@@ -1679,6 +1661,9 @@ msgstr "Service d’agenda non pris en charge."
 msgid "Upcoming appointments (server view)"
 msgstr "Rendez-vous à venir (vue serveur)"
 
+msgid "Use Products > Add a service. Give the simple product a name, description and regular price. You do not need a second service form."
+msgstr "Utilisez Produits > Ajouter une prestation. Renseignez le nom, la description et le prix normal du produit simple. Aucune deuxième fiche de prestation n’est nécessaire."
+
 msgid "Use a read-only calendar subscription instead"
 msgstr "Utiliser plutôt un abonnement de calendrier en lecture seule"
 
@@ -1687,9 +1672,6 @@ msgstr "Utilisez un mot de passe d’application Apple pour connecter votre agen
 
 msgid "Use an application-specific password if your service requires one. Your password is encrypted before it is saved."
 msgstr "Utilisez un mot de passe spécifique à l’application si le service le demande. Votre mot de passe sera chiffré avant son enregistrement."
-
-msgid "Use Products > Add a service. Give the simple product a name, description and regular price. You do not need a second service form."
-msgstr "Utilisez Produits > Ajouter une prestation. Renseignez le nom, la description et le prix normal du produit simple. Aucune deuxième fiche de prestation n’est nécessaire."
 
 msgid "Use this product as an appointment service"
 msgstr "Utiliser ce produit comme prestation de rendez-vous"
@@ -1775,6 +1757,9 @@ msgstr "Vous ne pouvez pas créer de prestations de rendez-vous."
 msgid "You cannot edit booking appearance."
 msgstr "Vous n’avez pas l’autorisation de modifier l’apparence des réservations."
 
+msgid "You cannot manage Dendrila booking profiles."
+msgstr "Vous n’avez pas l’autorisation de gérer les profils de réservation Dendrila."
+
 msgid "You cannot manage bookings."
 msgstr "Vous ne pouvez pas gérer les réservations."
 
@@ -1784,8 +1769,11 @@ msgstr "Vous ne pouvez pas gérer les connexions des agendas."
 msgid "You cannot manage calendar subscriptions."
 msgstr "Vous ne pouvez pas gérer les abonnements du calendrier."
 
-msgid "You cannot manage Dendrila booking profiles."
-msgstr "Vous n’avez pas l’autorisation de gérer les profils de réservation Dendrila."
+msgid "Your Dendrila appointments and personal events appear here. Other booking plugins are optional and can be shown separately."
+msgstr "Vos rendez-vous et événements personnels apparaissent ici. Les autres extensions de réservation sont facultatives et peuvent être affichées séparément."
+
+msgid "Your Dendrila events are selected by default. Other booking extensions are optional and never selected automatically."
+msgstr "Les événements Dendrila sont sélectionnés par défaut. Les autres extensions de réservation sont facultatives et ne sont jamais sélectionnées automatiquement."
 
 msgid "Your appointment"
 msgstr "Votre rendez-vous"
@@ -1820,12 +1808,6 @@ msgstr "Adresse de votre cloud"
 msgid "Your confirmation and booking reference will appear here."
 msgstr "Votre confirmation et votre référence de réservation apparaîtront ici."
 
-msgid "Your Dendrila appointments and personal events appear here. Other booking plugins are optional and can be shown separately."
-msgstr "Vos rendez-vous et événements personnels apparaissent ici. Les autres extensions de réservation sont facultatives et peuvent être affichées séparément."
-
-msgid "Your Dendrila events are selected by default. Other booking extensions are optional and never selected automatically."
-msgstr "Les événements Dendrila sont sélectionnés par défaut. Les autres extensions de réservation sont facultatives et ne sont jamais sélectionnées automatiquement."
-
 msgid "Your local times are also shown in %s."
 msgstr "Les horaires de votre fuseau local %s sont également affichés."
 
@@ -1849,3 +1831,9 @@ msgstr "Votre créneau sera réservé pendant le paiement. La réservation sera 
 
 msgid "Your time: %s"
 msgstr "Votre horaire local : %s"
+
+msgid "iCalendar subscription"
+msgstr "Abonnement iCalendar"
+
+msgid "opens in a new tab"
+msgstr "s’ouvre dans un nouvel onglet"

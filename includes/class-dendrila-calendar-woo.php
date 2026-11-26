@@ -65,6 +65,7 @@ final class Dendrila_Calendar_Woo {
         $selected = absint( $selected );
         if ( $selected && ! isset( $choices[ $selected ] ) ) {
             $current = self::available() ? wc_get_product( $selected ) : false;
+            /* translators: %d: WooCommerce product ID. */
             $choices[ $selected ] = $current ? $current->get_name() : sprintf( __( 'Unavailable product #%d', 'dendrila-calendar' ), $selected );
         }
         echo '<p><label for="dendrila-service-product">' . esc_html__( 'WooCommerce payment product', 'dendrila-calendar' ) . '</label></p>';
@@ -204,7 +205,7 @@ final class Dendrila_Calendar_Woo {
         $id = absint( $order->get_meta( self::BOOKING_KEY, true ) );
         if ( ! $id || (int) get_post_meta( $id, self::ORDER_KEY, true ) !== $order->get_id() ) { return; }
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only order receipt, authorized by Woo's order key.
-        $key = isset( $_GET['key'] ) && is_string( $_GET['key'] ) ? wc_clean( wp_unslash( $_GET['key'] ) ) : '';
+        $key = isset( $_GET['key'] ) && is_string( $_GET['key'] ) ? sanitize_text_field( wp_unslash( $_GET['key'] ) ) : '';
         if ( ! current_user_can( 'manage_woocommerce' ) && ! hash_equals( $order->get_order_key(), $key ) ) { return; }
         $status = get_post_meta( $id, Dendrila_Calendar_Native::STATUS_KEY, true );
         $message = __( 'This appointment is not confirmed. Please contact the organizer or choose another time.', 'dendrila-calendar' );

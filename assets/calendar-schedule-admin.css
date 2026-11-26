@@ -139,3 +139,6 @@
     padding: 10px;
   }
 }
+
+/* A direct link can expose the booking panel even before WooCommerce initializes its tabs. */
+.no-js #woocommerce-product-data #dendrila-product-booking:target { display: block; }

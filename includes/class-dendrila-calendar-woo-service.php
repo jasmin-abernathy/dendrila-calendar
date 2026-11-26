@@ -10,7 +10,7 @@ final class Dendrila_Calendar_Woo_Service {
 
     public static function boot() {
         add_action( 'admin_menu', array( __CLASS__, 'add_service_menu' ), 30 );
-        add_action( 'admin_notices', array( __CLASS__, 'product_editor_notice' ) );
+        add_action( 'edit_form_after_title', array( __CLASS__, 'product_editor_notice' ) );
         add_filter( 'woocommerce_product_data_tabs', array( __CLASS__, 'tab' ) );
         add_action( 'woocommerce_product_data_panels', array( __CLASS__, 'panel' ) );
         add_action( 'woocommerce_admin_process_product_object', array( __CLASS__, 'prepare' ) );
@@ -68,11 +68,11 @@ final class Dendrila_Calendar_Woo_Service {
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Navigation-only flag.
         $edit_service = isset( $_GET['dendrila_edit_service'] ) && is_string( $_GET['dendrila_edit_service'] ) &&
             '1' === sanitize_text_field( wp_unslash( $_GET['dendrila_edit_service'] ) );
-        echo '<div class="notice notice-info" data-dendrila-product-help data-dendrila-new-service="' . ( $shortcut ? '1' : '0' ) . '" data-dendrila-edit-service="' . ( $edit_service ? '1' : '0' ) . '"><p><strong>' .
+        echo '<div class="notice notice-info inline" data-dendrila-product-help data-dendrila-new-service="' . ( $shortcut ? '1' : '0' ) . '" data-dendrila-edit-service="' . ( $edit_service ? '1' : '0' ) . '"><p><strong>' .
             esc_html( $shortcut ? __( 'New bookable service', 'dendrila-calendar' ) : __( 'Dendrila appointment booking', 'dendrila-calendar' ) ) . '</strong> — ' .
             esc_html__( 'Enter the product name and price, then configure availability in Product data > Appointment booking.', 'dendrila-calendar' ) . '</p>';
-        echo '<p><button type="button" class="button button-primary" data-dendrila-open-booking-tab>' . esc_html__( 'Open appointment settings', 'dendrila-calendar' ) .
-            '</button> <a class="button" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-guide' ) ) . '">' . esc_html__( 'Step-by-step guide', 'dendrila-calendar' ) . '</a></p>';
+        echo '<p><a href="#dendrila-product-booking" class="button button-primary" data-dendrila-open-booking-tab>' . esc_html__( 'Open appointment settings', 'dendrila-calendar' ) .
+            '</a> <a class="button" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-guide' ) ) . '">' . esc_html__( 'Step-by-step guide', 'dendrila-calendar' ) . '</a></p>';
         echo '<p data-dendrila-missing-tab hidden>' . esc_html__( 'The appointment tab is not available in this editor. Use the standard WooCommerce product editor and consult the guide.', 'dendrila-calendar' ) . '</p></div>';
     }
 
@@ -260,7 +260,7 @@ final class Dendrila_Calendar_Woo_Service {
 
     public static function guard_store_cart( $product, $request ) {
         if ( self::is_appointment( $product->get_id() ) || ( $product->get_parent_id() && self::is_appointment( $product->get_parent_id() ) ) ) {
-            throw new \Automattic\WooCommerce\StoreApi\Exceptions\RouteException( 'dendrila_appointment_time_required', self::cart_message(), 400 );
+            throw new \Automattic\WooCommerce\StoreApi\Exceptions\RouteException( 'dendrila_appointment_time_required', esc_html( self::cart_message() ), 400 );
         }
     }
 

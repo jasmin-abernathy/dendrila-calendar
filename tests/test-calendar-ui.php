@@ -21,9 +21,9 @@ function wp_localize_script( $handle, $name, $data ) { $GLOBALS['localized_scrip
 function wp_create_nonce( $name ) { return 'testnonce'; }
 function wp_timezone_string() { return 'Europe/Paris'; }
 function wp_timezone() { return new DateTimeZone( 'Europe/Paris' ); }
+function checked( $value, $expected = true, $echo = true ) { return $value == $expected ? ' checked="checked"' : ''; }
 function get_user_locale() { return 'fr_FR'; }
 function get_option( $name, $default ) { return $default; }
-function checked( $value, $expected = true, $echo = true ) { $html = $value === $expected ? ' checked="checked"' : ''; if ( $echo ) { echo $html; } return $html; }
 function sanitize_key( $key ) { return strtolower( preg_replace( '/[^a-z0-9_-]/', '', $key ) ); }
 function wp_unslash( $value ) { return $value; }
 class Dendrila_Calendar_Sources {
@@ -50,7 +50,7 @@ if ( $GLOBALS['queued_scripts']['dendrila-calendar-admin']['version'] !== (strin
     throw new RuntimeException( 'Calendar asset version must reflect its file modification time' );
 }
 if ( Dendrila_Calendar::VERSION !== '0.0.6' ) {
-    throw new RuntimeException( 'Plugin version does not match the 0.0.6 test build' );
+    throw new RuntimeException( 'Plugin version does not match the 0.0.6 test release' );
 }
 ob_start();
 Dendrila_Calendar::render();

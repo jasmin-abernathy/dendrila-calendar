@@ -14,7 +14,7 @@
             window.jQuery(tab).trigger('click');
         } else { tab.click(); }
         var panel = document.getElementById('dendrila-product-booking');
-        if (box) box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (box) box.scrollIntoView({ behavior: 'auto', block: 'start' });
         if (panel) {
             var first = panel.querySelector('input[type="checkbox"][name="dendrila_product_booking"]');
             if (first) first.focus({ preventScroll: true });
@@ -30,8 +30,11 @@
         function open() {
             if (!openBookingTab() && error) error.hidden = false;
         }
-        if (button) button.addEventListener('click', open);
-        if (notice.dataset.dendrilaNewService === '1' || notice.dataset.dendrilaEditService === '1') {
+        if (button) button.addEventListener('click', function (event) {
+            if (openBookingTab()) event.preventDefault();
+            else if (error) error.hidden = false;
+        });
+        if (notice.dataset.dendrilaNewService === '1' || notice.dataset.dendrilaEditService === '1' || window.location.hash === '#dendrila-product-booking') {
             // WooCommerce can initialize product tabs after DOMContentLoaded.
             // Retry briefly instead of relying on one fragile 250 ms click.
             var delays = [150, 280, 450, 750, 1000];

@@ -97,7 +97,7 @@ final class Dendrila_Calendar_Booking {
             self::send_error( new WP_Error( 'dendrila_nonce_expired', __( 'Reload this page before checking availability or booking.', 'dendrila-calendar' ) ), 403 );
         }
         // A short, hashed network bucket stores neither addresses nor customer data.
-        $ip = isset( $_SERVER['REMOTE_ADDR'] ) && is_string( $_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : 'unknown';
+        $ip = isset( $_SERVER['REMOTE_ADDR'] ) && is_string( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : 'unknown';
         $key = 'dc_public_' . substr( hash_hmac( 'sha256', $kind . '|' . $ip . '|' . (int) floor( time() / 60 ), wp_salt( 'nonce' ) ), 0, 32 );
         $count = (int) get_transient( $key );
         if ( $count >= ( 'slots' === $kind ? 60 : 12 ) ) { self::send_error( new WP_Error( 'dendrila_rate_limit', __( 'Please wait a minute before trying again.', 'dendrila-calendar' ) ), 429 ); }
@@ -207,6 +207,7 @@ final class Dendrila_Calendar_Booking {
             $until = min( time() + self::HOLD_SECONDS, strtotime( $start . ' UTC' ) );
             if ( $paid && $until < time() + 60 ) { return new WP_Error( 'dendrila_payment_too_late', __( 'Choose a later time to leave enough time for payment.', 'dendrila-calendar' ) ); }
             $post = array( 'post_type' => Dendrila_Calendar_Native::BOOKING, 'post_status' => 'private',
+                /* translators: %s: service name. */
                 'post_title' => sprintf( __( 'Booking: %s', 'dendrila-calendar' ), get_the_title( $id ) ),
                 'meta_input' => array(
                     Dendrila_Calendar_Native::SERVICE_KEY => $id, Dendrila_Calendar_Native::PROFILE_KEY => $service['profile_id'],
@@ -407,6 +408,7 @@ final class Dendrila_Calendar_Booking {
             if ( ! in_array( $status, array( 'confirmed', 'payment_on_hold', 'cancelled', 'refunded', 'expired', 'payment_conflict' ), true ) ) { continue; }
             $cancelled = in_array( $status, array( 'cancelled', 'refunded', 'expired', 'payment_conflict' ), true );
             $events[] = array( 'id' => 'booking-' . $post->ID,
+                /* translators: %s: service name. */
                 'title' => sprintf( __( 'Booking: %s', 'dendrila-calendar' ), get_the_title( get_post_meta( $post->ID, Dendrila_Calendar_Native::SERVICE_KEY, true ) ) ),
                 'start' => str_replace( ' ', 'T', get_post_meta( $post->ID, Dendrila_Calendar_Native::START_KEY, true ) ) . 'Z',
                 'end' => str_replace( ' ', 'T', get_post_meta( $post->ID, Dendrila_Calendar_Native::END_KEY, true ) ) . 'Z',

@@ -174,10 +174,15 @@ class Dendrila_Calendar_Booking_Form {
             'loading' => __( 'Checking available times…', 'dendrila-calendar' ),
             'empty' => __( 'No times are available on this date. Please choose another date.', 'dendrila-calendar' ),
             'chooseSlot' => __( 'Choose an available time below.', 'dendrila-calendar' ),
+            /* translators: %s: appointment duration in minutes. */
             'minutes' => __( '%s minutes', 'dendrila-calendar' ),
+            /* translators: %s: booking timezone. */
             'timezone' => __( 'Times shown in %s.', 'dendrila-calendar' ),
+            /* translators: %s: visitor timezone. */
             'localTimezone' => __( 'Your local times are also shown in %s.', 'dendrila-calendar' ),
+            /* translators: %s: time in the visitor timezone. */
             'yourTime' => __( 'Your time: %s', 'dendrila-calendar' ),
+            /* translators: %s: selected appointment time. */
             'selected' => __( 'Selected time: %s', 'dendrila-calendar' ),
             'confirm' => __( 'Confirm booking', 'dendrila-calendar' ),
             'reserve' => __( 'Reserve and continue to payment', 'dendrila-calendar' ),
@@ -194,6 +199,7 @@ class Dendrila_Calendar_Booking_Form {
             'paymentWaiting' => __( 'Your payment is awaiting confirmation', 'dendrila-calendar' ),
             'paymentWaitingDescription' => __( 'Your appointment time remains reserved while the organizer checks the payment.', 'dendrila-calendar' ),
             'viewOrder' => __( 'View my order', 'dendrila-calendar' ),
+            /* translators: %s: localized payment deadline. */
             'heldUntil' => __( 'Complete payment before %s. After that, the time can become available again.', 'dendrila-calendar' ),
             'checkout' => __( 'Continue to payment', 'dendrila-calendar' ),
             'checkoutFailed' => __( 'The payment link is unavailable. Keep your booking reference and contact the site to complete payment.', 'dendrila-calendar' ),

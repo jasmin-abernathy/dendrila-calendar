@@ -29,6 +29,7 @@ final class Dendrila_Calendar_Schedule_Admin {
         wp_enqueue_style( 'dendrila-calendar-schedule-admin', $url . 'assets/calendar-schedule-admin.css', array(), (string) filemtime( $base . '/assets/calendar-schedule-admin.css' ) );
         wp_enqueue_script( 'dendrila-calendar-schedule-admin', $url . 'assets/calendar-schedule-admin.js', array(), (string) filemtime( $base . '/assets/calendar-schedule-admin.js' ), true );
         wp_localize_script( 'dendrila-calendar-schedule-admin', 'dendrilaScheduleAdmin', array(
+            /* translators: %d: position of this date exception. */
             'exceptionTitle' => __( 'Date exception %d', 'dendrila-calendar' ),
             'rangeAdded' => __( 'Time range added.', 'dendrila-calendar' ),
             'rangeRemoved' => __( 'Time range removed.', 'dendrila-calendar' ),
@@ -47,10 +48,10 @@ final class Dendrila_Calendar_Schedule_Admin {
         );
     }
 
-    private static function checkbox( $id, $name, $checked, $label, $attributes = '' ) {
+    private static function checkbox( $id, $name, $checked, $label, $closed_toggle = false ) {
         echo '<label class="dendrila-schedule-toggle" for="' . esc_attr( $id ) . '">';
-        echo '<input type="hidden" name="' . esc_attr( $name ) . '" value="0"' . ( false !== strpos( $attributes, 'data-schedule-closed' ) ? ' data-closed-value' : '' ) . '>';
-        echo '<input type="checkbox" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" value="1"' . ( $checked ? ' checked' : '' ) . $attributes . '> ' . esc_html( $label ) . '</label>';
+        echo '<input type="hidden" name="' . esc_attr( $name ) . '" value="0"' . ( $closed_toggle ? ' data-closed-value' : '' ) . '>';
+        echo '<input type="checkbox" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" value="1"' . ( $checked ? ' checked' : '' ) . ( $closed_toggle ? ' data-schedule-closed' : '' ) . '> ' . esc_html( $label ) . '</label>';
     }
 
     private static function range_fields( $name, $id, $range = array() ) {
@@ -68,10 +69,11 @@ final class Dendrila_Calendar_Schedule_Admin {
     private static function exception_fields( $index, $date = '', $ranges = array(), $fallback_help = true ) {
         $prefix = 'dendrila-profile-exception-' . $index;
         $name = self::PROFILE_FIELD . '[exceptions][' . $index . ']';
+        /* translators: %d: position of this date exception. */
         echo '<fieldset class="dendrila-schedule-exception" data-schedule-group="exception"><legend data-exception-title>' . esc_html( sprintf( __( 'Date exception %d', 'dendrila-calendar' ), (int) $index + 1 ) ) . '</legend>';
         echo '<div class="dendrila-schedule-exception-heading"><div><label data-exception-date-label for="' . esc_attr( $prefix . '-date' ) . '">' . esc_html__( 'Date', 'dendrila-calendar' ) . '</label>';
         echo '<input type="date" data-exception-date id="' . esc_attr( $prefix . '-date' ) . '" name="' . esc_attr( $name . '[date]' ) . '" value="' . esc_attr( $date ) . '"></div>';
-        self::checkbox( $prefix . '-closed', $name . '[closed]', empty( $ranges ), __( 'Closed all day', 'dendrila-calendar' ), ' data-schedule-closed' );
+        self::checkbox( $prefix . '-closed', $name . '[closed]', empty( $ranges ), __( 'Closed all day', 'dendrila-calendar' ), true );
         echo '<button type="button" class="button dendrila-schedule-remove" data-remove-exception data-schedule-js hidden>' . esc_html__( 'Remove date', 'dendrila-calendar' ) . '</button></div>';
         echo '<div data-time-ranges>';
         foreach ( $ranges ? array_values( $ranges ) : array( array() ) as $i => $range ) {
@@ -120,7 +122,7 @@ final class Dendrila_Calendar_Schedule_Admin {
             $prefix = 'dendrila-profile-day-' . $day;
             $name = self::PROFILE_FIELD . '[weekly][' . $day . ']';
             echo '<fieldset class="dendrila-schedule-day" data-schedule-group="day" data-day="' . esc_attr( $day ) . '"><legend>' . esc_html( $label ) . '</legend>';
-            self::checkbox( $prefix . '-closed', self::PROFILE_FIELD . '[closed][' . $day . ']', empty( $ranges ), __( 'Closed', 'dendrila-calendar' ), ' data-schedule-closed' );
+            self::checkbox( $prefix . '-closed', self::PROFILE_FIELD . '[closed][' . $day . ']', empty( $ranges ), __( 'Closed', 'dendrila-calendar' ), true );
             echo '<div data-time-ranges>';
             foreach ( $ranges ? array_values( $ranges ) : array( array() ) as $i => $range ) { self::range_fields( $name . '[' . $i . ']', $prefix . '-range-' . $i, $range ); }
             echo '</div><button type="button" class="button" data-add-range data-schedule-js hidden>' . esc_html__( 'Add a time range', 'dendrila-calendar' ) . '</button>';

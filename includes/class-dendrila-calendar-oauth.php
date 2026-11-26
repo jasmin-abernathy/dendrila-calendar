@@ -380,9 +380,18 @@ final class Dendrila_Calendar_OAuth {
         $start = ( new DateTimeImmutable( $event['start'], new DateTimeZone( 'UTC' ) ) )->setTimezone( new DateTimeZone( 'UTC' ) );
         $end = ( new DateTimeImmutable( $event['end'], new DateTimeZone( 'UTC' ) ) )->setTimezone( new DateTimeZone( 'UTC' ) );
         if ( 'google' === $provider ) {
-            $dates = ! empty( $event['all_day'] ) ?
-                array( 'start' => array( 'date' => $start->setTimezone( wp_timezone() )->format( 'Y-m-d' ), 'dateTime' => null, 'timeZone' => null ), 'end' => array( 'date' => $end->setTimezone( wp_timezone() )->format( 'Y-m-d' ), 'dateTime' => null, 'timeZone' => null ) ) :
-                array( 'start' => array( 'date' => null, 'dateTime' => $start->setTimezone( wp_timezone() )->format( 'Y-m-d\TH:i:sP' ), 'timeZone' => wp_timezone_string() ), 'end' => array( 'date' => null, 'dateTime' => $end->setTimezone( wp_timezone() )->format( 'Y-m-d\TH:i:sP' ), 'timeZone' => wp_timezone_string() ) );
+            $dates = array();
+            $timezone = wp_timezone();
+            foreach ( array( 'start' => $start, 'end' => $end ) as $key => $instant ) {
+                $local = $instant->setTimezone( $timezone );
+                if ( ! empty( $event['all_day'] ) ) {
+                    $dates[ $key ] = array( 'date' => $local->format( 'Y-m-d' ), 'dateTime' => null, 'timeZone' => null );
+                } else {
+                    // Clear a previously all-day date on PATCH. A fixed WP offset is not an IANA zone.
+                    $dates[ $key ] = array( 'date' => null, 'dateTime' => $local->format( DATE_RFC3339 ),
+                        'timeZone' => preg_match( '/^[+-]/', $timezone->getName() ) ? null : $timezone->getName() );
+                }
+            }
             return array_merge( array( 'summary' => $event['title'] ), $dates );
         }
         if ( ! empty( $event['all_day'] ) ) {
