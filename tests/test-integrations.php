@@ -41,13 +41,23 @@ namespace {
         public $prefix = 'wp_';
         public $last_error = '';
         public $sql = array();
-        public function prepare( $sql, $params ) {
+        public function prepare( $sql, ...$params ) {
+            // Simulate WordPress 6.2+ identifier placeholders to catch unescaped plugin tables.
             if ( ! is_array( $params ) || ! count( $params ) ) throw new \Exception( 'Missing bound SQL arguments' );
-            foreach ( $params as $param ) {
-                if ( ! is_string( $param ) ) throw new \Exception( 'Unexpected non-string date bound' );
-                $sql = preg_replace( '/%s/', "'" . str_replace( "'", "''", $param ) . "'", $sql, 1 );
+            preg_match_all( '/%(?:s|i)/', $sql, $placeholders );
+            if ( count( $params ) !== count( $placeholders[0] ) ) {
+                throw new \Exception( 'SQL placeholders/arguments mismatch' );
             }
-            return $sql;
+            $offset = 0;
+            return preg_replace_callback( '/%(s|i)/', static function ( $match ) use ( $params, &$offset ) {
+                $param = $params[ $offset++ ];
+                if ( ! is_string( $param ) ) throw new \Exception( 'Unexpected non-string SQL argument' );
+                if ( 'i' === $match[1] ) {
+                    if ( ! preg_match( '/^wp_[a-z0-9_]+$/D', $param ) ) throw new \Exception( 'Unsafe table identifier' );
+                    return '`' . $param . '`';
+                }
+                return "'" . str_replace( "'", "''", $param ) . "'";
+            }, $sql );
         }
         public function get_results( $sql ) {
             $this->sql[] = $sql;
@@ -75,6 +85,7 @@ namespace {
         }
     }
     $wpdb = new Test_Dendrila_DB();
+    require dirname( __DIR__ ) . '/includes/class-dendrila-calendar-detector.php';
     require dirname( __DIR__ ) . '/includes/class-dendrila-calendar-integrations.php';
     $sources = \Dendrila_Calendar_Integrations::available();
     if ( count( $sources ) !== 8 ) throw new \Exception( 'Expected eight optional integrations, got ' . count( $sources ) );
@@ -117,13 +128,21 @@ namespace {
     if ( \Dendrila_Calendar_Integrations::events( 'unknown', $range_start, $range_end ) ) {
         throw new \Exception( 'Unknown provider accepted' );
     }
-    // All-day reservations must span 23/25 actual hours over Paris DST transitions.
+    // A local all-day reservation must last 23/25 actual hours during Paris DST switches.
     $method = new \ReflectionMethod( \Dendrila_Calendar_Integrations::class, 'site_date' );
     foreach ( array( array('2027-03-28', '2027-03-29', 23), array('2027-10-31', '2027-11-01', 25) ) as $span ) {
         $day_start = $method->invoke( null, $span[0] . ' 00:00:00' );
         $day_end = $method->invoke( null, $span[1] . ' 00:00:00' );
         if ( ( $day_end->getTimestamp() - $day_start->getTimestamp() ) !== $span[2] * 3600 ) {
             throw new \Exception( 'DST all-day conversion incorrect on ' . $span[0] );
+        }
+    }
+    foreach ( $wpdb->sql as $statement ) {
+        if ( preg_match( '/FROM\\s+wp_|JOIN\\s+wp_/i', $statement ) ) {
+            throw new \Exception( 'A table name was not escaped as an identifier' );
+        }
+        if ( strpos( $statement, '%i' ) !== false || strpos( $statement, '%s' ) !== false ) {
+            throw new \Exception( 'An SQL placeholder was not bound' );
         }
     }
     echo 'Eight integration providers passed, ' . count( $events ) . ' fixture events (no PII/no writes)'.PHP_EOL;

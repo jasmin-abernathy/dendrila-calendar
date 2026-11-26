@@ -1,7 +1,49 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Dendrila Calendar 0.0.1\n"
+"Project-Id-Version: Dendrila Calendar 0.0.3\n"
 "Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "%1$d created, %2$d updated, %3$d cancelled, %4$d failed"
+msgstr ""
+
+msgid "1. Choose your calendar service"
+msgstr ""
+
+msgid "2. Connect your account"
+msgstr ""
+
+msgid "3. Choose where to add appointments"
+msgstr ""
+
+msgid "A compatibility request could not be submitted. Check your WordPress email delivery settings."
+msgstr ""
+
+msgid "A connector compatibility request was submitted for review."
+msgstr ""
+
+msgid "A synchronization attempt has finished. Review its status below."
+msgstr ""
+
+msgid "A test event is created then removed before automatic synchronization begins."
+msgstr ""
+
+msgid "Account authorization is not configured for this site."
+msgstr ""
+
+msgid "Account authorization successful"
+msgstr ""
+
+msgid "Account authorization was cancelled."
+msgstr ""
+
+msgid "Account authorized: choose your calendar"
+msgstr ""
+
+msgid "Account username or email"
+msgstr ""
+
+msgid "Actual appointments read from detected booking plugins. Select an appointment in the calendar to open its original booking tool; imported bookings are not editable here."
+msgstr ""
 
 msgid "Add an event"
 msgstr ""
@@ -12,28 +54,181 @@ msgstr ""
 msgid "All day"
 msgstr ""
 
-msgid "Amelia"
+msgid "Another calendar service"
+msgstr ""
+
+msgid "Apple iCloud (app-specific password)"
+msgstr ""
+
+msgid "Application credentials are managed in wp-config.php."
+msgstr ""
+
+msgid "Application credentials saved. You can now authorize your account using the button below."
+msgstr ""
+
+msgid "Application password"
 msgstr ""
 
 msgid "Appointment"
 msgstr ""
 
+msgid "Appointments from all detected booking plugins appear here. External calendar connection is not required to view them."
+msgstr ""
+
+msgid "Appointments to send"
+msgstr ""
+
 msgid "Approved"
+msgstr ""
+
+msgid "Automatic calendar synchronization"
+msgstr ""
+
+msgid "Automatic synchronization"
+msgstr ""
+
+msgid "Back"
+msgstr ""
+
+msgid "Back to calendar"
 msgstr ""
 
 msgid "Booking"
 msgstr ""
 
-msgid "Booking Calendar"
+msgid "Busy times also disable public Easy Appointments slots. Final booking submission is rechecked directly with connected calendars."
 msgstr ""
 
-msgid "Bookly"
+msgid "Calendar"
+msgstr ""
+
+msgid "Calendar actions"
+msgstr ""
+
+msgid "Calendar availability is temporarily unavailable. Please try again."
+msgstr ""
+
+msgid "Calendar connected. Automatic direct synchronization is enabled."
+msgstr ""
+
+msgid "Calendar disconnected. Existing remote events were not removed."
+msgstr ""
+
+msgid "Calendar disconnected. Previously created external events were not deleted."
+msgstr ""
+
+msgid "Calendar discovery was redirected to another service."
 msgstr ""
 
 msgid "Calendar event"
 msgstr ""
 
-msgid "Calendar events"
+msgid "Calendar service"
+msgstr ""
+
+msgid "Calendar view"
+msgstr ""
+
+msgid "Cannot verify this appointment time. Please select another slot."
+msgstr ""
+
+msgid "Change source and destination settings"
+msgstr ""
+
+msgid "Check busy times in Google and Outlook before accepting an Easy Appointments booking."
+msgstr ""
+
+msgid "Check the calendar address, credentials and selected sources."
+msgstr ""
+
+msgid "Choose a calendar and at least one source."
+msgstr ""
+
+msgid "Choose an agenda"
+msgstr ""
+
+msgid "Choose Google or Microsoft to authorize Dendrila Calendar, then select the calendar that will receive your appointments."
+msgstr ""
+
+msgid "Choose how appointments reach the calendar you already use."
+msgstr ""
+
+msgid "Choose month"
+msgstr ""
+
+msgid "Choose your destination calendar"
+msgstr ""
+
+msgid "Choosing an app only changes the instructions. Create an actual private link below and add it in that app."
+msgstr ""
+
+msgid "Compatible active plugins are preselected. You may deselect them. Inactive or unsupported plugins cannot be synchronized."
+msgstr ""
+
+msgid "Configuration"
+msgstr ""
+
+msgid "Configuration saved."
+msgstr ""
+
+msgid "Configure application credentials (administrator)"
+msgstr ""
+
+msgid "Configure Dendrila Calendar"
+msgstr ""
+
+msgid "Configure sources and destination"
+msgstr ""
+
+msgid "Connect a CalDAV calendar such as Nextcloud. New and changed WordPress bookings are pushed automatically approximately every five minutes while WordPress cron runs. This is one-way; the destination is never polled for changes."
+msgstr ""
+
+msgid "Connect at least one Google or Outlook calendar first."
+msgstr ""
+
+msgid "Connect this calendar"
+msgstr ""
+
+msgid "Connect with %s"
+msgstr ""
+
+msgid "Connect your account"
+msgstr ""
+
+msgid "Connect your calendar account"
+msgstr ""
+
+msgid "Connect your calendars, choose the bookings to send and protect your availability."
+msgstr ""
+
+msgid "Connect your Google account securely. Authorization requires a configured Dendrila OAuth application."
+msgstr ""
+
+msgid "Connect your Microsoft account securely. Authorization requires a configured Dendrila OAuth application."
+msgstr ""
+
+msgid "Connection method"
+msgstr ""
+
+msgid "Connection name"
+msgstr ""
+
+msgid "Connections grouped. No calendar events were deleted."
+msgstr ""
+
+msgid "Continue"
+msgstr ""
+
+msgid "Continue to your provider’s secure account authorization. No calendar password is entered in WordPress."
+msgstr ""
+
+msgid "Copy link"
+msgstr ""
+
+msgid "Create a private read-only subscription link."
+msgstr ""
+
+msgid "Create subscription link"
 msgstr ""
 
 msgid "Date and time"
@@ -45,10 +240,25 @@ msgstr ""
 msgid "Dendrila Calendar"
 msgstr ""
 
+msgid "Dendrila Calendar setup"
+msgstr ""
+
 msgid "Dendrila events"
 msgstr ""
 
-msgid "Easy Appointments"
+msgid "Dendrila local events"
+msgstr ""
+
+msgid "Direct account authorization is not available yet for this service. Dendrila cannot connect to your account just by selecting its name."
+msgstr ""
+
+msgid "Direct authorization requires the publisher to configure the Dendrila OAuth application once. Users do not need developer credentials."
+msgstr ""
+
+msgid "Direct synchronization into an existing calendar"
+msgstr ""
+
+msgid "Disconnect"
 msgstr ""
 
 msgid "Edit calendar event"
@@ -57,22 +267,97 @@ msgstr ""
 msgid "End"
 msgstr ""
 
+msgid "Enter a valid client ID and secret. No credentials were changed."
+msgstr ""
+
+msgid "Enter a valid HTTPS address for your calendar service."
+msgstr ""
+
+msgid "Enter the web address of your Nextcloud, then your login details."
+msgstr ""
+
+msgid "Enter your calendar account and application password."
+msgstr ""
+
+msgid "Enter your calendar service address and account details."
+msgstr ""
+
+msgid "Enter your cloud address and choose an agenda."
+msgstr ""
+
 msgid "Event"
 msgstr ""
 
-msgid "Event Organiser"
+msgid "Find events"
 msgstr ""
 
-msgid "Events Manager"
+msgid "Find my calendars"
 msgstr ""
 
-msgid "FluentBooking"
+msgid "Find Subscribe by URL, Internet calendar, or iCalendar subscription in your calendar application. Paste the link rather than importing a one-time ICS file."
+msgstr ""
+
+msgid "Finish by connecting your calendar account or creating an optional private calendar subscription."
+msgstr ""
+
+msgid "Finish connecting an agenda below. Google and Outlook use account authorization; Nextcloud and iCloud use CalDAV."
+msgstr ""
+
+msgid "Finish connecting my calendar"
+msgstr ""
+
+msgid "Finish the Dendrila Calendar setup to enable your chosen appointment sources and destination."
 msgstr ""
 
 msgid "Forbidden"
 msgstr ""
 
+msgid "Google / Outlook"
+msgstr ""
+
+msgid "Google and Outlook can authorize access when the Dendrila OAuth application is enabled by the publisher. Otherwise a read-only calendar subscription remains available."
+msgstr ""
+
+msgid "Google Calendar"
+msgstr ""
+
+msgid "Google Calendar and Outlook need OAuth account authorization and are not connected by this CalDAV form. Existing URL subscriptions remain available separately."
+msgstr ""
+
+msgid "Group"
+msgstr ""
+
+msgid "HTTPS is required for private calendar subscriptions."
+msgstr ""
+
+msgid "iCalendar subscription"
+msgstr ""
+
+msgid "If a provider cannot be checked, the new reservation is refused rather than double-booked."
+msgstr ""
+
+msgid "If an active booking plugin is detected but its connector is unusable, saving sends a technical compatibility request for review. This includes only the plugin name, entrypoint, version, reason, WordPress/PHP versions and site URL — never appointments, customer data or passwords. Duplicate requests are suppressed."
+msgstr ""
+
+msgid "In Nextcloud Calendar, choose New calendar > New subscription from link and paste the private URL. It will appear as a read-only subscribed calendar."
+msgstr ""
+
+msgid "In Outlook on the web, open Calendar > Add calendar > Subscribe from web. Paste the link and save. Updates can take more than 24 hours."
+msgstr ""
+
 msgid "Invalid date range"
+msgstr ""
+
+msgid "Keep my appointments inside WordPress only"
+msgstr ""
+
+msgid "language"
+msgstr ""
+
+msgid "Last synchronization:"
+msgstr ""
+
+msgid "Link copied."
 msgstr ""
 
 msgid "List"
@@ -81,46 +366,289 @@ msgstr ""
 msgid "Loading events…"
 msgstr ""
 
+msgid "Local events"
+msgstr ""
+
+msgid "Local events can be sent to connected external calendars. They do not yet block booking availability in third-party booking plugins. Do not use this form to prevent reservations."
+msgstr ""
+
+msgid "Looking for your calendars…"
+msgstr ""
+
+msgid "Manage local events"
+msgstr ""
+
+msgid "Maximum number of subscriptions reached. Revoke an old link first."
+msgstr ""
+
 msgid "Month"
+msgstr ""
+
+msgid "My calendar"
+msgstr ""
+
+msgid "Never synchronized"
 msgstr ""
 
 msgid "Next"
 msgstr ""
 
+msgid "Nextcloud (direct connection)"
+msgstr ""
+
+msgid "Nextcloud / iCloud"
+msgstr ""
+
+msgid "No calendar was found in this account."
+msgstr ""
+
+msgid "No events for this day."
+msgstr ""
+
 msgid "No events for this period."
 msgstr ""
 
-msgid "One private calendar for your WordPress events and compatible booking tools. Imported sources are read-only."
+msgid "No events returned by the active source connectors for the next 60 days. Check the source diagnostics below."
 msgstr ""
 
-msgid "Oryx Bookings"
+msgid "No external destination connected yet. Complete the connection on the Synchronization page."
+msgstr ""
+
+msgid "No supported appointment plugin was detected. You can start with local events and return to setup later."
+msgstr ""
+
+msgid "No writable calendar was found in this account."
+msgstr ""
+
+msgid "Not authorized."
+msgstr ""
+
+msgid "OAuth client ID"
+msgstr ""
+
+msgid "OAuth client secret"
+msgstr ""
+
+msgid "On a computer, open Google Calendar settings, choose Add calendar > From URL, paste the private HTTPS link, and add the calendar. Google decides when to refresh it. The mobile app cannot add URL subscriptions directly."
+msgstr ""
+
+msgid "On iPhone: Calendar > Calendars > Add Calendar > Add Subscription Calendar. Paste the URL. On Mac: File > New Calendar Subscription. You can also try Open Apple Calendar subscription after creating a link."
+msgstr ""
+
+msgid "Open Apple Calendar subscription"
+msgstr ""
+
+msgid "Open calendar view"
+msgstr ""
+
+msgid "Open configuration assistant"
+msgstr ""
+
+msgid "Open unified calendar"
+msgstr ""
+
+msgid "Other CalDAV service"
+msgstr ""
+
+msgid "Outlook / Microsoft 365"
+msgstr ""
+
+msgid "Paste your client ID"
+msgstr ""
+
+msgid "Paste your secret (never displayed again)"
 msgstr ""
 
 msgid "Pending"
 msgstr ""
 
+msgid "Pick your everyday calendar. We will guide you without technical setup."
+msgstr ""
+
+msgid "plural-forms"
+msgstr ""
+
+msgid "Prevent double bookings"
+msgstr ""
+
 msgid "Previous"
+msgstr ""
+
+msgid "project-id-version"
+msgstr ""
+
+msgid "Protect Easy Appointments reservations"
+msgstr ""
+
+msgid "Ready to connect"
+msgstr ""
+
+msgid "Redirect URI:"
 msgstr ""
 
 msgid "Reserved day"
 msgstr ""
 
+msgid "Revoke link"
+msgstr ""
+
+msgid "Revoke this subscription? Connected calendars will stop updating."
+msgstr ""
+
+msgid "Save application credentials"
+msgstr ""
+
+msgid "Save availability protection"
+msgstr ""
+
+msgid "Save settings and continue"
+msgstr ""
+
+msgid "Saved securely in the WordPress database, encrypted with this site’s keys. Leave a field empty to keep its saved value. Never paste credentials into chat."
+msgstr ""
+
+msgid "Search title or status"
+msgstr ""
+
 msgid "Select all"
+msgstr ""
+
+msgid "Select and copy the link manually."
+msgstr ""
+
+msgid "Select at least one appointment source."
+msgstr ""
+
+msgid "Select at least one available source and a valid destination."
+msgstr ""
+
+msgid "Select at least one calendar source."
 msgstr ""
 
 msgid "Select none"
 msgstr ""
 
-msgid "Simply Schedule Appointments"
+msgid "Select your WordPress sources, create a private calendar URL, then subscribe to it in your calendar app. The app refreshes events automatically on its own schedule; this is a read-only subscription, not instant or two-way synchronization."
+msgstr ""
+
+msgid "Selected day appointments"
+msgstr ""
+
+msgid "Setup required"
+msgstr ""
+
+msgid "Show instructions for this application (not a connection)"
+msgstr ""
+
+msgid "Source"
 msgstr ""
 
 msgid "Sources"
 msgstr ""
 
+msgid "Sources to synchronize"
+msgstr ""
+
 msgid "Start"
 msgstr ""
 
-msgid "The Events Calendar"
+msgid "Status"
+msgstr ""
+
+msgid "Step 1 — Detected appointment sources"
+msgstr ""
+
+msgid "Step 2 — Your destination calendar"
+msgstr ""
+
+msgid "Subscribe your personal calendar"
+msgstr ""
+
+msgid "Subscription created. Copy the URL now; it will not be shown again."
+msgstr ""
+
+msgid "Subscription name (e.g. personal calendar)"
+msgstr ""
+
+msgid "Subscription not found."
+msgstr ""
+
+msgid "Subscription revoked."
+msgstr ""
+
+msgid "Synchronization"
+msgstr ""
+
+msgid "Synchronization attempt finished. Review the status below."
+msgstr ""
+
+msgid "Synchronize appointments with your external calendar"
+msgstr ""
+
+msgid "Synchronize now"
+msgstr ""
+
+msgid "Test and connect this calendar"
+msgstr ""
+
+msgid "The calendar connection could not be saved. Please try again."
+msgstr ""
+
+msgid "The calendar server redirected to an unsafe address."
+msgstr ""
+
+msgid "The calendar service could not be reached securely."
+msgstr ""
+
+msgid "The calendar service did not accept the connection ("
+msgstr ""
+
+msgid "The calendar service returned an unreadable response. PHP DOM/XML may be unavailable."
+msgstr ""
+
+msgid "The calendar write test failed. Check the application password and make sure you can add and delete events in this calendar."
+msgstr ""
+
+msgid "The connection could not be completed. Try again."
+msgstr ""
+
+msgid "The connection expired. Try again."
+msgstr ""
+
+msgid "The full link is displayed only once after creation. If it is lost, revoke it and create a new one."
+msgstr ""
+
+msgid "The provider did not confirm that events can be created and removed. No connection was saved."
+msgstr ""
+
+msgid "The provider has granted access. Select the destination calendar and confirm the final test."
+msgstr ""
+
+msgid "The server cannot securely protect the calendar password."
+msgstr ""
+
+msgid "The subscription could not be saved. Try again."
+msgstr ""
+
+msgid "This account did not expose a calendar collection."
+msgstr ""
+
+msgid "This assistant detects active appointment plugins and guides external synchronization. You can view the local calendar before connecting an external destination."
+msgstr ""
+
+msgid "This calendar is connected more than once. Group the connections without deleting calendar events."
+msgstr ""
+
+msgid "This calendar was already connected. Authorization and selected sources were updated without creating a duplicate."
+msgstr ""
+
+msgid "This list contains only events created in Dendrila Calendar. Appointments imported from Easy Appointments and other plugins appear in the unified calendar."
+msgstr ""
+
+msgid "This server did not provide a calendar account. Check your service address."
+msgstr ""
+
+msgid "This time is occupied in a connected calendar. Please choose another."
 msgstr ""
 
 msgid "Times use the site timezone: %s. The event is visible only to administrators."
@@ -129,26 +657,95 @@ msgstr ""
 msgid "Today"
 msgstr ""
 
+msgid "Too many calendar redirects."
+msgstr ""
+
+msgid "Too many connected calendars."
+msgstr ""
+
+msgid "Too many connection attempts. Please try again later."
+msgstr ""
+
+msgid "Treat the link as a password. Anyone holding it can read the selected event titles and dates. Only HTTPS sites can create links."
+msgstr ""
+
+msgid "Unable to find calendars. Check your account details and try again."
+msgstr ""
+
+msgid "Unable to generate a private link."
+msgstr ""
+
 msgid "Unable to load events. Please try again."
+msgstr ""
+
+msgid "Unable to prepare calendar selection."
+msgstr ""
+
+msgid "Unable to update the subscription."
 msgstr ""
 
 msgid "Unified calendar"
 msgstr ""
 
+msgid "Unsupported calendar service."
+msgstr ""
+
+msgid "Upcoming appointments (server view)"
+msgstr ""
+
+msgid "Use a read-only calendar subscription instead"
+msgstr ""
+
+msgid "Use an Apple app password to connect your iCloud calendar."
+msgstr ""
+
+msgid "Use an application-specific password if your service requires one. Your password is encrypted before it is saved."
+msgstr ""
+
+msgid "Use your Apple Account email and an app-specific password. Connection may not work on every iCloud account yet."
+msgstr ""
+
 msgid "View"
+msgstr ""
+
+msgid "We will add and remove a temporary event to test the connection."
+msgstr ""
+
+msgid "We will guide you through the connection. You do not need an API key or a technical calendar address."
 msgstr ""
 
 msgid "Week"
 msgstr ""
 
+msgid "Where should your appointments appear?"
+msgstr ""
+
+msgid "Where will you use your calendar?"
+msgstr ""
+
+msgid "Which appointments should be sent?"
+msgstr ""
+
+msgid "Which calendar do you use?"
+msgstr ""
+
+msgid "You are not allowed to configure Dendrila Calendar."
+msgstr ""
+
+msgid "You are not allowed to manage calendar connections."
+msgstr ""
+
 msgid "You are not allowed to view this calendar."
 msgstr ""
 
-msgid "Find events"
+msgid "You cannot manage calendar connections."
 msgstr ""
 
-msgid "Search title or status"
+msgid "You cannot manage calendar subscriptions."
 msgstr ""
 
-msgid "Export filtered events (ICS)"
+msgid "Your calendar has been connected and synchronization started."
+msgstr ""
+
+msgid "Your cloud address"
 msgstr ""

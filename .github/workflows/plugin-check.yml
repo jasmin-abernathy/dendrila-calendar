@@ -1,0 +1,40 @@
+name: WordPress Plugin Check
+on:
+  pull_request:
+    paths:
+      - "dendrila-calendar.php"
+      - "includes/**"
+      - "assets/**"
+      - "languages/**"
+      - "readme.txt"
+      - ".github/workflows/plugin-check.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: plugin-check-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  plugin-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Stage only production plugin files
+        run: |
+          mkdir -p build/dendrila-calendar
+          cp dendrila-calendar.php readme.txt build/dendrila-calendar/
+          cp -R includes assets languages build/dendrila-calendar/
+          test -s build/dendrila-calendar/dendrila-calendar.php
+          test -s build/dendrila-calendar/languages/dendrila-calendar-fr_FR.l10n.php
+
+      - name: WordPress Plugin Check (official action)
+        uses: wordpress/plugin-check-action@v1
+        with:
+          build-dir: ./build/dendrila-calendar
+          slug: dendrila-calendar
+          strict: "false"

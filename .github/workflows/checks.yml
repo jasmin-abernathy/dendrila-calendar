@@ -12,14 +12,27 @@ jobs:
       - name: JavaScript syntax
         run: |
           node --check assets/calendar.js
-          node --check assets/calendar-ics.js
-          node tests/test-calendar-ics.js
+          node --check assets/calendar-subscriptions.js
+          node --check assets/calendar-connect.js
+      - name: Calendar browser initialization
+        run: node tests/test-calendar-init.js
       - name: Adapter smoke tests
         run: |
           php tests/test-sources.php
           php tests/test-integrations.php
           php tests/test-translation.php
           php tests/test-calendar-ui.php
+          php tests/test-admin-navigation.php
+          php tests/test-easy-appointments.php
+          php tests/test-subscriptions.php
+          php tests/test-direct-sync.php
+          php tests/test-oauth.php
+          php tests/test-oauth-flow.php
+          php tests/test-availability.php
+          php tests/test-discovery.php
+          php tests/test-setup-detection.php
+          php tests/test-setup-wizard.php
+          php tests/test-connector-report.php
       - name: Package contains all required assets
         run: |
           test -f dendrila-calendar.php
@@ -30,7 +43,31 @@ jobs:
           test -s languages/dendrila-calendar-fr_FR.l10n.php
           test -s docs/INTEGRATIONS.md
           test -s assets/calendar.js
-          test -s assets/calendar-ics.js
+          test -s assets/calendar-subscriptions.js
+          test -f includes/class-dendrila-calendar-subscriptions.php
+          test -s includes/class-dendrila-calendar-bridge.php
+          test -s includes/class-dendrila-calendar-discovery.php
+          test -s assets/calendar-connect.js
+          test -s includes/class-dendrila-calendar-detector.php
+          test -s includes/class-dendrila-calendar-setup.php
+          test -s includes/class-dendrila-calendar-oauth.php
+          test -s includes/class-dendrila-calendar-availability.php
           test -s assets/calendar.css
           test -s languages/dendrila-calendar.pot
           ! grep -R -E 'https?://(unpkg|cdnjs|cdn\.jsdelivr)' assets includes dendrila-calendar.php
+
+      - name: Build installable WordPress ZIP
+        run: |
+          mkdir -p build/dendrila-calendar
+          cp dendrila-calendar.php readme.txt build/dendrila-calendar/
+          cp -R assets includes languages build/dendrila-calendar/
+          cd build
+          zip -q -r dendrila-calendar-0.0.3-installable.zip dendrila-calendar
+          unzip -t dendrila-calendar-0.0.3-installable.zip
+      - name: Upload installable plugin ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: dendrila-calendar-0.0.3-installable
+          path: build/dendrila-calendar-0.0.3-installable.zip
+          if-no-files-found: error
+          retention-days: 14

@@ -1,6 +1,7 @@
 <?php
-/** Check that the admin UI wires the ICS exporter and search without requiring WordPress to run. */
+/** Check the WordPress admin UI wires search and secure subscription management. */
 define( 'ABSPATH', __DIR__ );
+define( 'DAY_IN_SECONDS', 86400 );
 $GLOBALS['queued_scripts'] = array();
 $GLOBALS['localized_scripts'] = array();
 function __( $s, $domain = null ) { return $s; }
@@ -12,41 +13,102 @@ function esc_url( $s ) { return $s; }
 function current_user_can( $role ) { return $role === 'manage_options'; }
 function wp_die( $message ) { throw new RuntimeException( $message ); }
 function admin_url( $path = '' ) { return 'https://example.org/wp-admin/' . $path; }
+function add_query_arg( $key, $value, $url ) { return $url . ( strpos( $url, '?' ) === false ? '?' : '&' ) . urlencode( $key ) . '=' . urlencode( $value ); }
 function plugin_dir_url( $path ) { return 'https://example.org/wp-content/plugins/dendrila-calendar/'; }
 function wp_enqueue_style( $handle, $url, $deps, $version ) { $GLOBALS['queued_styles'][ $handle ] = compact( 'url', 'version' ); }
 function wp_enqueue_script( $handle, $url, $deps, $version ) { $GLOBALS['queued_scripts'][ $handle ] = compact( 'url', 'deps', 'version' ); }
 function wp_localize_script( $handle, $name, $data ) { $GLOBALS['localized_scripts'][ $handle ] = $data; }
 function wp_create_nonce( $name ) { return 'testnonce'; }
 function wp_timezone_string() { return 'Europe/Paris'; }
+function wp_timezone() { return new DateTimeZone( 'Europe/Paris' ); }
 function get_user_locale() { return 'fr_FR'; }
 function get_option( $name, $default ) { return $default; }
+function sanitize_key( $key ) { return strtolower( preg_replace( '/[^a-z0-9_-]/', '', $key ) ); }
+function wp_unslash( $value ) { return $value; }
 class Dendrila_Calendar_Sources {
-    public static function available() { return array( 'native' => 'Local events' ); }
+    public static function available() { return array( 'native' => 'Local events', 'easy_appointments' => 'Easy Appointments' ); }
+    public static function events( $start, $end, $sources ) { return array( array( 'source' => 'easy_appointments', 'id' => 'ea-1', 'title' => 'Prestation test', 'start' => gmdate( 'Y-m-d\TH:i:s\Z', time() + DAY_IN_SECONDS ), 'end' => gmdate( 'Y-m-d\TH:i:s\Z', time() + DAY_IN_SECONDS + 1800 ), 'status' => 'pending' ) ); }
+    public static function diagnostics() { return array(); }
 }
+class Dendrila_Calendar_Bridge { public static function render_settings() { echo '<h2>Direct synchronization into an existing calendar</h2><select id="dendrila-connect-provider"></select>'; } }
+class Dendrila_Calendar_Discovery { const NONCE_ACTION = 'dendrila_calendar_discover'; }
+class Dendrila_Calendar_OAuth { public static function render_settings() { echo '<h2>OAuth provider account authorization</h2>'; } }
+class Dendrila_Calendar_Availability { public static function render_settings() { echo '<section>Availability protection</section>'; } }
 require dirname( __DIR__ ) . '/includes/class-dendrila-calendar.php';
+require dirname( __DIR__ ) . '/includes/class-dendrila-calendar-subscriptions.php';
 Dendrila_Calendar::enqueue( 'not-the-calendar' );
-if ( ! empty( $GLOBALS['queued_scripts'] ) ) {
-    throw new RuntimeException( 'Calendar assets loaded on unrelated admin screen' );
-}
+if ( ! empty( $GLOBALS['queued_scripts'] ) ) { throw new RuntimeException( 'Calendar assets loaded on unrelated admin screen' ); }
 Dendrila_Calendar::enqueue( 'toplevel_page_dendrila-calendar' );
-if ( ! isset( $GLOBALS['queued_scripts']['dendrila-calendar-ics'], $GLOBALS['queued_scripts']['dendrila-calendar-admin'] ) ) {
-    throw new RuntimeException( 'ICS exporter or calendar UI asset not enqueued' );
+if ( ! isset( $GLOBALS['queued_scripts']['dendrila-calendar-subscriptions'], $GLOBALS['queued_scripts']['dendrila-calendar-admin'] ) ) {
+    throw new RuntimeException( 'Subscription or calendar UI asset not enqueued' );
 }
-if ( $GLOBALS['queued_scripts']['dendrila-calendar-admin']['deps'] !== array( 'dendrila-calendar-ics' ) ) {
-    throw new RuntimeException( 'ICS dependency load order is not enforced' );
+if ( $GLOBALS['queued_scripts']['dendrila-calendar-admin']['deps'] !== array() ) {
+    throw new RuntimeException( 'Unexpected calendar JS dependencies' );
 }
-if ( $GLOBALS['queued_scripts']['dendrila-calendar-admin']['version'] !== '0.0.1' ) {
-    throw new RuntimeException( 'Development version mismatch' );
+if ( $GLOBALS['queued_scripts']['dendrila-calendar-admin']['version'] !== (string) filemtime( dirname( __DIR__ ) . '/assets/calendar.js' ) ) {
+    throw new RuntimeException( 'Calendar asset version must reflect its file modification time' );
+}
+if ( Dendrila_Calendar::VERSION !== '0.0.3' ) {
+    throw new RuntimeException( 'Plugin version does not match the 0.0.3 test release' );
 }
 ob_start();
 Dendrila_Calendar::render();
 $markup = ob_get_clean();
-foreach ( array( 'id="dendrila-grid"', 'id="dendrila-search"', 'id="dendrila-export"', 'id="dendrila-source-toggles"' ) as $id ) {
+foreach ( array( 'id="dendrila-grid"', 'id="dendrila-search"', 'id="dendrila-source-toggles"', 'id="dendrila-month"', 'type="month"' ) as $id ) {
     if ( strpos( $markup, $id ) === false ) {
         throw new RuntimeException( 'Missing UI control: ' . $id );
     }
 }
-if ( strpos( $markup, 'Export filtered events (ICS)' ) === false || strpos( $markup, 'type="search"' ) === false ) {
+if ( strpos( $markup, 'id="dendrila-day-details"' ) === false ||
+     strpos( $markup, 'aria-label="Calendar actions"' ) === false ||
+     strpos( $markup, 'dashicons-backup' ) !== false ) {
+    throw new RuntimeException( 'New calendar layout or native icon wiring regressed.' );
+}
+$calendar_pos = strpos( $markup, 'id="dendrila-grid"' );
+$actions_pos = strpos( $markup, 'class="dendrila-calendar-intro-actions"' );
+if ( false === $calendar_pos || false === $actions_pos || $actions_pos < $calendar_pos ) {
+    throw new RuntimeException( 'Calendar must come before secondary administration actions.' );
+}
+if ( strpos( $markup, 'Prestation test' ) === false || strpos( $markup, 'Upcoming appointments (server view)' ) === false || strpos( $markup, 'Synchronize appointments with your external calendar' ) === false || strpos( $markup, 'type="search"' ) === false || strpos( $markup, 'Export filtered events' ) !== false ) {
     throw new RuntimeException( 'Missing functional calendar controls' );
 }
-echo "Admin UI and asset loading passed\n";
+$GLOBALS['queued_scripts'] = array();
+Dendrila_Calendar::enqueue( 'dendrila-calendar_page_dendrila-calendar-sync' );
+if ( isset( $GLOBALS['queued_scripts']['dendrila-calendar-admin'] ) ||
+     ! isset( $GLOBALS['queued_scripts']['dendrila-calendar-connect'] ) ||
+     ! isset( $GLOBALS['queued_scripts']['dendrila-calendar-subscriptions'] ) ) {
+    throw new RuntimeException( 'Sync page must load connector-specific JS' );
+}
+if ( $GLOBALS['queued_scripts']['dendrila-calendar-connect']['version'] !== (string) filemtime( dirname( __DIR__ ) . '/assets/calendar-connect.js' ) ) {
+    throw new RuntimeException( 'Connector JS must use cache busting' );
+}
+ob_start();
+Dendrila_Calendar::render_sync_page();
+$sync_markup = ob_get_clean();
+if ( strpos( $sync_markup, 'admin.php?page=dendrila-calendar' ) === false ||
+     strpos( $sync_markup, 'admin.php?page=dendrila-calendar-view' ) !== false ) {
+    throw new RuntimeException( 'Return to calendar must target registered admin slug.' );
+}
+if ( strpos( $sync_markup, 'id="dendrila-connect-provider"' ) !== false ||
+     strpos( $sync_markup, 'Choose an agenda' ) === false ||
+     strpos( $sync_markup, 'Which calendar do you use?' ) === false ||
+     strpos( $sync_markup, 'id="dendrila-subscription-form"' ) !== false ) {
+    throw new RuntimeException( 'The default view must only display the calendar provider chooser.' );
+}
+$_GET['dendrila_method'] = 'oauth';
+ob_start();
+Dendrila_Calendar::render_sync_page();
+$oauth_markup = ob_get_clean();
+if ( strpos( $oauth_markup, 'OAuth provider account authorization' ) === false ||
+     strpos( $oauth_markup, 'id="dendrila-connect-provider"' ) !== false ) {
+    throw new RuntimeException( 'OAuth must use its own connection screen.' );
+}
+$_GET['dendrila_method'] = 'subscription';
+ob_start();
+Dendrila_Calendar::render_sync_page();
+$subscription_markup = ob_get_clean();
+if ( strpos( $subscription_markup, 'id="dendrila-subscription-form"' ) === false ||
+     strpos( $subscription_markup, 'id="dendrila-connect-provider"' ) !== false ) {
+    throw new RuntimeException( 'Subscription mode must show only the subscription flow' );
+}
+echo "Admin UI, separate connection methods, asset loading passed\n";

@@ -5,13 +5,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class Dendrila_Calendar_Sources {
+    private static $diagnostics = array();
+
+    public static function diagnostics() {
+        return self::$diagnostics;
+    }
+
     public static function available() {
         $sources = array( 'native' => __( 'Dendrila events', 'dendrila-calendar' ) );
-        if ( class_exists( '\\OryxBookings\\Repositories\\BookingRepository' ) ) {
-            $sources['oryx'] = __( 'Oryx Bookings', 'dendrila-calendar' );
-        }
-        if ( post_type_exists( 'tribe_events' ) ) {
-            $sources['tec'] = __( 'The Events Calendar', 'dendrila-calendar' );
+        $detected = Dendrila_Calendar_Detector::discover();
+        foreach ( array( 'oryx', 'tec' ) as $id ) {
+            if ( isset( $detected[ $id ] ) && $detected[ $id ]['ready'] ) {
+                $sources[ $id ] = $detected[ $id ]['label'];
+            }
         }
         $sources = array_merge( $sources, Dendrila_Calendar_Integrations::available() );
         /**
@@ -28,6 +34,8 @@ final class Dendrila_Calendar_Sources {
                 $clean[ $key ] = sanitize_text_field( $label );
             }
         }
+        // Viewing the local calendar is independent of the external destination
+        // configuration; all compatible active sources must remain visible.
         return $clean;
     }
 
@@ -41,6 +49,7 @@ final class Dendrila_Calendar_Sources {
 
     public static function events( $start_utc, $end_utc, $requested ) {
         $events = array();
+        self::$diagnostics = array();
         foreach ( $requested as $source ) {
             try {
                 if ( 'native' === $source ) {
@@ -55,7 +64,14 @@ final class Dendrila_Calendar_Sources {
                     $items = apply_filters( 'dendrila_calendar_source_events_' . $source, array(), $start_utc, $end_utc );
                 }
                 if ( ! is_array( $items ) ) {
+                    self::$diagnostics[ $source ] = 'Adapter returned a non-list result.';
                     continue;
+                }
+                if ( class_exists( 'Dendrila_Calendar_Integrations' ) && method_exists( 'Dendrila_Calendar_Integrations', 'last_error' ) ) {
+                    $error = Dendrila_Calendar_Integrations::last_error();
+                    if ( $error ) {
+                        self::$diagnostics[ $source ] = $error;
+                    }
                 }
                 foreach ( array_slice( $items, 0, 1000 ) as $item ) {
                     if ( ! is_array( $item ) || ! isset( $item['title'], $item['start'], $item['end'] ) ) {
@@ -78,7 +94,8 @@ final class Dendrila_Calendar_Sources {
                     );
                 }
             } catch ( Throwable $e ) {
-                // A broken optional source must not take down the entire calendar.
+                // Do not expose SQL queries, filesystem paths or secrets to the browser.
+                self::$diagnostics[ $source ] = 'Connector raised ' . get_class( $e ) . '. Review this source adapter and its version.';
                 continue;
             }
         }

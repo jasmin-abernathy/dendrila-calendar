@@ -38,6 +38,13 @@ a.dendrila-event:hover,a.dendrila-event:focus {background:#d9e9f8; color:#003d71
  .dendrila-grid--month .dendrila-day--outside {display:none;}
  .dendrila-grid--month .dendrila-day-date {font-size:1rem;}
 }
+.dendrila-agenda-options {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:12px;margin:18px 0}
+.dendrila-agenda-option,.dendrila-oauth-provider {background:#fff;border:1px solid #dcdcde;border-radius:8px;padding:18px;margin:0}
+.dendrila-agenda-option h3 {margin-top:0}
+.dendrila-oauth-provider {margin:12px 0}
+.dendrila-oauth-provider p {margin-bottom:0}
+.dendrila-oauth-provider button:disabled {opacity:.55}
+.dendrila-oauth .dendrila-connect-card {max-width:740px}
 @media(prefers-reduced-motion:reduce) { .dendrila-calendar-wrap * {scroll-behavior:auto; transition:none!important;} }
 
 .dendrila-source-actions { display: flex; gap: 8px; margin: 8px 0 12px; flex-wrap: wrap; }
@@ -46,3 +53,188 @@ a.dendrila-event:hover,a.dendrila-event:focus {background:#d9e9f8; color:#003d71
 .dendrila-calendar-tools input[type=search] {flex:1 1 210px; max-width:420px;}
 .dendrila-calendar-tools button {margin-left:auto;}
 @media(max-width:650px) {.dendrila-calendar-tools button {margin-left:0; width:100%;}}
+
+/* Live subscription links: intentionally distinct from the visible calendar filters. */
+.dendrila-subscriptions {border:1px solid #c3c4c7; background:#fff; border-radius:6px; padding:12px 16px; margin:14px 0;}
+.dendrila-subscriptions summary {cursor:pointer; font-weight:600; font-size:1.05rem; padding:4px 0;}
+.dendrila-subscriptions fieldset {display:flex; flex-wrap:wrap; gap:8px 18px;}
+.dendrila-subscriptions legend {font-weight:600; padding-bottom:6px;}
+.dendrila-subscriptions input[type=text] {max-width:100%; width:330px;}
+#dendrila-subscription-result {display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin:10px 0;}
+#dendrila-subscription-result > p {flex-basis:100%; margin:0;}
+#dendrila-subscription-result input[type=url] {flex:1 1 360px; max-width:100%;}
+.dendrila-copy-feedback {font-style:italic;}
+.dendrila-subscription-list {display:grid; gap:8px; margin:10px 0;}
+.dendrila-subscription-list li {display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap; margin:0; padding:8px; background:#f6f7f7; border-radius:4px; overflow-wrap:anywhere;}
+
+/* Make the month selector usable on narrow WordPress admin screens. */
+.dendrila-calendar-toolbar .dendrila-month-picker { min-width: 140px; max-width: 190px; }
+@media (max-width: 650px) {
+  .dendrila-calendar-toolbar h2 {flex-basis: 100%; order: 2;}
+  .dendrila-calendar-toolbar label[for=dendrila-month] {order: 3;}
+  .dendrila-calendar-toolbar .dendrila-month-picker {order: 3; flex: 1 0 155px;}
+  .dendrila-calendar-toolbar label[for=dendrila-view], .dendrila-calendar-toolbar #dendrila-view {order: 4;}
+}
+
+/* Discoverable automatic synchronization. */
+.dendrila-calendar-intro-actions { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 18px; }
+.dendrila-subscriptions { padding:18px 20px; }
+.dendrila-subscriptions h2 { margin-top:0; font-size:1.35rem; }
+.dendrila-sync-providers { border:1px solid #dcdcde; border-radius:6px; padding:12px 16px; margin:16px 0; background:#f6f7f7; }
+.dendrila-sync-providers h3 { margin:0 0 12px; }
+.dendrila-sync-providers select { max-width:100%; }
+.dendrila-provider-instructions { padding:12px 0 4px; line-height:1.55; max-width:75ch; }
+#dendrila-subscription-result { scroll-margin-top: 90px; }
+@media(max-width:650px) {
+ .dendrila-subscriptions { padding:14px; }
+ .dendrila-calendar-intro-actions .button { width:100%; text-align:center; }
+}
+
+/* Server-rendered fallback makes an inaccessible/failed calendar diagnosable. */
+.dendrila-upcoming {margin-top:22px;border:1px solid #c3c4c7;background:#fff;border-radius:6px;padding:14px 18px}
+.dendrila-upcoming table {margin:10px 0;max-width:100%;}
+.dendrila-upcoming .notice {padding:8px 12px;}
+
+/* Guided connections are intentionally one workflow at a time. */
+.dendrila-connection-methods {display:flex; flex-wrap:wrap; gap:10px; margin:18px 0;}
+.dendrila-calendar-direct-sync {max-width:820px;}
+.dendrila-connect-card {background:#fff; border:1px solid #c3c4c7; border-radius:8px; padding:18px 20px; margin:14px 0;}
+.dendrila-connect-card[hidden] {display:none!important;}
+.dendrila-connect-card h3 {font-size:1.12rem; margin:0 0 12px;}
+.dendrila-connect-card p {max-width:72ch; line-height:1.5;}
+.dendrila-connect-card input:not([type=checkbox]), .dendrila-connect-card select {display:block; width:100%; max-width:480px; min-height:40px; margin:6px 0 0;}
+.dendrila-connect-card label {font-weight:600;}
+.dendrila-connect-card fieldset {display:flex;flex-wrap:wrap;gap:10px 18px;border:1px solid #ddd;padding:14px;border-radius:6px;}
+.dendrila-connect-card fieldset label {font-weight:400;}
+#dendrila-discovery-feedback:not(:empty) {border-left:3px solid #2271b1; background:#f0f5fa; padding:12px; margin:12px 0;}
+@media(max-width:600px){.dendrila-connect-card{padding:14px 12px;} .dendrila-connection-methods .button {flex:1 1 100%;text-align:center;}}
+
+/* OAuth application setup: comfortable one-column controls on mobile. */
+.dendrila-oauth-app-setup {max-width:760px;}
+.dendrila-oauth-app-setup summary {cursor:pointer;font-weight:600;padding:10px 0;}
+.dendrila-oauth-app-setup code {display:inline-block;max-width:100%;overflow-wrap:anywhere;white-space:normal;}
+.dendrila-oauth-app-setup input[type=text],.dendrila-oauth-app-setup input[type=password] {box-sizing:border-box;width:100%;max-width:540px;min-height:44px;}
+.dendrila-oauth-app-setup .button {min-height:42px;white-space:normal;}
+@media(max-width:600px){.dendrila-oauth-app-setup .button{width:100%;text-align:center;}}
+
+/* Responsive calendar setup: readable steps and touch-friendly controls. */
+.dendrila-settings-page{max-width:1060px}
+.dendrila-settings-page *{box-sizing:border-box}
+.dendrila-settings-lead{line-height:1.6;color:#475569;max-width:70ch;font-size:15px}
+.dendrila-settings-page .dendrila-connection-methods{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:18px 0 24px}
+.dendrila-settings-page .dendrila-connection-methods .button{min-height:48px;height:auto;padding:10px;line-height:1.35;white-space:normal;text-align:center;display:flex;align-items:center;justify-content:center;border-radius:10px;font-weight:600}
+.dendrila-settings-page .dendrila-oauth{max-width:850px}
+.dendrila-settings-page .dendrila-oauth-app-setup{max-width:810px;border-radius:12px;box-shadow:0 2px 8px rgba(20,30,60,.04)}
+.dendrila-oauth-stage{border-left:4px solid #17854c;background:#eaf6ee;border-radius:9px;padding:15px 17px;margin:16px 0}
+.dendrila-stage-count{font-size:12px;color:#155e39;font-weight:750}
+.dendrila-oauth-stage strong{display:block;font-size:1.1rem;margin-top:6px}
+.dendrila-oauth-stage p{line-height:1.5;margin:5px 0}
+.dendrila-step-header{display:flex;gap:12px;align-items:center}
+.dendrila-step-header h3{margin:0}
+.dendrila-step-number{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:#3154ec;color:white;font-weight:700}
+.dendrila-oauth-step fieldset{margin-top:14px}
+.dendrila-oauth-step select{max-width:100%;min-height:48px}
+.dendrila-main-action{min-height:46px!important;white-space:normal}
+.dendrila-connection-badge{display:inline-block;margin-left:8px;font-size:12px;padding:4px 9px;border-radius:100px;background:#fff1d6;color:#82520e;vertical-align:middle}
+.dendrila-connection-badge.is-ready{background:#e3f4e8;color:#11663a}
+.dendrila-status-card{border:1px solid #bedbc8;background:white;border-radius:12px;padding:15px 19px;margin:15px 0;max-width:810px}
+.dendrila-status-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#16814d;margin-right:7px}
+.dendrila-status-card .button{min-height:44px;border-radius:8px}
+.dendrila-availability-panel{background:white;border:1px solid #cbd5e1;border-radius:12px;padding:20px;max-width:840px;margin:22px 0}
+.dendrila-availability-panel h2{font-size:1.35rem;margin:0}
+.dendrila-availability-panel p{line-height:1.55}
+.dendrila-toggle{display:flex;gap:12px;align-items:flex-start;background:#f3f6fb;padding:14px;border-radius:10px;cursor:pointer}
+.dendrila-toggle input{flex:none;width:22px;height:22px;margin:2px 0;accent-color:#3557ee}
+.dendrila-toggle strong,.dendrila-toggle small{display:block}
+.dendrila-toggle small{margin-top:5px;font-size:13px;line-height:1.5;color:#475569}
+.dendrila-availability-panel .button{min-height:44px}
+.dendrila-settings-page .button:focus-visible,.dendrila-settings-page select:focus-visible,.dendrila-settings-page input:focus-visible{outline:3px solid #2944cd;outline-offset:2px}
+@media(max-width:680px){.dendrila-settings-page .dendrila-connection-methods{grid-template-columns:repeat(2,minmax(0,1fr))}.dendrila-availability-panel{padding:14px}.dendrila-oauth-step .button,.dendrila-availability-panel .button{width:100%;white-space:normal;text-align:center}}
+@media(max-width:350px){.dendrila-settings-page .dendrila-connection-methods{grid-template-columns:1fr}}
+
+
+/* 0.0.3 calendar overview — controls above, calendar first, admin actions after. */
+.dendrila-calendar-overview{max-width:1280px}
+.dendrila-calendar-overview *{box-sizing:border-box}
+.dendrila-overview-header{padding:8px 0 6px}
+.dendrila-overview-header h1{font-size:24px;line-height:1.25;margin:0 0 6px}
+.dendrila-overview-header p{color:#506073;line-height:1.55;margin:0 0 14px;max-width:75ch}
+.dendrila-calendar-panel{background:#fff;border:1px solid #d4dbe5;border-radius:14px;padding:18px 20px;box-shadow:0 3px 14px rgba(24,48,82,.04)}
+.dendrila-calendar-overview .dendrila-calendar-toolbar{display:grid;grid-template-columns:auto 1fr auto;gap:10px 16px;align-items:center;margin:0 0 16px}
+.dendrila-calendar-navigation,.dendrila-calendar-selectors{display:flex;align-items:center;flex-wrap:wrap;gap:7px}
+.dendrila-calendar-navigation .button{min-width:65px;min-height:38px;border-radius:8px;padding:4px 11px}
+.dendrila-calendar-overview .dendrila-calendar-toolbar h2{font-size:19px;line-height:1.35;flex:none;text-align:center;margin:0;white-space:normal}
+.dendrila-calendar-selectors label{font-size:13px;color:#526070;font-weight:550}
+.dendrila-calendar-selectors input,.dendrila-calendar-selectors select{min-height:38px;border-radius:7px;max-width:176px}
+.dendrila-calendar-overview .dendrila-calendar-sources{padding:10px 12px;border-color:#e1e7ef;border-radius:9px;background:#f8fafc;margin-bottom:12px}
+.dendrila-calendar-overview .dendrila-calendar-sources legend{font-size:13px;color:#475569}
+.dendrila-calendar-overview .dendrila-source-actions{gap:6px;margin:1px 0 8px}
+.dendrila-calendar-overview .dendrila-source-actions .button{border-radius:6px}
+.dendrila-calendar-overview #dendrila-source-toggles{gap:10px 15px}
+.dendrila-calendar-overview .dendrila-calendar-tools{margin-bottom:8px}
+.dendrila-calendar-overview .dendrila-calendar-tools label{font-size:13px;font-weight:600}
+.dendrila-calendar-overview .dendrila-calendar-tools input{min-height:38px;border-radius:8px}
+.dendrila-calendar-overview .dendrila-grid{border:1px solid #dbe3ed;border-radius:11px;overflow:hidden}
+.dendrila-calendar-overview .dendrila-day-heading{font-size:12px;text-transform:capitalize;background:#f1f5f9;color:#526071;padding:10px 6px}
+.dendrila-calendar-overview .dendrila-day{border-color:#e5eaf1;position:relative;min-width:0}
+.dendrila-calendar-overview .dendrila-day--outside{background:#f8fafc;color:#7e8b9c}
+.dendrila-calendar-overview .dendrila-day--today{box-shadow:inset 0 0 0 2px #2563eb}
+.dendrila-calendar-overview .dendrila-day--selected{background:#eef4ff}
+.dendrila-calendar-overview .dendrila-day-date{display:block;font-size:13px;line-height:1.25;font-weight:650;color:#334155;margin:0 0 7px;padding:0;border:0;background:none;text-align:left}
+.dendrila-calendar-overview button.dendrila-day-date{cursor:pointer;min-height:28px;min-width:28px;border-radius:7px;padding:3px 5px}
+.dendrila-calendar-overview button.dendrila-day-date:focus-visible{outline:2px solid #2563eb;outline-offset:2px}
+.dendrila-calendar-overview .dendrila-event{font-size:12px;line-height:1.4;background:#eaf2ff;border-left-color:#4777ce;border-radius:5px;padding:6px 7px;text-decoration:none}
+.dendrila-calendar-overview .dendrila-day-events li{margin-bottom:5px}
+.dendrila-calendar-overview .dendrila-day-count{display:none}
+.dendrila-calendar-overview .dendrila-day-details{display:none}
+.dendrila-calendar-overview .dendrila-calendar-intro-actions{margin:12px 0 20px;gap:9px;display:flex;flex-wrap:wrap}
+.dendrila-calendar-overview .dendrila-calendar-intro-actions .button{height:auto;min-height:38px;padding:7px 12px;border-radius:8px;white-space:normal;text-align:center}
+.dendrila-calendar-overview .dendrila-upcoming{border-color:#d4dbe5;border-radius:11px;padding:13px 16px}
+.dendrila-calendar-overview .dendrila-upcoming summary{cursor:pointer;font-weight:600;font-size:14px;line-height:1.5}
+.dendrila-calendar-overview .dendrila-upcoming table{width:100%}
+.dendrila-calendar-overview .dendrila-upcoming .description{margin:9px 0}
+@media(max-width:900px){
+ .dendrila-calendar-overview .dendrila-calendar-toolbar{grid-template-columns:1fr 1fr}
+ .dendrila-calendar-navigation{grid-column:1/2}
+ .dendrila-calendar-overview .dendrila-calendar-toolbar h2{grid-column:2/3;text-align:right}
+ .dendrila-calendar-selectors{grid-column:1/-1}
+}
+@media(max-width:650px){
+ .dendrila-calendar-panel{padding:11px 10px}
+ .dendrila-overview-header h1{font-size:22px}
+ .dendrila-overview-header p{font-size:13px}
+ .dendrila-calendar-overview .dendrila-calendar-toolbar{grid-template-columns:1fr;gap:8px}
+ .dendrila-calendar-navigation{grid-column:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%}
+ .dendrila-calendar-navigation .button{min-width:0;padding:6px 4px}
+ .dendrila-calendar-overview .dendrila-calendar-toolbar h2{grid-column:1;text-align:center;font-size:18px;order:2}
+ .dendrila-calendar-selectors{grid-column:1;display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);column-gap:10px;row-gap:4px;align-items:end;order:3}
+ .dendrila-calendar-selectors label[for=dendrila-month]{grid-column:1;grid-row:1}
+ .dendrila-calendar-selectors #dendrila-month{grid-column:1;grid-row:2;width:100%;max-width:none}
+ .dendrila-calendar-selectors label[for=dendrila-view]{grid-column:2;grid-row:1}
+ .dendrila-calendar-selectors #dendrila-view{grid-column:2;grid-row:2;width:100%;max-width:none}
+ .dendrila-calendar-selectors label{font-size:12px}
+ .dendrila-calendar-selectors input,.dendrila-calendar-selectors select{max-width:150px;min-width:0;font-size:13px;flex:0 1 auto}
+ .dendrila-calendar-overview #dendrila-source-toggles{gap:7px 12px;font-size:13px}
+ .dendrila-calendar-overview .dendrila-calendar-tools{gap:6px}
+ .dendrila-calendar-overview .dendrila-calendar-tools input{flex:1 1 100%;max-width:none}
+ .dendrila-calendar-overview .dendrila-grid--month{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-radius:9px}
+ .dendrila-calendar-overview .dendrila-grid--month .dendrila-day-heading{display:block;padding:8px 0;font-size:10px;text-align:center;min-width:0}
+ .dendrila-calendar-overview .dendrila-grid--month .dendrila-day{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;min-height:49px;padding:6px 1px;border-right:1px solid #e5eaf1}
+ .dendrila-calendar-overview .dendrila-grid--month .dendrila-day--outside{display:flex;opacity:.45}
+ .dendrila-calendar-overview .dendrila-grid--month .dendrila-day-date{font-size:12px;line-height:1.2;margin:0}
+ .dendrila-calendar-overview .dendrila-grid--month button.dendrila-day-date{display:flex;align-items:center;justify-content:center;width:29px;height:29px;min-height:29px;min-width:29px;padding:0;border-radius:50%;background:transparent}
+ .dendrila-calendar-overview .dendrila-grid--month .dendrila-day--selected button.dendrila-day-date{background:#2459d5;color:#fff}
+ .dendrila-calendar-overview .dendrila-grid--month .dendrila-day--today:not(.dendrila-day--selected) button.dendrila-day-date{outline:1.5px solid #2459d5;outline-offset:-1.5px}
+ .dendrila-calendar-overview .dendrila-grid--month .dendrila-day-events{display:none}
+ .dendrila-calendar-overview .dendrila-grid--month .dendrila-day-count{display:block;width:5px;height:5px;font-size:0;overflow:hidden;border-radius:50%;background:#3b68c4;flex:none}
+ .dendrila-calendar-overview .dendrila-day-details:not([hidden]){display:block;background:#f8fafc;border:1px solid #e0e7f0;border-radius:9px;margin:9px 0 0;padding:12px}
+ .dendrila-calendar-overview .dendrila-day-details h3{font-size:14px;line-height:1.4;margin:0 0 8px;text-transform:capitalize}
+ .dendrila-calendar-overview .dendrila-day-details-events{padding:0;margin:0;list-style:none;display:grid;gap:6px}
+ .dendrila-calendar-overview .dendrila-day-details .dendrila-event{font-size:13px}
+ .dendrila-calendar-overview .dendrila-day-details-empty{margin:0;color:#64748b;font-size:13px}
+ .dendrila-calendar-overview .dendrila-grid--week .dendrila-day{min-height:85px}
+ .dendrila-calendar-overview .dendrila-grid--list .dendrila-day{min-height:0}
+ .dendrila-calendar-overview .dendrila-calendar-intro-actions .button{width:100%}
+ .dendrila-calendar-overview .dendrila-upcoming{overflow:auto}
+}
+@media(prefers-reduced-motion:reduce){.dendrila-calendar-overview *{scroll-behavior:auto;transition:none!important}}

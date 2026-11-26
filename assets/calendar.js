@@ -8,22 +8,26 @@
   const period = document.getElementById('dendrila-period');
   const message = document.getElementById('dendrila-message');
   const viewSelect = document.getElementById('dendrila-view');
+  const monthPicker = document.getElementById('dendrila-month');
   const toggles = document.getElementById('dendrila-source-toggles');
   const search = document.getElementById('dendrila-search');
-  const exportButton = document.getElementById('dendrila-export');
-  if (!root || !period || !message || !viewSelect || !toggles || !search || !exportButton) return;
+  const dayDetails = document.getElementById('dendrila-day-details');
+  if (!root || !period || !message || !viewSelect || !toggles) return;
 
   const locale = (config.locale || 'en').replace(/_/g, '-');
-  const timeZone = config.timezone || 'UTC';
+  const configuredTimeZone = config.timezone || 'UTC';
+  let timeZone = configuredTimeZone;
+  try { new Intl.DateTimeFormat('en', { timeZone }).format(); }
+  catch (_) { timeZone = 'UTC'; }
   const firstDay = Number(config.weekStartsOn) || 0;
   const sources = config.sources || {};
   const i18n = config.i18n || {};
-  const state = { selected: new Date(), view: 'month', selectedSources: new Set(Object.keys(sources)), request: null, events: [], loaded: false };
   const dayFormatter = new Intl.DateTimeFormat('en-GB', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' });
   const monthFormatter = new Intl.DateTimeFormat(locale, { timeZone: 'UTC', month: 'long', year: 'numeric' });
   const weekdayFormatter = new Intl.DateTimeFormat(locale, { timeZone: 'UTC', weekday: 'short' });
   const fullDayFormatter = new Intl.DateTimeFormat(locale, { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' });
   const timeFormatter = new Intl.DateTimeFormat(locale, { timeZone, hour: '2-digit', minute: '2-digit' });
+  const state = { selected: today(), selectedDay: siteKey(new Date()), view: 'month', selectedSources: new Set(Object.keys(sources)), request: null, events: [], loaded: false };
 
   function el(tag, className, text) {
     const element = document.createElement(tag);
@@ -82,7 +86,7 @@
     return siteKey(start) <= dateKey && siteKey(new Date(end.getTime() - 1)) >= dateKey;
   }
   function filteredEvents() {
-    const query = search.value.trim().toLocaleLowerCase(locale);
+    const query = search ? search.value.trim().toLocaleLowerCase(locale) : '';
     if (!query) return state.events;
     return state.events.filter(event => [event.title, event.status, sources[event.source] || '']
       .some(value => String(value || '').toLocaleLowerCase(locale).includes(query)));
@@ -90,13 +94,14 @@
   function renderFiltered() {
     const events = filteredEvents();
     display(events);
-    exportButton.disabled = !state.loaded || events.length === 0 || !window.DendrilaCalendarIcs;
   }
   function display(events) {
     root.replaceChildren();
     const { start, days } = range();
     const month = state.view === 'month';
     root.className = `dendrila-grid dendrila-grid--${state.view}`;
+    viewSelect.value = state.view;
+    if (monthPicker) monthPicker.value = key(state.selected).slice(0, 7);
     if (state.view === 'week') {
       period.textContent = `${fullDayFormatter.format(start)} – ${fullDayFormatter.format(addDays(start, 6))}`;
     } else {
@@ -118,7 +123,28 @@
       cell.setAttribute('aria-label', fullDayFormatter.format(day));
       if (dayKey === siteKey(new Date())) cell.classList.add('dendrila-day--today');
       if (month && day.getUTCMonth() !== state.selected.getUTCMonth()) cell.classList.add('dendrila-day--outside');
-      cell.append(el('h3', 'dendrila-day-date', month ? day.getUTCDate() : fullDayFormatter.format(day)));
+      cell.dataset.day = dayKey;
+      if (month) {
+        const dateButton = el('button', 'dendrila-day-date', day.getUTCDate());
+        dateButton.type = 'button';
+        dateButton.setAttribute('aria-label', fullDayFormatter.format(day));
+        dateButton.setAttribute('aria-pressed', dayKey === state.selectedDay ? 'true' : 'false');
+        if (dayKey === state.selectedDay) cell.classList.add('dendrila-day--selected');
+        dateButton.addEventListener('click', () => {
+          state.selectedDay = dayKey;
+          display(events);
+          const selected = root.querySelector?.('.dendrila-day--selected .dendrila-day-date');
+          selected?.focus?.();
+        });
+        cell.append(dateButton);
+        if (matches.length) {
+          const count = el('span', 'dendrila-day-count', matches.length);
+          count.setAttribute('aria-hidden', 'true');
+          cell.append(count);
+        }
+      } else {
+        cell.append(el('h3', 'dendrila-day-date', fullDayFormatter.format(day)));
+      }
       const entries = el('ul', 'dendrila-day-events');
       const displayed = month ? matches.slice(0, 5) : matches;
       displayed.forEach(event => {
@@ -132,7 +158,23 @@
       cell.append(entries);
       root.append(cell);
     }
-    if (!visible) root.append(el('p', 'dendrila-empty', i18n.empty || 'No events for this period.'));
+    if (!visible && !month) root.append(el('p', 'dendrila-empty', i18n.empty || 'No events for this period.'));
+    if (dayDetails) {
+      dayDetails.replaceChildren();
+      dayDetails.hidden = !month;
+      if (month) {
+        const date = new Date(state.selectedDay + 'T12:00:00Z');
+        dayDetails.append(el('h3', 'dendrila-day-details-heading', fullDayFormatter.format(date)));
+        const selectedEvents = events.filter(event => eventCoversDay(event, state.selectedDay));
+        if (selectedEvents.length) {
+          const list = el('ul', 'dendrila-day-details-events');
+          selectedEvents.forEach(event => { const item = el('li'); item.append(eventRow(event)); list.append(item); });
+          dayDetails.append(list);
+        } else {
+          dayDetails.append(el('p', 'dendrila-day-details-empty', i18n.emptyDay || 'No events for this day.'));
+        }
+      }
+    }
   }
   async function load() {
     if (state.request) state.request.abort();
@@ -149,7 +191,6 @@
     message.textContent = i18n.loading || 'Loading…';
     state.events = [];
     state.loaded = false;
-    exportButton.disabled = true;
     const url = new URL(config.ajaxUrl);
     url.searchParams.set('action', 'dendrila_calendar_events');
     url.searchParams.set('nonce', config.nonce);
@@ -165,13 +206,18 @@
       state.events = payload.data.events;
       state.loaded = true;
       renderFiltered();
-      message.textContent = '';
+      // Display per-source counts so a missing event is traceable to a provider or the UI.
+      const counts = payload.data.source_counts || {};
+      const warnings = payload.data.source_warnings || {};
+      const stats = Object.keys(sources)
+        .filter(source => state.selectedSources.has(source))
+        .map(source => `${sources[source]}: ${Number(counts[source] || 0)}${warnings[source] ? ` ⚠ ${warnings[source]}` : ''}`);
+      message.textContent = stats.join(' · ');
     } catch (error) {
       if (error.name === 'AbortError' || state.request !== controller) return;
       root.replaceChildren();
       state.loaded = false;
-      exportButton.disabled = true;
-      message.textContent = i18n.failed || 'Unable to load events.';
+      message.textContent = `${i18n.failed || 'Unable to load events.'} (${error.message || 'Request failed'})`;
     }
   }
   Object.entries(sources).forEach(([slug, title]) => {
@@ -187,22 +233,7 @@
     label.append(checkbox, document.createTextNode(' ' + title));
     toggles.append(label);
   });
-  search.addEventListener('input', () => { if (state.loaded) renderFiltered(); });
-  exportButton.addEventListener('click', () => {
-    if (!state.loaded || !window.DendrilaCalendarIcs || exportButton.disabled) return;
-    const events = filteredEvents();
-    if (!events.length) return;
-    const content = window.DendrilaCalendarIcs.generate(events, siteKey, new Date(), window.location.hostname);
-    const blobUrl = URL.createObjectURL(new Blob([content], { type: 'text/calendar;charset=utf-8' }));
-    const link = el('a');
-    link.href = blobUrl;
-    const dates = range();
-    link.download = 'dendrila-calendar-' + key(dates.start) + '-' + key(addDays(dates.end, -1)) + '.ics';
-    document.body.append(link);
-    link.click();
-    link.remove();
-    window.setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
-  });
+  if (search) search.addEventListener('input', () => { if (state.loaded) renderFiltered(); });
   const setAllSources = selected => {
     toggles.querySelectorAll('input[type=checkbox]').forEach(box => { box.checked = selected; });
     state.selectedSources = new Set(selected ? Object.keys(sources) : []);
@@ -212,11 +243,22 @@
   document.getElementById('dendrila-sources-none')?.addEventListener('click', () => setAllSources(false));
   document.getElementById('dendrila-prev').addEventListener('click', () => navigate(-1));
   document.getElementById('dendrila-next').addEventListener('click', () => navigate(1));
-  document.getElementById('dendrila-today').addEventListener('click', () => { state.selected = today(); load(); });
+  document.getElementById('dendrila-today').addEventListener('click', () => { state.selected = today(); state.selectedDay = key(state.selected); load(); });
   viewSelect.addEventListener('change', () => { state.view = viewSelect.value; load(); });
+  // A direct month selector prevents users having to click previous/next repeatedly.
+  monthPicker?.addEventListener('change', () => {
+    const value = monthPicker.value;
+    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(value)) return;
+    const [year, month] = value.split('-').map(Number);
+    if (year < 100 || year > 9999) return;
+    state.selected = new Date(Date.UTC(year, month - 1, 1, 12));
+    state.selectedDay = key(state.selected);
+    load();
+  });
   function navigate(delta) {
     if (state.view === 'week') state.selected = addDays(state.selected, 7 * delta);
     else state.selected = new Date(Date.UTC(state.selected.getUTCFullYear(), state.selected.getUTCMonth() + delta, 15, 12));
+    state.selectedDay = key(state.selected);
     load();
   }
   state.selected = today();
