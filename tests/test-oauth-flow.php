@@ -15,6 +15,7 @@ $GLOBALS['calls'] = array();
 $GLOBALS['token_requests'] = array();
 function __( $s, $domain = '' ) { return $s; }
 function esc_html__( $s, $domain = '' ) { return $s; }
+function esc_attr__( $s, $domain = '' ) { return $s; }
 function esc_html( $s ) { return htmlspecialchars( (string) $s, ENT_QUOTES, 'UTF-8' ); }
 function esc_attr( $s ) { return htmlspecialchars( (string) $s, ENT_QUOTES, 'UTF-8' ); }
 function esc_url( $s ) { return $s; }
@@ -43,6 +44,7 @@ function wp_generate_uuid4() { return '00000000-1111-4000-8000-123456789012'; }
 function wp_json_encode( $value ) { return json_encode( $value ); }
 function wp_timezone() { return new DateTimeZone( 'Europe/Paris' ); }
 function wp_timezone_string() { return 'Europe/Paris'; }
+function checked( $value, $expected = true, $echo = true ) { $html = $value === $expected ? ' checked="checked"' : ''; if ( $echo ) { echo $html; } return $html; }
 function is_wp_error( $response ) { return false; }
 function wp_remote_retrieve_body( $response ) { return $response['body']; }
 function wp_remote_retrieve_response_code( $response ) { return $response['status']; }
