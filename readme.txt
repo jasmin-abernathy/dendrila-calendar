@@ -8,13 +8,15 @@ Stable tag: 0.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-A free unified WordPress calendar for events and bookings from optional plugins.
+A free WordPress calendar and first-party appointment scheduling foundation with optional read-only connectors.
 
 == Description ==
 
 Development test version. Do not publish to WordPress.org before end-to-end testing and deployment of a publisher-managed OAuth authorization service. Google and Outlook connections work with administrator-configured OAuth applications; CalDAV direct push and private ICS subscriptions are also supported.
 
-Dendrila Calendar is an independent WordPress administration calendar that brings together native events and compatible event and booking plugins. All third-party integrations are optional and read-only. The original plugins remain responsible for reservations, payments and their data. Customer details are not included in the calendar event payload.
+Dendrila Calendar is evolving into a native booking system with its own mandatory booking profiles, services and private reservation records, while retaining existing calendar and connector functionality. The native public booking form and WooCommerce payment checkout are still under development and are intentionally not enabled in this test build.
+
+Dendrila Calendar is also an independent WordPress administration calendar that brings together native events and compatible event and booking plugins. All third-party integrations are optional and read-only. The original plugins remain responsible for reservations, payments and their data. Customer details are not included in the calendar event payload.
 
 = Sources =
 
@@ -23,7 +25,7 @@ Dendrila Calendar is an independent WordPress administration calendar that bring
 * Booking sources: Amelia, Booking Calendar, Bookly, Easy Appointments, FluentBooking, Oryx Bookings and Simply Schedule Appointments.
 * Ten external sources in total, all optional and read-only.
 
-Search loaded events locally. On first activation, the required setup assistant detects active booking plugins and lets you choose your sources and destination. No external CDN, custom booking tables or mandatory dependency.
+Search loaded events locally. On first activation, the required setup assistant detects active booking plugins and lets you choose your sources and destination. No external CDN or mandatory commercial dependency. Native booking profiles and services are private WordPress content types, independent of the installed booking plugins.
 
 = Calendar subscriptions =
 
@@ -40,6 +42,15 @@ ICS Calendar can subscribe to the URL as a destination. Importing remote feeds t
 5. For Nextcloud and compatible services, enter the cloud URL, account login and application password. Select a calendar from the discovered list; the setup only completes when the connection succeeds.
 6. If an active booking plugin has no usable adapter, validation sends a limited, deduplicated technical compatibility report to the maintainer using WordPress email. The address is not displayed; no customer or booking data is sent.
 
+== Native booking foundation (development) ==
+
+* Create and publish at least one profile under Dendrila Calendar > Profiles before offering bookable services. A profile can represent a professional or another booking resource.
+* Create services under Dendrila Calendar > Services. Assign a required published profile, duration, preparation/recovery buffers, optional price in cents and optional future WooCommerce product ID.
+* A service without a valid active profile is **never bookable**; disabling its profile disables its bookings.
+* Private booking records include both service ID and profile ID. No public reservation endpoint is enabled yet; no customer booking is falsely confirmed or charged.
+* WooCommerce integration is optional and is being designed for HPOS and Cart/Checkout Blocks through official Woo APIs; listing a product ID does not imply live checkout compatibility.
+* Support the developer via a small optional footer link in the administration (same destination as Dendrila Simple Edit).
+
 == Frequently Asked Questions ==
 
 = Does it change appointments? =
@@ -55,6 +66,13 @@ Not yet. This development build requires Google/Microsoft OAuth apps configured 
 The WordPress administration calendar is restricted to administrators. Private subscription URLs can be accessed by anyone who holds the secret link; these links can be revoked.
 
 == Changelog ==
+
+= 0.0.3 (development build: native booking foundation; no version bump) =
+* Private first-party profile, service and reservation content types; profile mandatory before a service becomes bookable.
+* Profile and service management pages with duration, price, preparation/recovery buffers and optional Woo product link.
+* No live native checkout or public booking has been enabled; existing read-only integrations remain unchanged.
+* Discreet optional developer coffee link at the bottom of Dendrila administrator pages, matching Simple Edit.
+
 
 = 0.0.3 (development build: external busy slots displayed correctly) =
 * With administrator-opted-in availability protection, public Easy Appointments slots overlapping events in connected Google/Outlook calendars are marked unavailable before selection.

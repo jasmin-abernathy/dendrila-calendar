@@ -29,6 +29,7 @@ jobs:
           php tests/test-oauth.php
           php tests/test-oauth-flow.php
           php tests/test-availability.php
+          php tests/test-native-bookings.php
           php tests/test-discovery.php
           php tests/test-setup-detection.php
           php tests/test-setup-wizard.php
@@ -52,6 +53,8 @@ jobs:
           test -s includes/class-dendrila-calendar-setup.php
           test -s includes/class-dendrila-calendar-oauth.php
           test -s includes/class-dendrila-calendar-availability.php
+          test -s includes/class-dendrila-calendar-native.php
+          test -s includes/class-dendrila-calendar-woo.php
           test -s assets/calendar.css
           test -s languages/dendrila-calendar.pot
           ! grep -R -E 'https?://(unpkg|cdnjs|cdn\.jsdelivr)' assets includes dendrila-calendar.php

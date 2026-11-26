@@ -26,6 +26,8 @@ require_once __DIR__ . '/includes/class-dendrila-calendar-discovery.php';
 require_once __DIR__ . '/includes/class-dendrila-calendar-oauth.php';
 require_once __DIR__ . '/includes/class-dendrila-calendar-availability.php';
 require_once __DIR__ . '/includes/class-dendrila-calendar-setup.php';
+require_once __DIR__ . '/includes/class-dendrila-calendar-native.php';
+require_once __DIR__ . '/includes/class-dendrila-calendar-woo.php';
 
 add_action( 'plugins_loaded', array( 'Dendrila_Calendar', 'boot' ) );
 add_action( 'plugins_loaded', array( 'Dendrila_Calendar_Subscriptions', 'boot' ) );
@@ -36,3 +38,4 @@ add_action( 'plugins_loaded', array( 'Dendrila_Calendar_Availability', 'boot' ) 
 
 register_activation_hook( __FILE__, array( 'Dendrila_Calendar_Setup', 'activate' ) );
 add_action( 'plugins_loaded', array( 'Dendrila_Calendar_Setup', 'boot' ) );
+add_action( 'plugins_loaded', array( 'Dendrila_Calendar_Native', 'boot' ) );

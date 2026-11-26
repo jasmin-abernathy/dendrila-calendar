@@ -17,6 +17,7 @@ final class Dendrila_Calendar {
         add_action( 'admin_menu', array( __CLASS__, 'admin_menu' ) );
         add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
         add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_menu_icon_style' ) );
+        add_action( 'admin_footer', array( __CLASS__, 'render_support_footer' ) );
         add_action( 'admin_notices', array( __CLASS__, 'local_events_notice' ) );
         add_action( 'wp_ajax_dendrila_calendar_events', array( __CLASS__, 'ajax_events' ) );
     }
@@ -66,8 +67,35 @@ final class Dendrila_Calendar {
         wp_enqueue_style( 'dashicons' );
         wp_add_inline_style(
             'dashicons',
-            '#adminmenu #toplevel_page_dendrila-calendar .wp-menu-image:before { color: #f0f6fc; font-size: 22px; }'
+            '#adminmenu #toplevel_page_dendrila-calendar .wp-menu-image:before { color: #f0f6fc; font-size: 22px; }' .
+            '.dendrila-calendar-support{margin:26px 0 16px;font-size:13px;color:#64748b}' .
+            '.dendrila-calendar-support a{display:inline-flex;align-items:center;gap:6px;color:#526174;text-decoration:none}' .
+            '.dendrila-calendar-support a:hover,.dendrila-calendar-support a:focus-visible{color:#1d4ed8;text-decoration:underline}' .
+            '.dendrila-calendar-support .dashicons{font-size:16px;width:16px;height:16px}'
         );
+    }
+
+    /** Unobtrusive, optional support link matching Dendrila Simple Edit. */
+    public static function render_support_footer() {
+        if ( ! current_user_can( 'manage_options' ) ) {
+            return;
+        }
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only screen detection.
+        $page = isset( $_GET['page'] ) && is_string( $_GET['page'] )
+            ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
+        $screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+        $type = $screen && isset( $screen->post_type ) ? $screen->post_type : '';
+        if ( 0 !== strpos( $page, 'dendrila-calendar' ) &&
+             ! in_array( $type, array( 'dendrila_profile', 'dendrila_service', 'dendrila_booking', self::POST_TYPE ), true ) ) {
+            return;
+        }
+        echo '<footer class="dendrila-calendar-support" aria-label="' .
+            esc_attr__( 'Support development', 'dendrila-calendar' ) . '">';
+        echo '<a href="https://app.lepotager.org/soutenir/" target="_blank" rel="noopener noreferrer">' .
+            '<span class="dashicons dashicons-coffee" aria-hidden="true"></span>' .
+            esc_html__( 'Offer the developer a coffee', 'dendrila-calendar' ) .
+            '<span class="screen-reader-text"> (' . esc_html__( 'opens in a new tab', 'dendrila-calendar' ) .
+            ')</span></a></footer>';
     }
 
     public static function admin_menu() {
@@ -192,7 +220,7 @@ final class Dendrila_Calendar {
             return;
         }
         $url = plugin_dir_url( dirname( __DIR__ ) . '/dendrila-calendar.php' );
-        // The plugin stays at 0.0.1 during internal testing, but assets must refresh on every change.
+        // Keep 0.0.3 during internal testing; cache assets by file modification time.
         $asset_version = static function ( $file ) {
             $path = dirname( __DIR__ ) . '/assets/' . $file;
             return is_file( $path ) ? (string) filemtime( $path ) : self::VERSION;
@@ -360,6 +388,12 @@ final class Dendrila_Calendar {
         echo '<a class="button" href="' . esc_url( admin_url( 'post-new.php?post_type=' . self::POST_TYPE ) ) . '">' . esc_html__( 'Add an event', 'dendrila-calendar' ) . '</a> ';
         echo '<a class="button" href="' . esc_url( admin_url( 'edit.php?post_type=' . self::POST_TYPE ) ) . '">' . esc_html__( 'Manage local events', 'dendrila-calendar' ) . '</a> ';
         echo '<a class="button" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-setup' ) ) . '">' . esc_html__( 'Configure sources and destination', 'dendrila-calendar' ) . '</a>';
+        if ( class_exists( 'Dendrila_Calendar_Native' ) ) {
+            echo ' <a class="button" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-profiles' ) ) . '">' .
+                esc_html__( 'Booking profiles', 'dendrila-calendar' ) . '</a>';
+            echo ' <a class="button" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-services' ) ) . '">' .
+                esc_html__( 'Services', 'dendrila-calendar' ) . '</a>';
+        }
         echo '</nav>';
         self::render_upcoming();
         echo '</div>';

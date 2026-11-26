@@ -290,6 +290,23 @@ final class Dendrila_Calendar_Setup {
         echo '<div class="wrap dendrila-calendar-setup"><h1>' . esc_html__( 'Configure Dendrila Calendar', 'dendrila-calendar' ) . '</h1>';
         echo '<p>' . esc_html__( 'This assistant detects active appointment plugins and guides external synchronization. You can view the local calendar before connecting an external destination.', 'dendrila-calendar' ) . '</p>';
         echo '<p><a class="button" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar' ) ) . '">' . esc_html__( 'Open calendar view', 'dendrila-calendar' ) . '</a></p>';
+        // The native booking path requires a profile; legacy calendar sources
+        // remain available while their administrators migrate at their pace.
+        if ( class_exists( 'Dendrila_Calendar_Native' ) ) {
+            $has_profile = Dendrila_Calendar_Native::has_profile();
+            echo '<section class="dendrila-setup-profile-step" aria-labelledby="dendrila-setup-profile-title">';
+            echo '<h2 id="dendrila-setup-profile-title">' . esc_html__( 'Native booking setup — create a profile first', 'dendrila-calendar' ) . '</h2>';
+            echo '<p>' . esc_html__( 'Every new native reservation must belong to a profile. Add at least one professional or resource before creating bookable services.', 'dendrila-calendar' ) . '</p>';
+            if ( $has_profile ) {
+                echo '<p class="notice notice-success inline">' . esc_html__( 'At least one active profile is ready.', 'dendrila-calendar' ) . '</p>';
+            } else {
+                echo '<p class="notice notice-warning inline">' . esc_html__( 'Required for native bookings: no active profile has been created.', 'dendrila-calendar' ) . '</p>';
+            }
+            echo '<p><a class="button button-primary" href="' . esc_url( admin_url( 'post-new.php?post_type=' . Dendrila_Calendar_Native::PROFILE ) ) . '">' .
+                esc_html__( 'Create a profile', 'dendrila-calendar' ) . '</a> <a class="button" href="' .
+                esc_url( admin_url( 'admin.php?page=dendrila-calendar-profiles' ) ) . '">' .
+                esc_html__( 'Manage profiles', 'dendrila-calendar' ) . '</a></p></section>';
+        }
         if ( 'saved' === $status ) {
             echo '<div class="notice notice-success inline"><p>' . esc_html__( 'Configuration saved.', 'dendrila-calendar' ) . '</p></div>';
         } elseif ( in_array( $status, array( 'source_required', 'destination_invalid' ), true ) ) {

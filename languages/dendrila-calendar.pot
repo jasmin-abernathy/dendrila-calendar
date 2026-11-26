@@ -21,6 +21,9 @@ msgstr ""
 msgid "A connector compatibility request was submitted for review."
 msgstr ""
 
+msgid "A profile is required before a service can be offered for booking."
+msgstr ""
+
 msgid "A synchronization attempt has finished. Review its status below."
 msgstr ""
 
@@ -45,10 +48,22 @@ msgstr ""
 msgid "Actual appointments read from detected booking plugins. Select an appointment in the calendar to open its original booking tool; imported bookings are not editable here."
 msgstr ""
 
+msgid "Add a profile"
+msgstr ""
+
+msgid "Add a service"
+msgstr ""
+
 msgid "Add an event"
 msgstr ""
 
+msgid "Add booking profile"
+msgstr ""
+
 msgid "Add calendar event"
+msgstr ""
+
+msgid "Add service"
 msgstr ""
 
 msgid "All day"
@@ -81,6 +96,9 @@ msgstr ""
 msgid "Approved"
 msgstr ""
 
+msgid "At least one active profile is ready."
+msgstr ""
+
 msgid "Automatic calendar synchronization"
 msgstr ""
 
@@ -94,6 +112,15 @@ msgid "Back to calendar"
 msgstr ""
 
 msgid "Booking"
+msgstr ""
+
+msgid "Booking profile"
+msgstr ""
+
+msgid "Booking profiles"
+msgstr ""
+
+msgid "Bookings"
 msgstr ""
 
 msgid "Busy times also disable public Easy Appointments slots. Final booking submission is rechecked directly with connected calendars."
@@ -228,7 +255,22 @@ msgstr ""
 msgid "Create a private read-only subscription link."
 msgstr ""
 
+msgid "Create a profile"
+msgstr ""
+
+msgid "Create a profile and assign it to a published service before accepting bookings."
+msgstr ""
+
+msgid "Create and publish at least one booking profile before offering a service."
+msgstr ""
+
+msgid "Create services with their own duration, preparation time, price and mandatory responsible profile."
+msgstr ""
+
 msgid "Create subscription link"
+msgstr ""
+
+msgid "Create the first profile"
 msgstr ""
 
 msgid "Date and time"
@@ -261,7 +303,22 @@ msgstr ""
 msgid "Disconnect"
 msgstr ""
 
+msgid "Duration in minutes"
+msgstr ""
+
+msgid "Duration, profile and price"
+msgstr ""
+
+msgid "Each reservation will belong to a profile. Create one for yourself, or one per professional or resource."
+msgstr ""
+
+msgid "Edit booking profile"
+msgstr ""
+
 msgid "Edit calendar event"
+msgstr ""
+
+msgid "Edit service"
 msgstr ""
 
 msgid "End"
@@ -286,6 +343,9 @@ msgid "Enter your cloud address and choose an agenda."
 msgstr ""
 
 msgid "Event"
+msgstr ""
+
+msgid "Every new native reservation must belong to a profile. Add at least one professional or resource before creating bookable services."
 msgstr ""
 
 msgid "Find events"
@@ -351,9 +411,6 @@ msgstr ""
 msgid "Keep my appointments inside WordPress only"
 msgstr ""
 
-msgid "language"
-msgstr ""
-
 msgid "Last synchronization:"
 msgstr ""
 
@@ -378,6 +435,12 @@ msgstr ""
 msgid "Manage local events"
 msgstr ""
 
+msgid "Manage profiles"
+msgstr ""
+
+msgid "Manage services"
+msgstr ""
+
 msgid "Maximum number of subscriptions reached. Revoke an old link first."
 msgstr ""
 
@@ -385,6 +448,21 @@ msgid "Month"
 msgstr ""
 
 msgid "My calendar"
+msgstr ""
+
+msgid "Native booking"
+msgstr ""
+
+msgid "Native booking setup — create a profile first"
+msgstr ""
+
+msgid "Native booking setup: create at least one profile before offering services or taking reservations."
+msgstr ""
+
+msgid "Native bookings"
+msgstr ""
+
+msgid "Native reservations will be linked to both a service and its profile. The public booking and WooCommerce checkout flows are not active yet."
 msgstr ""
 
 msgid "Never synchronized"
@@ -397,6 +475,9 @@ msgid "Nextcloud (direct connection)"
 msgstr ""
 
 msgid "Nextcloud / iCloud"
+msgstr ""
+
+msgid "No active profile yet. Bookings cannot be offered."
 msgstr ""
 
 msgid "No calendar was found in this account."
@@ -429,6 +510,9 @@ msgstr ""
 msgid "OAuth client secret"
 msgstr ""
 
+msgid "Offer the developer a coffee"
+msgstr ""
+
 msgid "On a computer, open Google Calendar settings, choose Add calendar > From URL, paste the private HTTPS link, and add the calendar. Google decides when to refresh it. The mobile app cannot add URL subscriptions directly."
 msgstr ""
 
@@ -447,10 +531,16 @@ msgstr ""
 msgid "Open unified calendar"
 msgstr ""
 
+msgid "opens in a new tab"
+msgstr ""
+
 msgid "Other CalDAV service"
 msgstr ""
 
 msgid "Outlook / Microsoft 365"
+msgstr ""
+
+msgid "Paid bookings are not enabled until WooCommerce checkout is integrated. Prices do not authorize a payment."
 msgstr ""
 
 msgid "Paste your client ID"
@@ -465,7 +555,7 @@ msgstr ""
 msgid "Pick your everyday calendar. We will guide you without technical setup."
 msgstr ""
 
-msgid "plural-forms"
+msgid "Preparation time before (minutes)"
 msgstr ""
 
 msgid "Prevent double bookings"
@@ -474,7 +564,10 @@ msgstr ""
 msgid "Previous"
 msgstr ""
 
-msgid "project-id-version"
+msgid "Price in cents (0 = free)"
+msgstr ""
+
+msgid "Profiles"
 msgstr ""
 
 msgid "Protect Easy Appointments reservations"
@@ -483,10 +576,19 @@ msgstr ""
 msgid "Ready to connect"
 msgstr ""
 
+msgid "Recovery time after (minutes)"
+msgstr ""
+
 msgid "Redirect URI:"
 msgstr ""
 
+msgid "Required for native bookings: no active profile has been created."
+msgstr ""
+
 msgid "Reserved day"
+msgstr ""
+
+msgid "Responsible profile (required)"
 msgstr ""
 
 msgid "Revoke link"
@@ -508,6 +610,9 @@ msgid "Saved securely in the WordPress database, encrypted with this site’s ke
 msgstr ""
 
 msgid "Search title or status"
+msgstr ""
+
+msgid "Select a profile"
 msgstr ""
 
 msgid "Select all"
@@ -532,6 +637,12 @@ msgid "Select your WordPress sources, create a private calendar URL, then subscr
 msgstr ""
 
 msgid "Selected day appointments"
+msgstr ""
+
+msgid "Service"
+msgstr ""
+
+msgid "Services"
 msgstr ""
 
 msgid "Setup required"
@@ -574,6 +685,9 @@ msgid "Subscription not found."
 msgstr ""
 
 msgid "Subscription revoked."
+msgstr ""
+
+msgid "Support development"
 msgstr ""
 
 msgid "Synchronization"
@@ -624,6 +738,12 @@ msgstr ""
 msgid "The provider has granted access. Select the destination calendar and confirm the final test."
 msgstr ""
 
+msgid "The reservation duration must match its service."
+msgstr ""
+
+msgid "The selected profile does not provide this service."
+msgstr ""
+
 msgid "The server cannot securely protect the calendar password."
 msgstr ""
 
@@ -643,6 +763,9 @@ msgid "This calendar was already connected. Authorization and selected sources w
 msgstr ""
 
 msgid "This list contains only events created in Dendrila Calendar. Appointments imported from Easy Appointments and other plugins appear in the unified calendar."
+msgstr ""
+
+msgid "This reservation has an invalid time period."
 msgstr ""
 
 msgid "This server did not provide a calendar account. Check your service address."
@@ -708,6 +831,9 @@ msgstr ""
 msgid "View"
 msgstr ""
 
+msgid "View private booking records"
+msgstr ""
+
 msgid "We will add and remove a temporary event to test the connection."
 msgstr ""
 
@@ -729,6 +855,9 @@ msgstr ""
 msgid "Which calendar do you use?"
 msgstr ""
 
+msgid "WooCommerce product ID (optional)"
+msgstr ""
+
 msgid "You are not allowed to configure Dendrila Calendar."
 msgstr ""
 
@@ -742,6 +871,9 @@ msgid "You cannot manage calendar connections."
 msgstr ""
 
 msgid "You cannot manage calendar subscriptions."
+msgstr ""
+
+msgid "You cannot manage Dendrila booking profiles."
 msgstr ""
 
 msgid "Your calendar has been connected and synchronization started."

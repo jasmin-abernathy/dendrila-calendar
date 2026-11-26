@@ -46,6 +46,19 @@ if ( strpos( $notice, 'Open unified calendar' ) === false ||
      strpos( $notice, 'admin.php?page=dendrila-calendar' ) === false ) {
     throw new RuntimeException( 'Local events list must link to unified calendar.' );
 }
+$_GET['page'] = 'dendrila-calendar';
+function sanitize_key( $key ) { return strtolower( preg_replace( '/[^a-z0-9_-]/', '', $key ) ); }
+function wp_unslash( $value ) { return $value; }
+ob_start();
+Dendrila_Calendar::render_support_footer();
+$coffee = ob_get_clean();
+if ( strpos( $coffee, 'https://app.lepotager.org/soutenir/' ) === false ||
+     strpos( $coffee, 'dashicons-coffee' ) === false ||
+     strpos( $coffee, 'Offer the developer a coffee' ) === false ||
+     strpos( $coffee, 'rel="noopener noreferrer"' ) === false ) {
+    throw new RuntimeException( 'Coffee footer must follow the discreet Simple Edit support link.' );
+}
+unset( $_GET['page'] );
 $GLOBALS['fake_screen'] = 'dashboard';
 ob_start();
 Dendrila_Calendar::local_events_notice();

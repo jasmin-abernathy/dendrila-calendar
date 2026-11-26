@@ -23,6 +23,9 @@ msgstr "Impossible de transmettre une demande de compatibilité. Vérifiez l’e
 msgid "A connector compatibility request was submitted for review."
 msgstr "Une demande de compatibilité de connecteur a été transmise pour examen."
 
+msgid "A profile is required before a service can be offered for booking."
+msgstr "Un profil est nécessaire avant qu’une prestation puisse être réservable."
+
 msgid "A synchronization attempt has finished. Review its status below."
 msgstr "Une tentative de synchronisation est terminée. Consultez son état ci-dessous."
 
@@ -47,11 +50,23 @@ msgstr "Identifiant ou adresse e-mail"
 msgid "Actual appointments read from detected booking plugins. Select an appointment in the calendar to open its original booking tool; imported bookings are not editable here."
 msgstr "Rendez-vous réellement récupérés depuis les extensions détectées. Sélectionnez un rendez-vous dans le calendrier pour ouvrir son extension d’origine ; les réservations importées ne sont pas modifiables ici."
 
+msgid "Add a profile"
+msgstr "Ajouter un profil"
+
+msgid "Add a service"
+msgstr "Ajouter une prestation"
+
 msgid "Add an event"
 msgstr "Ajouter un événement"
 
+msgid "Add booking profile"
+msgstr "Ajouter un profil de réservation"
+
 msgid "Add calendar event"
 msgstr "Ajouter un événement au calendrier"
+
+msgid "Add service"
+msgstr "Ajouter une prestation"
 
 msgid "All day"
 msgstr "Toute la journée"
@@ -83,6 +98,9 @@ msgstr "Rendez-vous à transmettre"
 msgid "Approved"
 msgstr "Approuvé"
 
+msgid "At least one active profile is ready."
+msgstr "Au moins un profil actif est prêt."
+
 msgid "Automatic calendar synchronization"
 msgstr "Synchronisation automatique des calendriers"
 
@@ -97,6 +115,15 @@ msgstr "Retour au calendrier"
 
 msgid "Booking"
 msgstr "Réservation"
+
+msgid "Booking profile"
+msgstr "Profil de réservation"
+
+msgid "Booking profiles"
+msgstr "Profils de réservation"
+
+msgid "Bookings"
+msgstr "Réservations"
 
 msgid "Busy times also disable public Easy Appointments slots. Final booking submission is rechecked directly with connected calendars."
 msgstr "Les créneaux occupés sont aussi désactivés dans le formulaire public Easy Appointments. La disponibilité est de nouveau vérifiée à la validation de la réservation."
@@ -230,8 +257,23 @@ msgstr "Copier le lien"
 msgid "Create a private read-only subscription link."
 msgstr "Créez un lien d’abonnement privé en lecture seule."
 
+msgid "Create a profile"
+msgstr "Créer un profil"
+
+msgid "Create a profile and assign it to a published service before accepting bookings."
+msgstr "Créez un profil et associez-le à une prestation publiée avant d’accepter des réservations."
+
+msgid "Create and publish at least one booking profile before offering a service."
+msgstr "Créez et publiez au moins un profil avant de proposer une prestation."
+
+msgid "Create services with their own duration, preparation time, price and mandatory responsible profile."
+msgstr "Créez des prestations avec leur durée, leurs temps de préparation, leur tarif et un profil responsable obligatoire."
+
 msgid "Create subscription link"
 msgstr "Créer un lien d’abonnement"
+
+msgid "Create the first profile"
+msgstr "Créer le premier profil"
 
 msgid "Date and time"
 msgstr "Date et heure"
@@ -263,8 +305,23 @@ msgstr "Synchronisation directe avec un agenda existant"
 msgid "Disconnect"
 msgstr "Déconnecter"
 
+msgid "Duration in minutes"
+msgstr "Durée en minutes"
+
+msgid "Duration, profile and price"
+msgstr "Durée, profil et tarif"
+
+msgid "Each reservation will belong to a profile. Create one for yourself, or one per professional or resource."
+msgstr "Chaque réservation sera liée à un profil. Créez-en un pour vous, ou un par professionnel ou ressource."
+
+msgid "Edit booking profile"
+msgstr "Modifier le profil de réservation"
+
 msgid "Edit calendar event"
 msgstr "Modifier l’événement"
+
+msgid "Edit service"
+msgstr "Modifier la prestation"
 
 msgid "End"
 msgstr "Fin"
@@ -289,6 +346,9 @@ msgstr "Saisissez l’adresse de votre cloud et choisissez un agenda."
 
 msgid "Event"
 msgstr "Événement"
+
+msgid "Every new native reservation must belong to a profile. Add at least one professional or resource before creating bookable services."
+msgstr "Chaque nouvelle réservation native doit être liée à un profil. Ajoutez au moins un professionnel ou une ressource avant de créer des prestations réservables."
 
 msgid "Find events"
 msgstr "Rechercher des événements"
@@ -353,9 +413,6 @@ msgstr "Période invalide"
 msgid "Keep my appointments inside WordPress only"
 msgstr "Garder mes rendez-vous uniquement dans WordPress"
 
-msgid "language"
-msgstr "fr_FR"
-
 msgid "Last synchronization:"
 msgstr "Dernière synchronisation :"
 
@@ -380,6 +437,12 @@ msgstr "Recherche de vos agendas…"
 msgid "Manage local events"
 msgstr "Gérer les événements locaux"
 
+msgid "Manage profiles"
+msgstr "Gérer les profils"
+
+msgid "Manage services"
+msgstr "Gérer les prestations"
+
 msgid "Maximum number of subscriptions reached. Revoke an old link first."
 msgstr "Nombre maximal d’abonnements atteint. Révoquez d’abord un ancien lien."
 
@@ -388,6 +451,21 @@ msgstr "Mois"
 
 msgid "My calendar"
 msgstr "Mon calendrier"
+
+msgid "Native booking"
+msgstr "Réservation native"
+
+msgid "Native booking setup — create a profile first"
+msgstr "Configuration des réservations natives — commencez par créer un profil"
+
+msgid "Native booking setup: create at least one profile before offering services or taking reservations."
+msgstr "Configuration des réservations natives : créez au moins un profil avant de proposer des prestations ou d’accepter des réservations."
+
+msgid "Native bookings"
+msgstr "Réservations natives"
+
+msgid "Native reservations will be linked to both a service and its profile. The public booking and WooCommerce checkout flows are not active yet."
+msgstr "Les réservations natives seront liées à une prestation et à son profil. Le formulaire de réservation public et le paiement WooCommerce ne sont pas encore actifs."
 
 msgid "Never synchronized"
 msgstr "Jamais synchronisé"
@@ -400,6 +478,9 @@ msgstr "Nextcloud (connexion directe)"
 
 msgid "Nextcloud / iCloud"
 msgstr "Nextcloud / iCloud"
+
+msgid "No active profile yet. Bookings cannot be offered."
+msgstr "Aucun profil actif pour le moment. Les réservations ne peuvent pas être proposées."
 
 msgid "No calendar was found in this account."
 msgstr "Aucun calendrier trouvé dans ce compte."
@@ -431,6 +512,9 @@ msgstr "Identifiant client OAuth"
 msgid "OAuth client secret"
 msgstr "Secret client OAuth"
 
+msgid "Offer the developer a coffee"
+msgstr "Offrez un café au développeur"
+
 msgid "On a computer, open Google Calendar settings, choose Add calendar > From URL, paste the private HTTPS link, and add the calendar. Google decides when to refresh it. The mobile app cannot add URL subscriptions directly."
 msgstr "Depuis un ordinateur, ouvrez les paramètres de Google Agenda, puis Ajouter un agenda > À partir de l’URL. Collez le lien HTTPS privé. Google choisit la fréquence d’actualisation ; l’application mobile ne permet pas d’ajouter directement un abonnement par URL."
 
@@ -449,11 +533,17 @@ msgstr "Ouvrir l’assistant de configuration"
 msgid "Open unified calendar"
 msgstr "Ouvrir le calendrier unifié"
 
+msgid "opens in a new tab"
+msgstr "s’ouvre dans un nouvel onglet"
+
 msgid "Other CalDAV service"
 msgstr "Autre service CalDAV"
 
 msgid "Outlook / Microsoft 365"
 msgstr "Outlook / Microsoft 365"
+
+msgid "Paid bookings are not enabled until WooCommerce checkout is integrated. Prices do not authorize a payment."
+msgstr "Les réservations payantes ne sont pas activées tant que le paiement WooCommerce n’est pas intégré. Renseigner un tarif n’autorise aucun encaissement."
 
 msgid "Paste your client ID"
 msgstr "Collez votre identifiant client"
@@ -467,8 +557,8 @@ msgstr "En attente"
 msgid "Pick your everyday calendar. We will guide you without technical setup."
 msgstr "Choisissez votre agenda habituel. Nous vous guiderons sans réglages techniques."
 
-msgid "plural-forms"
-msgstr "nplurals=2; plural=n>1;"
+msgid "Preparation time before (minutes)"
+msgstr "Temps de préparation avant (minutes)"
 
 msgid "Prevent double bookings"
 msgstr "Empêcher les doubles réservations"
@@ -476,8 +566,11 @@ msgstr "Empêcher les doubles réservations"
 msgid "Previous"
 msgstr "Précédent"
 
-msgid "project-id-version"
-msgstr "Dendrila Calendar 0.0.3"
+msgid "Price in cents (0 = free)"
+msgstr "Tarif en centimes (0 = gratuit)"
+
+msgid "Profiles"
+msgstr "Profils"
 
 msgid "Protect Easy Appointments reservations"
 msgstr "Protéger les réservations Easy Appointments"
@@ -485,11 +578,20 @@ msgstr "Protéger les réservations Easy Appointments"
 msgid "Ready to connect"
 msgstr "Prêt à connecter"
 
+msgid "Recovery time after (minutes)"
+msgstr "Temps de battement après (minutes)"
+
 msgid "Redirect URI:"
 msgstr "URI de redirection :"
 
+msgid "Required for native bookings: no active profile has been created."
+msgstr "Obligatoire pour les réservations natives : aucun profil actif n’a encore été créé."
+
 msgid "Reserved day"
 msgstr "Journée réservée"
+
+msgid "Responsible profile (required)"
+msgstr "Profil responsable (obligatoire)"
 
 msgid "Revoke link"
 msgstr "Révoquer le lien"
@@ -511,6 +613,9 @@ msgstr "Enregistrés dans la base WordPress et chiffrés avec les clés du site.
 
 msgid "Search title or status"
 msgstr "Rechercher par titre ou statut"
+
+msgid "Select a profile"
+msgstr "Choisir un profil"
 
 msgid "Select all"
 msgstr "Tout sélectionner"
@@ -535,6 +640,12 @@ msgstr "Sélectionnez les sources WordPress, créez une adresse privée puis abo
 
 msgid "Selected day appointments"
 msgstr "Rendez-vous du jour sélectionné"
+
+msgid "Service"
+msgstr "Prestation"
+
+msgid "Services"
+msgstr "Prestations"
 
 msgid "Setup required"
 msgstr "Configuration nécessaire"
@@ -577,6 +688,9 @@ msgstr "Abonnement introuvable."
 
 msgid "Subscription revoked."
 msgstr "Abonnement révoqué."
+
+msgid "Support development"
+msgstr "Soutenir le développement"
 
 msgid "Synchronization"
 msgstr "Synchronisation"
@@ -626,6 +740,12 @@ msgstr "Le service n’a pas confirmé les droits de création et de suppression
 msgid "The provider has granted access. Select the destination calendar and confirm the final test."
 msgstr "Le service a autorisé l’accès. Choisissez l’agenda de destination, puis confirmez le test final."
 
+msgid "The reservation duration must match its service."
+msgstr "La durée de la réservation doit correspondre à celle de la prestation."
+
+msgid "The selected profile does not provide this service."
+msgstr "Le profil sélectionné ne propose pas cette prestation."
+
 msgid "The server cannot securely protect the calendar password."
 msgstr "Le serveur ne peut pas protéger de manière sûre le mot de passe du calendrier."
 
@@ -646,6 +766,9 @@ msgstr "Cet agenda était déjà connecté. L’autorisation et les sources ont 
 
 msgid "This list contains only events created in Dendrila Calendar. Appointments imported from Easy Appointments and other plugins appear in the unified calendar."
 msgstr "Cette liste contient uniquement les événements créés dans Dendrila Calendar. Les rendez-vous importés depuis Easy Appointments et les autres extensions apparaissent dans le calendrier unifié."
+
+msgid "This reservation has an invalid time period."
+msgstr "Cette réservation comporte un créneau horaire invalide."
 
 msgid "This server did not provide a calendar account. Check your service address."
 msgstr "Le service n’a pas fourni de compte de calendrier. Vérifiez son adresse."
@@ -710,6 +833,9 @@ msgstr "Utilisez votre adresse de compte Apple et un mot de passe spécifique à
 msgid "View"
 msgstr "Vue"
 
+msgid "View private booking records"
+msgstr "Voir les réservations privées"
+
 msgid "We will add and remove a temporary event to test the connection."
 msgstr "Un événement temporaire sera ajouté puis supprimé pour vérifier la connexion."
 
@@ -731,6 +857,9 @@ msgstr "Quels rendez-vous envoyer ?"
 msgid "Which calendar do you use?"
 msgstr "Quel agenda utilisez-vous ?"
 
+msgid "WooCommerce product ID (optional)"
+msgstr "Identifiant du produit WooCommerce (facultatif)"
+
 msgid "You are not allowed to configure Dendrila Calendar."
 msgstr "Vous ne pouvez pas configurer Dendrila Calendar."
 
@@ -745,6 +874,9 @@ msgstr "Vous ne pouvez pas gérer les connexions des agendas."
 
 msgid "You cannot manage calendar subscriptions."
 msgstr "Vous ne pouvez pas gérer les abonnements du calendrier."
+
+msgid "You cannot manage Dendrila booking profiles."
+msgstr "Vous n’avez pas l’autorisation de gérer les profils de réservation Dendrila."
 
 msgid "Your calendar has been connected and synchronization started."
 msgstr "Votre agenda est connecté et la synchronisation a démarré."
