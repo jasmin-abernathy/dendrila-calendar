@@ -23,6 +23,7 @@ function wp_timezone_string() { return 'Europe/Paris'; }
 function wp_timezone() { return new DateTimeZone( 'Europe/Paris' ); }
 function get_user_locale() { return 'fr_FR'; }
 function get_option( $name, $default ) { return $default; }
+function checked( $value, $expected = true, $echo = true ) { $html = $value === $expected ? ' checked="checked"' : ''; if ( $echo ) { echo $html; } return $html; }
 function sanitize_key( $key ) { return strtolower( preg_replace( '/[^a-z0-9_-]/', '', $key ) ); }
 function wp_unslash( $value ) { return $value; }
 class Dendrila_Calendar_Sources {
