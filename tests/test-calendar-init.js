@@ -36,7 +36,7 @@ const today = new Date();
 const start = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 15, 12));
 const finish = new Date(start.getTime() + 30 * 60000);
 const fakeEvent = {
-  id: 'ea-1', source: 'easy_appointments', title: 'Prestation test',
+  id: 'ea-1', source: 'bookings', title: 'Prestation test',
   status: 'pending', start: start.toISOString(), end: finish.toISOString(),
   url: 'https://example.org/wp-admin/admin.php?page=easy-appointments'
 };
@@ -47,7 +47,7 @@ const config = {
   locale: 'fr_FR',
   timezone: 'Europe/Paris',
   weekStartsOn: 1,
-  sources: { easy_appointments: 'Easy Appointments' },
+  sources: { bookings: 'Your appointments', easy_appointments: 'Easy Appointments' },
   i18n: { loading: 'Chargement', empty: 'Aucun événement', failed: 'Erreur', allDay: 'Toute la journée' }
 };
 const sandbox = {
@@ -57,13 +57,14 @@ const sandbox = {
     createElement: tag => new Node(tag),
     createTextNode: txt => ({ textContent: String(txt) })
   },
-  fetch: async () => {
+  fetch: async url => {
+    assert.strictEqual(new URL(url).searchParams.get('sources'), 'bookings');
     ++requests;
     return {
       ok: true,
       json: async () => ({ success: true, data: {
         events: [fakeEvent],
-        source_counts: { easy_appointments: 1 },
+        source_counts: { bookings: 1 },
         source_warnings: {}
       } })
     };
@@ -88,6 +89,35 @@ function textTree(node) {
   assert(dayButton && typeof dayButton.handlers.click === 'function', 'Month view needs an accessible day picker');
   dayButton.handlers.click();
   assert(textTree(ids['dendrila-day-details']).includes('Prestation test'), 'The selected day should show its appointments');
+  const picker = ids['dendrila-month'];
+  const grid = ids['dendrila-grid'];
+  picker.value = '2026-12';
+  picker.handlers.change();
+  function swipe(dx, dy, interactive = false) {
+    sandbox.document.elementFromPoint = () => ({ closest: () => interactive });
+    grid.contains = () => true;
+    const touch = { identifier: 1, clientX: 100, clientY: 100 };
+    grid.handlers.touchstart({ touches: [touch], target: { closest: () => interactive } });
+    const end = { ...touch, clientX: 100 + dx, clientY: 100 + dy };
+    grid.handlers.touchmove({ touches: [end] });
+    grid.handlers.touchend({ touches: [], changedTouches: [end] });
+  }
+  swipe(-80, 8);
+  assert.strictEqual(picker.value, '2027-01');
+  // The AJAX promise has not resolved yet. Dates must already match the title.
+  const januaryDay = grid.children.find(cell => cell.dataset.day === '2027-01-15');
+  assert(januaryDay, 'Navigation must replace old month cells before the next response');
+  januaryDay.children[0].handlers.click();
+  assert(textTree(ids['dendrila-day-details']).includes('janvier'));
+
+  swipe(80, 8);
+  assert.strictEqual(picker.value, '2026-12');
+  for (const gesture of [[12, 80], [-60, 48], [0, 0], [-80, 4, true]]) {
+    swipe(...gesture);
+    assert.strictEqual(picker.value, '2026-12');
+  }
+  ids['dendrila-next'].handlers.click();
+  assert.strictEqual(picker.value, '2027-01');
   for (const view of ['week', 'list']) {
     ids['dendrila-view'].value = view;
     assert(typeof ids['dendrila-view'].handlers.change === 'function', 'View control must work');

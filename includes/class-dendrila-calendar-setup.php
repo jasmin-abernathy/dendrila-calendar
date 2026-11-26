@@ -282,14 +282,32 @@ final class Dendrila_Calendar_Setup {
         $detected = Dendrila_Calendar_Detector::discover();
         $saved = self::settings();
         $ready = self::ready_sources( $detected );
-        $selected = ! empty( $saved['sources'] ) ? $saved['sources'] : $ready;
+        $selected = ! empty( $saved['sources'] ) ? $saved['sources'] : array( 'native' );
         $mode = ! empty( $saved['mode'] ) ? $saved['mode'] : 'caldav';
         $calendar_service = ! empty( $saved['calendar_service'] ) ? $saved['calendar_service'] : ( 'subscription' === $mode ? 'google' : ( 'local' === $mode ? 'local' : 'nextcloud' ) );
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only setup notice, sanitized and checked against known values.
         $status = isset( $_GET['setup_status'] ) ? sanitize_key( wp_unslash( $_GET['setup_status'] ) ) : '';
         echo '<div class="wrap dendrila-calendar-setup"><h1>' . esc_html__( 'Configure Dendrila Calendar', 'dendrila-calendar' ) . '</h1>';
-        echo '<p>' . esc_html__( 'This assistant detects active appointment plugins and guides external synchronization. You can view the local calendar before connecting an external destination.', 'dendrila-calendar' ) . '</p>';
+        echo '<p>' . esc_html__( 'Dendrila manages its own events and appointments without another booking plugin. Connect Google or Outlook only if you want calendar synchronization.', 'dendrila-calendar' ) . '</p>';
         echo '<p><a class="button" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar' ) ) . '">' . esc_html__( 'Open calendar view', 'dendrila-calendar' ) . '</a></p>';
+        echo '<div class="notice notice-info inline"><p><strong>' . esc_html__( 'New: book and sell appointments with WooCommerce', 'dendrila-calendar' ) . '</strong> — ' . esc_html__( 'Start with the guided setup. The instructions remain available in Dendrila Calendar > Booking guide.', 'dendrila-calendar' ) . ' <a href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-guide' ) ) . '">' . esc_html__( 'Open the booking setup guide', 'dendrila-calendar' ) . '</a></p></div>';
+        // The native booking path requires a profile; legacy calendar sources
+        // remain available while their administrators migrate at their pace.
+        if ( class_exists( 'Dendrila_Calendar_Native' ) ) {
+            $has_profile = Dendrila_Calendar_Native::has_profile();
+            echo '<section class="dendrila-setup-profile-step" aria-labelledby="dendrila-setup-profile-title">';
+            echo '<h2 id="dendrila-setup-profile-title">' . esc_html__( 'Native booking setup — create a profile first', 'dendrila-calendar' ) . '</h2>';
+            echo '<p>' . esc_html__( 'Every new native reservation must belong to a profile. Add at least one professional or resource before creating bookable services.', 'dendrila-calendar' ) . '</p>';
+            if ( $has_profile ) {
+                echo '<p class="notice notice-success inline">' . esc_html__( 'At least one active profile is ready.', 'dendrila-calendar' ) . '</p>';
+            } else {
+                echo '<p class="notice notice-warning inline">' . esc_html__( 'Required for native bookings: no active profile has been created.', 'dendrila-calendar' ) . '</p>';
+            }
+            echo '<p><a class="button button-primary" href="' . esc_url( admin_url( 'post-new.php?post_type=' . Dendrila_Calendar_Native::PROFILE ) ) . '">' .
+                esc_html__( 'Create a profile', 'dendrila-calendar' ) . '</a> <a class="button" href="' .
+                esc_url( admin_url( 'admin.php?page=dendrila-calendar-profiles' ) ) . '">' .
+                esc_html__( 'Manage profiles', 'dendrila-calendar' ) . '</a></p></section>';
+        }
         if ( 'saved' === $status ) {
             echo '<div class="notice notice-success inline"><p>' . esc_html__( 'Configuration saved.', 'dendrila-calendar' ) . '</p></div>';
         } elseif ( in_array( $status, array( 'source_required', 'destination_invalid' ), true ) ) {
@@ -307,11 +325,15 @@ final class Dendrila_Calendar_Setup {
         echo '<input type="hidden" name="action" value="dendrila_calendar_setup_save">';
         wp_nonce_field( 'dendrila_calendar_setup' );
         echo '<section id="dendrila-setup-sources">';
-        echo '<h2>' . esc_html__( 'Step 1 — Detected appointment sources', 'dendrila-calendar' ) . '</h2>';
-        echo '<p>' . esc_html__( 'Compatible active plugins are preselected. You may deselect them. Inactive or unsupported plugins cannot be synchronized.', 'dendrila-calendar' ) . '</p>';
-        echo '<fieldset><label><input type="checkbox" name="sources[]" value="native" ' . checked( in_array( 'native', $selected, true ), true, false ) . '> ' . esc_html__( 'Dendrila local events', 'dendrila-calendar' ) . '</label></fieldset>';
+        echo '<h2>' . esc_html__( 'Step 1 — Choose what to show', 'dendrila-calendar' ) . '</h2>';
+        echo '<p>' . esc_html__( 'Your Dendrila events are selected by default. Other booking extensions are optional and never selected automatically.', 'dendrila-calendar' ) . '</p>';
+        echo '<fieldset><label><input type="checkbox" name="sources[]" value="native" ' . checked( in_array( 'native', $selected, true ), true, false ) . '> ' . esc_html__( 'Personal events', 'dendrila-calendar' ) . '</label></fieldset>';
         if ( ! $detected ) {
-            echo '<p>' . esc_html__( 'No supported appointment plugin was detected. You can start with local events and return to setup later.', 'dendrila-calendar' ) . '</p>';
+            echo '<p>' . esc_html__( 'Dendrila works independently. You can add appointments and optionally connect an external calendar later.', 'dendrila-calendar' ) . '</p>';
+        }
+        if ( $detected ) {
+            echo '<details class="dendrila-optional-setup"><summary>' . esc_html__( 'Other booking plugins (optional)', 'dendrila-calendar' ) . '</summary>';
+            echo '<p class="description">' . esc_html__( 'Only enable these sources if you already use the corresponding plugins. They are never required for Dendrila appointments.', 'dendrila-calendar' ) . '</p>';
         }
         foreach ( $detected as $id => $details ) {
             $name = $details['label'];
@@ -326,6 +348,7 @@ final class Dendrila_Calendar_Setup {
             }
             echo '</div>';
         }
+        if ( $detected ) { echo '</details>'; }
         echo '<p><button type="button" class="button button-primary" id="dendrila-setup-next" hidden>' . esc_html__( 'Continue', 'dendrila-calendar' ) . '</button></p>';
         echo '<p id="dendrila-setup-feedback" role="status"></p></section>';
         echo '<section id="dendrila-setup-destination">';

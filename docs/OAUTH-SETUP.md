@@ -1,12 +1,12 @@
-# Connecting external calendar accounts (development test)
+# Connecting external calendar accounts (0.0.4 development build)
 
-Dendrila Calendar currently implements **one-way appointment/event synchronization** from supported WordPress booking sources into an external calendar. Calendar accounts are connected by authorization where the provider supports this integration.
+Dendrila Calendar exports supported WordPress booking sources to external calendars. Google and Microsoft additionally support **two-way synchronization of single Dendrila local events**, proposed by default for new destinations and visible before confirmation. Existing connections retain their saved direction after an update or reauthorization.
 
 ## Google Calendar and Microsoft Outlook: OAuth
 
-The WordPress admin flow is **Dendrila Calendar → Calendar synchronization → Google / Outlook → Connect with Google Calendar / Microsoft Outlook**. The site administrator authorizes access on the provider's official sign-in page, chooses a writable calendar, selects appointment sources, and confirms the tested connection.
+The WordPress admin flow is **Dendrila Calendar → Calendar synchronization → Google / Outlook → Connect with Google Calendar / Microsoft Outlook**. The site administrator authorizes access on the provider's official sign-in page, chooses a writable calendar, reviews the synchronization direction and sources, then clicks **Connect and synchronize this calendar**. The temporary write/delete check runs automatically.
 
-The plugin already contains OAuth authorization-code + PKCE handling, encrypted server-side tokens, calendar discovery, create/update/cancel and revocation. It intentionally does not ship with any client secret.
+The plugin already contains OAuth authorization-code + PKCE handling, encrypted server-side tokens, calendar discovery, create/update/cancel and local disconnection. Provider-side app consent can be revoked in the account settings. It intentionally does not ship with any client secret.
 
 For a **development site**, register the OAuth app with the provider, then open **WordPress admin → Dendrila Calendar → Calendar synchronization → Google / Outlook → Configure application credentials**. Paste the client ID and client secret into the mobile-friendly administrator form and save. The secret is encrypted before it is stored in the WordPress database and never displayed again. This does not remove the requirement to create the provider application; it removes the need to edit PHP files on mobile.
 
@@ -40,13 +40,28 @@ For a distributable plugin where end users never create OAuth clients, use a **p
 - **Apple iCloud Calendar:** Connect through CalDAV with an Apple app-specific password when supported. Apple Calendar/iCloud does not expose an equivalent general-purpose Google Calendar OAuth authorization flow for third-party WordPress calendar synchronization.
 - **Other calendars accepting iCalendar:** Use the private revocable HTTPS ICS subscription. This is a read-only subscription with app-controlled refresh frequency, not two-way OAuth.
 
-The Google/Microsoft connector pushes WordPress-source events **outward only**. It does not currently import remote appointments back into WordPress, prevent external-calendar overlaps from opening bookable slots, or update reservations from external edits. Do not advertise those as implemented.
+## Enabling two-way events
+
+In the calendar-selection step, **Synchronize local events in both directions** is selected for a new destination. Selecting a known destination restores its saved mode instead. The administrator can change the visible setting before confirming. An existing connection has the same setting and a **Save synchronization direction** button; another consent flow is unnecessary.
+
+This setting synchronizes single event titles, dates/times and all-day status. New events are discovered from 7 days ago to 85 days ahead; existing linked events remain tracked when moved outside that window. Local deletion removes the remote copy, and confirmed remote deletion moves an unchanged local copy to WordPress Trash. Conflicting changes are reported and neither version is overwritten. Recurring events and invitations are skipped. Bookings owned by other WordPress plugins remain outbound only.
+
+Existing imports are private and excluded from unrelated exports/subscriptions. Disconnecting removes active account credentials; non-secret event links and the destination identity remain for duplicate-free reconnection. Regular work uses WordPress Cron, approximately every five minutes when site traffic triggers it. The source limit is 500 events per pass and is reported when reached.
+
+Busy-time protection is a separate opt-in feature for Easy Appointments 4.x. The native public booking form and native WooCommerce checkout remain disabled.
 
 ## Validation checklist
 
 1. Run PHP syntax checks, JavaScript syntax checks and the existing OAuth-flow and calendar tests.
 2. On an HTTPS WordPress staging site, configure provider credentials without committing them.
 3. Follow consent, callback, calendar selection and the temporary create/delete probe using a disposable test calendar.
-4. Create, move and cancel a test booking; verify its corresponding remote event and no duplicates.
-5. Disconnect and confirm refresh tokens are not used again; note that existing remote events are intentionally retained.
+4. Create, move and cancel a test booking; verify its corresponding remote event and no duplicates. Enable two-way mode only on a disposable calendar; create/edit/delete one event from each side, test an all-day event and a simultaneous-edit conflict.
+5. Disconnect and confirm refresh tokens are not used again. Reconnect the same calendar and verify existing local/remote identities are reused without duplicate events. Existing events are intentionally retained on disconnect.
 6. Test both Google and Microsoft separately, including expiration and token refresh.
+
+## Provider references
+
+- [Google Calendar conditional modification / ETags](https://developers.google.com/workspace/calendar/api/guides/version-resources)
+- [Google Calendar patch semantics](https://developers.google.com/workspace/calendar/api/guides/performance)
+- [Microsoft Graph event resource and transactionId](https://learn.microsoft.com/en-us/graph/api/resources/event?view=graph-rest-1.0)
+- [Microsoft Graph calendarView](https://learn.microsoft.com/en-us/graph/api/calendar-list-calendarview?view=graph-rest-1.0)

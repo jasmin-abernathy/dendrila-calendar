@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class Dendrila_Calendar {
-    const VERSION = '0.0.3';
+    const VERSION = '0.0.6';
     const POST_TYPE = 'dendrila_event';
     const START_KEY = '_dendrila_calendar_start_utc';
     const END_KEY = '_dendrila_calendar_end_utc';
@@ -17,6 +17,7 @@ final class Dendrila_Calendar {
         add_action( 'admin_menu', array( __CLASS__, 'admin_menu' ) );
         add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
         add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_menu_icon_style' ) );
+        add_action( 'admin_footer', array( __CLASS__, 'render_support_footer' ) );
         add_action( 'admin_notices', array( __CLASS__, 'local_events_notice' ) );
         add_action( 'wp_ajax_dendrila_calendar_events', array( __CLASS__, 'ajax_events' ) );
     }
@@ -25,9 +26,9 @@ final class Dendrila_Calendar {
         load_plugin_textdomain( 'dendrila-calendar', false, 'dendrila-calendar/languages' );
         register_post_type( self::POST_TYPE, array(
             'labels' => array(
-                'name' => __( 'Local events', 'dendrila-calendar' ),
-                'menu_name' => __( 'Local events', 'dendrila-calendar' ),
-                'all_items' => __( 'Local events', 'dendrila-calendar' ),
+                'name' => __( 'Personal events', 'dendrila-calendar' ),
+                'menu_name' => __( 'Personal events', 'dendrila-calendar' ),
+                'all_items' => __( 'Personal events', 'dendrila-calendar' ),
                 'singular_name' => __( 'Calendar event', 'dendrila-calendar' ),
                 'add_new_item' => __( 'Add calendar event', 'dendrila-calendar' ),
                 'edit_item' => __( 'Edit calendar event', 'dendrila-calendar' ),
@@ -66,8 +67,35 @@ final class Dendrila_Calendar {
         wp_enqueue_style( 'dashicons' );
         wp_add_inline_style(
             'dashicons',
-            '#adminmenu #toplevel_page_dendrila-calendar .wp-menu-image:before { color: #f0f6fc; font-size: 22px; }'
+            '#adminmenu #toplevel_page_dendrila-calendar .wp-menu-image:before { color: #f0f6fc; font-size: 22px; }' .
+            '.dendrila-calendar-support{margin:26px 0 16px;font-size:13px;color:#64748b}' .
+            '.dendrila-calendar-support a{display:inline-flex;align-items:center;gap:6px;color:#526174;text-decoration:none}' .
+            '.dendrila-calendar-support a:hover,.dendrila-calendar-support a:focus-visible{color:#1d4ed8;text-decoration:underline}' .
+            '.dendrila-calendar-support .dashicons{font-size:16px;width:16px;height:16px}'
         );
+    }
+
+    /** Unobtrusive, optional support link matching Dendrila Simple Edit. */
+    public static function render_support_footer() {
+        if ( ! current_user_can( 'manage_options' ) ) {
+            return;
+        }
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only screen detection.
+        $page = isset( $_GET['page'] ) && is_string( $_GET['page'] )
+            ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
+        $screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+        $type = $screen && isset( $screen->post_type ) ? $screen->post_type : '';
+        if ( 0 !== strpos( $page, 'dendrila-calendar' ) &&
+             ! in_array( $type, array( 'dendrila_profile', 'dendrila_service', 'dendrila_booking', self::POST_TYPE ), true ) ) {
+            return;
+        }
+        echo '<footer class="dendrila-calendar-support" aria-label="' .
+            esc_attr__( 'Support development', 'dendrila-calendar' ) . '">';
+        echo '<a href="https://app.lepotager.org/soutenir/" target="_blank" rel="noopener noreferrer">' .
+            '<span class="dashicons dashicons-coffee" aria-hidden="true"></span>' .
+            esc_html__( 'Offer the developer a coffee', 'dendrila-calendar' ) .
+            '<span class="screen-reader-text"> (' . esc_html__( 'opens in a new tab', 'dendrila-calendar' ) .
+            ')</span></a></footer>';
     }
 
     public static function admin_menu() {
@@ -109,7 +137,7 @@ final class Dendrila_Calendar {
             return;
         }
         echo '<div class="notice notice-info"><p>' . esc_html__(
-            'This list contains only events created in Dendrila Calendar. Appointments imported from Easy Appointments and other plugins appear in the unified calendar.',
+            'This list contains manually created events and events imported from connected calendars. Customer appointments are shown under Your appointments. Other plugins are optional.',
             'dendrila-calendar'
         ) . '</p><p><a class="button button-primary" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar' ) ) . '">' . esc_html__(
             'Open unified calendar', 'dendrila-calendar'
@@ -147,6 +175,8 @@ final class Dendrila_Calendar {
         echo '<input id="dendrila-calendar-start" type="datetime-local" name="dendrila_calendar_start" value="' . esc_attr( $start ) . '" required></p>';
         echo '<p><label for="dendrila-calendar-end">' . esc_html__( 'End', 'dendrila-calendar' ) . '</label> ';
         echo '<input id="dendrila-calendar-end" type="datetime-local" name="dendrila_calendar_end" value="' . esc_attr( $end ) . '" required></p>';
+        echo '<p><label><input type="checkbox" name="dendrila_calendar_all_day" value="1"' . ( get_post_meta( $post->ID, '_dendrila_calendar_all_day', true ) ? ' checked' : '' ) . '> ' . esc_html__( 'All-day event', 'dendrila-calendar' ) . '</label></p>';
+        echo '<p class="description">' . esc_html__( 'For all-day events, use midnight for both times. The end date is the first day after the event.', 'dendrila-calendar' ) . '</p>';
         echo '<p class="notice notice-info inline">' . esc_html__( 'Local events can be sent to connected external calendars. They do not yet block booking availability in third-party booking plugins. Do not use this form to prevent reservations.', 'dendrila-calendar' ) . '</p>';
         echo '<p class="description">' . esc_html( sprintf(
             /* translators: %s: WordPress site timezone. */
@@ -180,6 +210,9 @@ final class Dendrila_Calendar {
             // Do not destroy previously valid dates on malformed input.
             return;
         }
+        $all_day = isset( $_POST['dendrila_calendar_all_day'] ) && '1' === $_POST['dendrila_calendar_all_day'] &&
+            '00:00' === $start->format( 'H:i' ) && '00:00' === $end->format( 'H:i' );
+        update_post_meta( $post_id, '_dendrila_calendar_all_day', (int) $all_day );
         update_post_meta( $post_id, self::START_KEY, $start->setTimezone( new DateTimeZone( 'UTC' ) )->format( 'Y-m-d H:i:s' ) );
         update_post_meta( $post_id, self::END_KEY, $end->setTimezone( new DateTimeZone( 'UTC' ) )->format( 'Y-m-d H:i:s' ) );
     }
@@ -188,16 +221,18 @@ final class Dendrila_Calendar {
         $calendar_screen = in_array( $hook, array( 'toplevel_page_dendrila-calendar', 'dendrila-calendar_page_dendrila-calendar' ), true );
         $sync_screen = 'dendrila-calendar_page_dendrila-calendar-sync' === $hook;
         $setup_screen = 'dendrila-calendar_page_dendrila-calendar-setup' === $hook;
-        if ( ! $calendar_screen && ! $sync_screen && ! $setup_screen ) {
+        $native_screen = in_array( $hook, array( 'dendrila-calendar_page_dendrila-calendar-services', 'dendrila-calendar_page_dendrila-calendar-profiles', 'dendrila-calendar_page_dendrila-calendar-bookings' ), true );
+        if ( ! $calendar_screen && ! $sync_screen && ! $setup_screen && ! $native_screen ) {
             return;
         }
         $url = plugin_dir_url( dirname( __DIR__ ) . '/dendrila-calendar.php' );
-        // The plugin stays at 0.0.1 during internal testing, but assets must refresh on every change.
+        // Version assets independently of the plugin test version.
         $asset_version = static function ( $file ) {
             $path = dirname( __DIR__ ) . '/assets/' . $file;
             return is_file( $path ) ? (string) filemtime( $path ) : self::VERSION;
         };
         wp_enqueue_style( 'dendrila-calendar-admin', $url . 'assets/calendar.css', array(), $asset_version( 'calendar.css' ) );
+        if ( $native_screen ) { return; }
         if ( $calendar_screen ) {
             wp_enqueue_script( 'dendrila-calendar-admin', $url . 'assets/calendar.js', array(), $asset_version( 'calendar.js' ), true );
         }
@@ -249,11 +284,17 @@ final class Dendrila_Calendar {
             'timezone' => wp_timezone_string(),
             'weekStartsOn' => (int) get_option( 'start_of_week', 1 ),
             'sources' => Dendrila_Calendar_Sources::available(),
+            'primarySources' => array( 'native', 'bookings' ),
+            'savedSources' => class_exists( 'Dendrila_Calendar_Setup' ) ? Dendrila_Calendar_Setup::selected_sources() : null,
             'i18n' => array(
                 'today' => __( 'Today', 'dendrila-calendar' ),
                 'month' => __( 'Month', 'dendrila-calendar' ),
                 'week' => __( 'Week', 'dendrila-calendar' ),
                 'list' => __( 'List', 'dendrila-calendar' ),
+                'previousMonth' => __( 'Previous month', 'dendrila-calendar' ),
+                'nextMonth' => __( 'Next month', 'dendrila-calendar' ),
+                'previousWeek' => __( 'Previous week', 'dendrila-calendar' ),
+                'nextWeek' => __( 'Next week', 'dendrila-calendar' ),
                 'previous' => __( 'Previous', 'dendrila-calendar' ),
                 'next' => __( 'Next', 'dendrila-calendar' ),
                 'loading' => __( 'Loading events…', 'dendrila-calendar' ),
@@ -262,6 +303,8 @@ final class Dendrila_Calendar {
                 'failed' => __( 'Unable to load events. Please try again.', 'dendrila-calendar' ),
                 'allDay' => __( 'All day', 'dendrila-calendar' ),
                 'sources' => __( 'Sources', 'dendrila-calendar' ),
+                'optionalSources' => __( 'Other booking plugins (optional)', 'dendrila-calendar' ),
+                'optionalSourceHelp' => __( 'These integrations are only for sites that already use another booking plugin. Dendrila works without them.', 'dendrila-calendar' ),
             ),
         ) );
         }
@@ -314,9 +357,19 @@ final class Dendrila_Calendar {
             );
             echo '<div class="dendrila-agenda-options">';
             foreach ( $choices as $choice ) {
+                $provider = 'Google Calendar' === $choice[0] ? 'google' : 'microsoft';
                 $url = add_query_arg( 'dendrila_method', $choice[1], admin_url( 'admin.php?page=dendrila-calendar-sync' ) );
                 echo '<article class="dendrila-agenda-option"><h3>' . esc_html( $choice[0] ) . '</h3><p>' . esc_html( $choice[2] ) . '</p>';
-                echo '<a class="button button-primary" href="' . esc_url( $url ) . '">' . esc_html__( 'Continue', 'dendrila-calendar' ) . '</a></article>';
+                if ( 'oauth' === $choice[1] && Dendrila_Calendar_OAuth::ready( $provider ) ) {
+                    echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"><input type="hidden" name="action" value="dendrila_calendar_oauth_start"><input type="hidden" name="provider" value="' . esc_attr( $provider ) . '">';
+                    wp_nonce_field( 'dendrila_calendar_oauth_start' );
+                    /* translators: %s: calendar provider name. */
+                    echo '<button class="button button-primary">' . esc_html( sprintf( __( 'Connect with %s', 'dendrila-calendar' ), $choice[0] ) ) . '</button></form>';
+                } else {
+                    if ( 'oauth' === $choice[1] ) { $url = add_query_arg( 'oauth_provider', $provider, $url ); }
+                    echo '<a class="button button-primary" href="' . esc_url( $url ) . '">' . esc_html__( 'Continue', 'dendrila-calendar' ) . '</a>';
+                }
+                echo '</article>';
             }
             echo '</div></section>';
         }
@@ -330,22 +383,22 @@ final class Dendrila_Calendar {
         }
         echo '<div class="wrap dendrila-calendar-wrap dendrila-calendar-overview">';
         echo '<header class="dendrila-overview-header"><h1>' . esc_html__( 'Dendrila Calendar', 'dendrila-calendar' ) . '</h1>';
-        echo '<p>' . esc_html__( 'Appointments from all detected booking plugins appear here. External calendar connection is not required to view them.', 'dendrila-calendar' ) . '</p></header>';
+        echo '<p>' . esc_html__( 'Your Dendrila appointments and personal events appear here. Other booking plugins are optional and can be shown separately.', 'dendrila-calendar' ) . '</p></header>';
         echo '<section class="dendrila-calendar-panel" aria-labelledby="dendrila-period">';
         echo '<div class="dendrila-calendar-toolbar">';
-        echo '<div class="dendrila-calendar-navigation">';
-        echo '<button type="button" class="button" id="dendrila-prev">' . esc_html__( 'Previous', 'dendrila-calendar' ) . '</button>';
-        echo '<button type="button" class="button" id="dendrila-today">' . esc_html__( 'Today', 'dendrila-calendar' ) . '</button>';
-        echo '<button type="button" class="button" id="dendrila-next">' . esc_html__( 'Next', 'dendrila-calendar' ) . '</button></div>';
+        echo '<div class="dendrila-calendar-navigation" role="group" aria-label="' . esc_attr__( 'Calendar period navigation', 'dendrila-calendar' ) . '">';
+        echo '<button type="button" class="button" id="dendrila-prev" aria-controls="dendrila-grid" aria-label="' . esc_attr__( 'Previous month', 'dendrila-calendar' ) . '"><span aria-hidden="true">‹</span></button>';
         echo '<h2 id="dendrila-period" aria-live="polite"></h2>';
-        echo '<div class="dendrila-calendar-selectors"><label for="dendrila-month">' . esc_html__( 'Choose month', 'dendrila-calendar' ) . '</label> ';
+        echo '<button type="button" class="button" id="dendrila-next" aria-controls="dendrila-grid" aria-label="' . esc_attr__( 'Next month', 'dendrila-calendar' ) . '"><span aria-hidden="true">›</span></button></div>';
+        echo '<div class="dendrila-calendar-selectors"><button type="button" class="button" id="dendrila-today">' . esc_html__( 'Today', 'dendrila-calendar' ) . '</button>';
+        echo '<label for="dendrila-month">' . esc_html__( 'Choose month', 'dendrila-calendar' ) . '</label> ';
         echo '<input type="month" id="dendrila-month" class="dendrila-month-picker" autocomplete="off">';
         echo '<label for="dendrila-view">' . esc_html__( 'View', 'dendrila-calendar' ) . '</label> <select id="dendrila-view">';
         echo '<option value="month">' . esc_html__( 'Month', 'dendrila-calendar' ) . '</option><option value="week">' . esc_html__( 'Week', 'dendrila-calendar' ) . '</option><option value="list">' . esc_html__( 'List', 'dendrila-calendar' ) . '</option></select></div></div>';
-        echo '<fieldset class="dendrila-calendar-sources"><legend>' . esc_html__( 'Sources', 'dendrila-calendar' ) . '</legend>';
+        echo '<details class="dendrila-calendar-filters"><summary>' . esc_html__( 'Sources', 'dendrila-calendar' ) . ' <span id="dendrila-source-count"></span></summary><fieldset class="dendrila-calendar-sources"><legend class="screen-reader-text">' . esc_html__( 'Sources', 'dendrila-calendar' ) . '</legend>';
         echo '<div class="dendrila-source-actions"><button type="button" class="button button-small" id="dendrila-sources-all">' . esc_html__( 'Select all', 'dendrila-calendar' ) . '</button> ';
         echo '<button type="button" class="button button-small" id="dendrila-sources-none">' . esc_html__( 'Select none', 'dendrila-calendar' ) . '</button></div>';
-        echo '<div id="dendrila-source-toggles"></div></fieldset>';
+        echo '<div id="dendrila-source-toggles"></div></fieldset></details>';
         echo '<div class="dendrila-calendar-tools">';
         echo '<label for="dendrila-search">' . esc_html__( 'Find events', 'dendrila-calendar' ) . '</label> ';
         echo '<input id="dendrila-search" type="search" placeholder="' . esc_attr__( 'Search title or status', 'dendrila-calendar' ) . '">';
@@ -360,6 +413,12 @@ final class Dendrila_Calendar {
         echo '<a class="button" href="' . esc_url( admin_url( 'post-new.php?post_type=' . self::POST_TYPE ) ) . '">' . esc_html__( 'Add an event', 'dendrila-calendar' ) . '</a> ';
         echo '<a class="button" href="' . esc_url( admin_url( 'edit.php?post_type=' . self::POST_TYPE ) ) . '">' . esc_html__( 'Manage local events', 'dendrila-calendar' ) . '</a> ';
         echo '<a class="button" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-setup' ) ) . '">' . esc_html__( 'Configure sources and destination', 'dendrila-calendar' ) . '</a>';
+        if ( class_exists( 'Dendrila_Calendar_Native' ) ) {
+            echo ' <a class="button" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-profiles' ) ) . '">' .
+                esc_html__( 'Booking profiles', 'dendrila-calendar' ) . '</a>';
+            echo ' <a class="button" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-services' ) ) . '">' .
+                esc_html__( 'Services', 'dendrila-calendar' ) . '</a>';
+        }
         echo '</nav>';
         self::render_upcoming();
         echo '</div>';
@@ -374,9 +433,9 @@ final class Dendrila_Calendar {
         $start = $now->modify( '-1 day' )->format( 'Y-m-d H:i:s' );
         $end = $now->modify( '+60 days' )->format( 'Y-m-d H:i:s' );
         $available = Dendrila_Calendar_Sources::available();
-        $events = Dendrila_Calendar_Sources::events( $start, $end, array_keys( $available ) );
+        $events = Dendrila_Calendar_Sources::events( $start, $end, array_keys( $available ), true );
         echo '<details class="dendrila-upcoming" aria-labelledby="dendrila-upcoming-heading"><summary id="dendrila-upcoming-heading">' . esc_html__( 'Upcoming appointments (server view)', 'dendrila-calendar' ) . '</summary>';
-        echo '<p class="description">' . esc_html__( 'Actual appointments read from detected booking plugins. Select an appointment in the calendar to open its original booking tool; imported bookings are not editable here.', 'dendrila-calendar' ) . '</p>';
+        echo '<p class="description">' . esc_html__( 'Dendrila appointments and personal events are shown here. Events from other booking plugins can be displayed on request; their records remain managed by their original extension.', 'dendrila-calendar' ) . '</p>';
         if ( ! $events ) {
             echo '<p class="notice notice-warning inline">' . esc_html__( 'No events returned by the active source connectors for the next 60 days. Check the source diagnostics below.', 'dendrila-calendar' ) . '</p>';
         } else {
@@ -426,7 +485,7 @@ final class Dendrila_Calendar {
         $requested = array_values( array_intersect( $allowed, $requested ) );
         $start_utc = $start_date->setTimezone( new DateTimeZone( 'UTC' ) )->format( 'Y-m-d H:i:s' );
         $end_utc = $end_date->setTimezone( new DateTimeZone( 'UTC' ) )->format( 'Y-m-d H:i:s' );
-        $events = Dendrila_Calendar_Sources::events( $start_utc, $end_utc, $requested );
+        $events = Dendrila_Calendar_Sources::events( $start_utc, $end_utc, $requested, true );
         // Aggregated source counts help diagnose missing bookings without exposing personal data.
         $source_counts = array_fill_keys( $requested, 0 );
         foreach ( $events as $event ) {

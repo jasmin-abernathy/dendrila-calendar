@@ -4,5 +4,6 @@
 node_modules/
 vendor/
 *.zip
+!/downloads/dendrila-calendar-0.0.4-installable.zip
 *.log
 coverage/

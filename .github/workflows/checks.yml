@@ -7,15 +7,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: PHP 8.4 with DOM for rendered-form tests
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: dom
+          coverage: none
       - name: PHP syntax
         run: find . -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: JavaScript syntax
         run: |
           node --check assets/calendar.js
+          node --check assets/calendar-product-admin.js
+          node --check assets/calendar-appearance-admin.js
           node --check assets/calendar-subscriptions.js
           node --check assets/calendar-connect.js
+          node --check assets/calendar-booking.js
+          node --check assets/calendar-schedule-admin.js
       - name: Calendar browser initialization
         run: node tests/test-calendar-init.js
+      - name: OAuth calendar direction selection
+        run: node tests/test-oauth-modes.js
+      - name: Public booking form behavior
+        run: node tests/test-booking-form.js
+      - name: Schedule editor form round trips
+        run: node tests/test-schedule-admin.cjs
       - name: Adapter smoke tests
         run: |
           php tests/test-sources.php
@@ -28,7 +44,14 @@ jobs:
           php tests/test-direct-sync.php
           php tests/test-oauth.php
           php tests/test-oauth-flow.php
+          php tests/test-two-way.php
+          php tests/test-two-way-query-encoding.php
+          php tests/test-admin-services-ux.php
+          php tests/test-product-editor-placement.php
           php tests/test-availability.php
+          php tests/test-native-bookings.php
+          php tests/test-native-schedule.php
+          php tests/test-schedule-admin.php
           php tests/test-discovery.php
           php tests/test-setup-detection.php
           php tests/test-setup-wizard.php
@@ -43,6 +66,9 @@ jobs:
           test -s languages/dendrila-calendar-fr_FR.l10n.php
           test -s docs/INTEGRATIONS.md
           test -s assets/calendar.js
+          test -s assets/calendar-product-admin.js
+          test -s assets/calendar-appearance-admin.css
+          test -s includes/class-dendrila-calendar-appearance.php
           test -s assets/calendar-subscriptions.js
           test -f includes/class-dendrila-calendar-subscriptions.php
           test -s includes/class-dendrila-calendar-bridge.php
@@ -51,7 +77,20 @@ jobs:
           test -s includes/class-dendrila-calendar-detector.php
           test -s includes/class-dendrila-calendar-setup.php
           test -s includes/class-dendrila-calendar-oauth.php
+          test -s includes/class-dendrila-calendar-two-way.php
           test -s includes/class-dendrila-calendar-availability.php
+          test -s includes/class-dendrila-calendar-native.php
+          test -s includes/class-dendrila-calendar-woo.php
+          test -s includes/class-dendrila-calendar-schedule.php
+          test -s includes/class-dendrila-calendar-schedule-admin.php
+          test -s includes/class-dendrila-calendar-booking.php
+          test -s includes/class-dendrila-calendar-booking-form.php
+          test -s includes/class-dendrila-calendar-woo-service.php
+          test -s assets/calendar-booking.js
+          test -s assets/calendar-booking.css
+          test -s assets/calendar-schedule-admin.js
+          test -s assets/calendar-schedule-admin.css
+          test -s docs/TESTING-NATIVE-BOOKINGS.md
           test -s assets/calendar.css
           test -s languages/dendrila-calendar.pot
           ! grep -R -E 'https?://(unpkg|cdnjs|cdn\.jsdelivr)' assets includes dendrila-calendar.php
@@ -62,12 +101,12 @@ jobs:
           cp dendrila-calendar.php readme.txt build/dendrila-calendar/
           cp -R assets includes languages build/dendrila-calendar/
           cd build
-          zip -q -r dendrila-calendar-0.0.3-installable.zip dendrila-calendar
-          unzip -t dendrila-calendar-0.0.3-installable.zip
+          zip -q -r dendrila-calendar-0.0.6-installable.zip dendrila-calendar
+          unzip -t dendrila-calendar-0.0.6-installable.zip
       - name: Upload installable plugin ZIP
         uses: actions/upload-artifact@v4
         with:
-          name: dendrila-calendar-0.0.3-installable
-          path: build/dendrila-calendar-0.0.3-installable.zip
+          name: dendrila-calendar-0.0.6-installable
+          path: build/dendrila-calendar-0.0.6-installable.zip
           if-no-files-found: error
-          retention-days: 14
+          retention-days: 7

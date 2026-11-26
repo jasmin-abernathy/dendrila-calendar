@@ -2,6 +2,7 @@
 /** Simulated Google/Microsoft OAuth consent, token handling and calendar selection. */
 define( 'ABSPATH', '/' );
 define( 'MINUTE_IN_SECONDS', 60 );
+define( 'HOUR_IN_SECONDS', 3600 );
 define( 'DAY_IN_SECONDS', 86400 );
 define( 'DENDRILA_CALENDAR_GOOGLE_CLIENT_ID', 'test-google-id' );
 define( 'DENDRILA_CALENDAR_GOOGLE_CLIENT_SECRET', 'test-google-secret' );
@@ -14,6 +15,7 @@ $GLOBALS['calls'] = array();
 $GLOBALS['token_requests'] = array();
 function __( $s, $domain = '' ) { return $s; }
 function esc_html__( $s, $domain = '' ) { return $s; }
+function esc_attr__( $s, $domain = '' ) { return $s; }
 function esc_html( $s ) { return htmlspecialchars( (string) $s, ENT_QUOTES, 'UTF-8' ); }
 function esc_attr( $s ) { return htmlspecialchars( (string) $s, ENT_QUOTES, 'UTF-8' ); }
 function esc_url( $s ) { return $s; }
@@ -23,7 +25,8 @@ function wp_unslash( $s ) { return $s; }
 function wp_die( $s ) { throw new RuntimeException( $s ); }
 function current_user_can( $cap ) { return $cap === 'manage_options'; }
 function get_current_user_id() { return 7; }
-function check_admin_referer( $nonce ) { if ( ! in_array( $nonce, array( 'dendrila_calendar_oauth_start', 'dendrila_calendar_oauth_confirm', 'dendrila_calendar_oauth_dedupe' ), true ) ) { throw new RuntimeException( 'Unexpected nonce action' ); } }
+function check_admin_referer( $nonce ) { if ( ! in_array( $nonce, array( 'dendrila_calendar_oauth_start', 'dendrila_calendar_oauth_confirm', 'dendrila_calendar_oauth_dedupe', 'dendrila_calendar_oauth_disconnect', 'dendrila_calendar_oauth_mode' ), true ) ) { throw new RuntimeException( 'Unexpected nonce action' ); } }
+function wp_nonce_field( $nonce ) { echo '<input type="hidden" name="_wpnonce" value="test">'; }
 function add_query_arg( $arguments, $url ) {
     return $url . ( strpos( $url, '?' ) === false ? '?' : '&' ) . http_build_query( $arguments );
 }
@@ -35,14 +38,22 @@ function get_transient( $key ) { return $GLOBALS['transients'][ $key ] ?? false;
 function delete_transient( $key ) { unset( $GLOBALS['transients'][ $key ] ); }
 function get_option( $key, $default = array() ) { return $GLOBALS['options'][ $key ] ?? $default; }
 function update_option( $key, $value, $autoload = false ) { $GLOBALS['options'][ $key ] = $value; return true; }
+function get_post_meta( $id, $key, $single = true ) { return $GLOBALS['post_meta'][ $id ][ $key ] ?? ''; }
+function update_post_meta( $id, $key, $value ) { $GLOBALS['post_meta'][ $id ][ $key ] = $value; return true; }
 function wp_generate_uuid4() { return '00000000-1111-4000-8000-123456789012'; }
 function wp_json_encode( $value ) { return json_encode( $value ); }
 function wp_timezone() { return new DateTimeZone( 'Europe/Paris' ); }
+function wp_timezone_string() { return 'Europe/Paris'; }
+function checked( $value, $expected = true, $echo = true ) { $html = $value === $expected ? ' checked="checked"' : ''; if ( $echo ) { echo $html; } return $html; }
 function is_wp_error( $response ) { return false; }
 function wp_remote_retrieve_body( $response ) { return $response['body']; }
 function wp_remote_retrieve_response_code( $response ) { return $response['status']; }
 function response( $status, $data ) { return array( 'status' => $status, 'body' => json_encode( $data ) ); }
 class RedirectSignal extends RuntimeException {}
+class WP_Upgrader {
+    public static function create_lock( $name, $ttl ) { return true; }
+    public static function release_lock( $name ) {}
+}
 function add_filter( $tag, $callback ) { $GLOBALS['redirect_host_filter'] = $callback; }
 function remove_filter( $tag, $callback ) { unset( $GLOBALS['redirect_host_filter'] ); }
 function wp_redirect( $url, $code = 302, $origin = '' ) { throw new RedirectSignal( $url ); }
@@ -111,8 +122,14 @@ class Dendrila_Calendar_Subscriptions {
     }
 }
 class Dendrila_Calendar_Sources {
-    public static function available() { return array( 'easy_appointments' => 'Easy Appointments' ); }
+    public static function available() { return array( 'easy_appointments' => 'Easy Appointments', 'native' => 'Local events' ); }
     public static function events( $start, $end, $sources ) { return array(); }
+}
+class Dendrila_Calendar_Two_Way {
+    public static function sync( $id, $item, $access, $events, $from, $to ) {
+        $GLOBALS['two_way_calls'][] = $id;
+        return array( 'errors' => 0, 'conflicts' => array() );
+    }
 }
 class Dendrila_Calendar_Setup { public static function destination_connected() {} }
 require dirname( __DIR__ ) . '/includes/class-dendrila-calendar-oauth.php';
@@ -231,3 +248,152 @@ if ( count( $GLOBALS['calls'] ) !== $before_cleanup_calls ) {
     throw new RuntimeException( 'Consolidating connections must not delete or modify remote events.' );
 }
 echo "OAuth same-calendar reauthorization and safe duplicate consolidation passed\n";
+
+// Disconnect forgets credentials while retaining the destination's identities for later reconnection.
+$saved_links = array( 88 => array( 'remote' => 'remote-import', 'baseline' => 'baseline', 'generation' => 0 ) );
+update_option( 'dc_two_way_links_' . $google_id, $saved_links );
+$_POST = array( 'connection_id' => $google_id );
+$disconnected = redirected( array( 'Dendrila_Calendar_OAuth', 'disconnect' ) );
+$archive = get_option( Dendrila_Calendar_OAuth::ARCHIVES_OPTION );
+if ( isset( Dendrila_Calendar_OAuth::connections()[ $google_id ] ) ||
+     false !== strpos( json_encode( $archive ), 'encrypted:' ) ||
+     false !== strpos( json_encode( $archive ), 'fake-access' ) ) {
+    throw new RuntimeException( 'Disconnected destination retained credentials' );
+}
+$_POST = array( 'provider' => 'google' );
+$reconnect_url = redirected( array( 'Dendrila_Calendar_OAuth', 'start' ) );
+parse_str( parse_url( $reconnect_url, PHP_URL_QUERY ), $reconnect_args );
+$_GET = array( 'state' => $reconnect_args['state'], 'code' => 'reconnect-consent' );
+redirected( $GLOBALS['hooks']['admin_post'] );
+$_POST = array( 'calendar' => 'primary@example.test', 'sources' => array( 'easy_appointments' ) );
+redirected( array( 'Dendrila_Calendar_OAuth', 'confirm' ) );
+$reconnected = Dendrila_Calendar_OAuth::connections();
+if ( ! isset( $reconnected[ $google_id ]['map']['existing-source-key'] ) ||
+     $saved_links !== get_option( 'dc_two_way_links_' . $google_id ) ) {
+    throw new RuntimeException( 'Disconnect/reconnect lost destination identity or two-way links' );
+}
+
+// Compatible links and import markers migrate with an explicitly consolidated duplicate.
+$reconnected['duplicate-with-links'] = $reconnected[ $google_id ];
+update_option( Dendrila_Calendar_OAuth::OPTION, $reconnected );
+update_option( 'dc_two_way_links_duplicate-with-links', array( 99 => array( 'remote' => 'second-import', 'baseline' => 'other', 'generation' => 0 ) ) );
+update_post_meta( 99, '_dendrila_calendar_import_connection', 'duplicate-with-links' );
+$_POST = array( 'connection_id' => 'duplicate-with-links' );
+redirected( array( 'Dendrila_Calendar_OAuth', 'consolidate_duplicate' ) );
+if ( ! isset( get_option( 'dc_two_way_links_' . $google_id )[99] ) ||
+     $google_id !== get_post_meta( 99, '_dendrila_calendar_import_connection' ) ||
+     hash( 'sha256', $google_id . '|second-import' ) !== get_post_meta( 99, '_dendrila_calendar_import_identity' ) ) {
+    throw new RuntimeException( 'Consolidation lost two-way links or orphaned imported events' );
+}
+echo "OAuth disconnect/reconnect identity retention and two-way link consolidation passed\n";
+
+// Direction defaults belong to the selected destination, including saved history.
+$availability_fixture_options = $GLOBALS['options'];
+foreach ( array( 'google', 'microsoft' ) as $provider ) {
+    $base = array(
+        'provider' => $provider, 'access' => Dendrila_Calendar_Bridge::protect( 'fake-access' ),
+        'refresh' => Dendrila_Calendar_Bridge::protect( 'fake-refresh' ), 'expires' => time() + 3600,
+        'sources' => array( 'easy_appointments' ), 'map' => array(), 'last_run' => '', 'last_error' => '',
+    );
+    $known = array();
+    foreach ( array( 'known-export' => false, 'known-two-way' => true ) as $calendar => $mode ) {
+        $known[ $calendar ] = $base + array( 'calendar' => $calendar, 'label' => $calendar, 'two_way' => $mode );
+    }
+    $history = array();
+    foreach ( array( 'archived-export' => false, 'archived-two-way' => true, 'archived-legacy' => null, 'known-export' => true ) as $calendar => $mode ) {
+        $history[ hash( 'sha256', $provider . '|' . $calendar ) ] = array( 'id' => $calendar, 'map' => array() );
+        if ( null !== $mode ) { $history[ hash( 'sha256', $provider . '|' . $calendar ) ]['two_way'] = $mode; }
+    }
+    // The same calendar ID at another provider is not this destination's history.
+    $history[ hash( 'sha256', ( 'google' === $provider ? 'microsoft' : 'google' ) . '|new-calendar' ) ] = array( 'id' => 'other-provider', 'two_way' => false );
+    $expected_modes = array( 'new-calendar' => true, 'known-export' => false, 'known-two-way' => true,
+        'archived-export' => false, 'archived-two-way' => true, 'archived-legacy' => false );
+    $pending = $base + array( 'calendars' => array_combine( array_keys( $expected_modes ), array_keys( $expected_modes ) ) );
+    $fixture_options = array( Dendrila_Calendar_OAuth::OPTION => $known, Dendrila_Calendar_OAuth::ARCHIVES_OPTION => $history );
+    $GLOBALS['options'] = $fixture_options;
+    $_GET = array();
+    foreach ( $expected_modes as $first_calendar => $expected_mode ) {
+        $view = $pending;
+        $view['calendars'] = array( $first_calendar => $first_calendar ) + $pending['calendars'];
+        set_transient( 'dc_oauth_pending_7', $view );
+        ob_start();
+        Dendrila_Calendar_OAuth::render_settings();
+        $html = ob_get_clean();
+        if ( ! preg_match( '/<input[^>]+id="dendrila-oauth-two-way"[^>]*>/', $html, $checkbox ) ||
+             ( false !== strpos( $checkbox[0], ' checked' ) ) !== $expected_mode ||
+             false === strpos( $html, 'id="dendrila-oauth-mode-calendar" value="' . $first_calendar . '"' ) ) {
+            throw new RuntimeException( 'Wrong initial direction for ' . $provider . '/' . $first_calendar );
+        }
+        foreach ( $expected_modes as $calendar => $mode ) {
+            if ( false === strpos( $html, '<option value="' . $calendar . '" data-two-way="' . ( $mode ? '1' : '0' ) . '">' ) ) {
+                throw new RuntimeException( 'Missing destination-specific mode for ' . $calendar );
+            }
+        }
+        if ( false === strpos( $html, 'Connect and synchronize this calendar' ) ||
+             false === strpos( $html, 'Deletions propagate.' ) || false === strpos( $html, '<noscript>' ) ||
+             $GLOBALS['options'] !== $fixture_options ) {
+            throw new RuntimeException( 'Rendering changed saved options or lost connection guidance' );
+        }
+    }
+
+    $cases = array(
+        array( 'new-calendar', 'new-calendar', true, true ),
+        array( 'new-calendar', 'new-calendar', false, false ),
+        array( 'known-export', 'known-export', false, false ),
+        array( 'known-two-way', 'known-two-way', true, true ),
+        array( 'known-export', 'known-export', true, true ),
+        array( 'known-two-way', 'known-two-way', false, false ),
+        array( 'known-export', 'new-calendar', true, false ),
+        array( 'known-two-way', 'known-export', false, true ),
+        array( 'known-export', null, true, false ),
+        array( 'archived-export', 'new-calendar', true, false ),
+        array( 'archived-two-way', 'known-export', false, true ),
+        array( 'archived-legacy', 'new-calendar', true, false ),
+        array( 'archived-export', 'archived-export', true, true ),
+    );
+    foreach ( $cases as $case ) {
+        list( $calendar, $displayed_calendar, $checked, $expected_mode ) = $case;
+        $GLOBALS['options'] = $fixture_options;
+        $GLOBALS['two_way_calls'] = array();
+        set_transient( 'dc_oauth_pending_7', $pending );
+        // No selected sources when two-way is expected: native must be added
+        // after the effective direction is resolved, including without JS.
+        $_POST = array( 'calendar' => $calendar, 'sources' => $expected_mode ? array() : array( 'easy_appointments' ) );
+        if ( null !== $displayed_calendar ) { $_POST['two_way_calendar'] = $displayed_calendar; }
+        if ( $checked ) { $_POST['two_way'] = '1'; }
+        $result = redirected( array( 'Dendrila_Calendar_OAuth', 'confirm' ) );
+        if ( ! preg_match( '/oauth_status=(connected|updated)/', $result ) ) {
+            throw new RuntimeException( 'Direction confirmation failed: ' . $result );
+        }
+        $matched = null;
+        foreach ( Dendrila_Calendar_OAuth::connections() as $item ) {
+            if ( $item['provider'] === $provider && $item['calendar'] === $calendar ) { $matched = $item; }
+        }
+        if ( ! $matched || $matched['two_way'] !== $expected_mode ||
+             ( $expected_mode && ! in_array( 'native', $matched['sources'], true ) ) ||
+             count( $GLOBALS['two_way_calls'] ) !== ( $expected_mode ? 1 : 0 ) ) {
+            throw new RuntimeException( 'Direction was changed unexpectedly or not applied: ' . json_encode( $case ) );
+        }
+    }
+
+    // Disconnect archives both explicit modes without retaining any credentials.
+    foreach ( array( false, true ) as $mode ) {
+        $GLOBALS['options'] = $fixture_options;
+        $GLOBALS['options'][ Dendrila_Calendar_OAuth::OPTION ]['known-export']['two_way'] = $mode;
+        $_POST = array( 'connection_id' => 'known-export' );
+        redirected( array( 'Dendrila_Calendar_OAuth', 'disconnect' ) );
+        $saved = get_option( Dendrila_Calendar_OAuth::ARCHIVES_OPTION )[ hash( 'sha256', $provider . '|known-export' ) ];
+        if ( $saved['two_way'] !== $mode || array_diff( array_keys( $saved ), array( 'id', 'map', 'two_way' ) ) ) {
+            throw new RuntimeException( 'Disconnect lost direction or archived credentials' );
+        }
+        set_transient( 'dc_oauth_pending_7', $pending );
+        $_POST = array( 'calendar' => 'known-export', 'two_way_calendar' => 'new-calendar', 'sources' => array( 'easy_appointments' ) );
+        if ( ! $mode ) { $_POST['two_way'] = '1'; }
+        redirected( array( 'Dendrila_Calendar_OAuth', 'confirm' ) );
+        if ( Dendrila_Calendar_OAuth::connections()['known-export']['two_way'] !== $mode ) {
+            throw new RuntimeException( 'Reconnection did not restore archived direction' );
+        }
+    }
+}
+$GLOBALS['options'] = $availability_fixture_options;
+echo "OAuth direction defaults: new, active, archived, legacy, explicit choices and no-JS destination changes passed for both providers\n";
