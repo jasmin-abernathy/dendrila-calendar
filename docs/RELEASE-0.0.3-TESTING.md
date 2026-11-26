@@ -17,3 +17,14 @@
 - Verify Google/Outlook busy-time protection and Easy Appointments unchanged when toggled off.
 - Check WordPress menus at desktop and mobile sizes: the Dashicon must be standard-sized (20 × 20 px), no special icon enlarge rule.
 - Do not merge PR #2 before manual browser verification. No hosted OAuth broker is included in this ZIP.
+
+
+## Public Easy Appointments availability interception (follow-up)
+
+- When the site administrator has explicitly enabled **Protect Easy Appointments reservations**, the public `ea_date_selected` AJAX response is intercepted by an early output buffer after its normal nonce check. The original Easy Appointments JSON structure is retained; overlapping slots get `count: 0` and are therefore non-selectable in its own UI.
+- Dendrila makes one read-only provider availability request per day (cached for 20 seconds for the public display). It does not expose event titles. The final booking guard calls providers again without display-cache reuse.
+- Remote time-window lookups use WordPress timezone including DST. Service duration and before/after buffers are read from the selected Easy Appointments service. Unsupported multi-service selections retain the provider's original UI but final server-side protection remains.
+- If a provider cannot be reached and protection is enabled, slots are disabled rather than advertised as free.
+- Final reservation confirmation (`easy_ea_can_update_reservation`) also checks the calendar. Do not remove the earlier reservation-creation guard.
+- Test real Easy Appointments plugin version on the WordPress staging site. Output buffering is a compatibility adapter required because current EA does not expose a server-side filter for public available slots; retest after EA upgrades.
+- Do not use the code on a production booking site before validating response shape and performance with a live Google busy event, a free event, an Outlook event and provider failure.

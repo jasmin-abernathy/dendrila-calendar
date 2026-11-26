@@ -98,8 +98,8 @@ msgstr "Retour au calendrier"
 msgid "Booking"
 msgstr "Réservation"
 
-msgid "Busy times are checked at booking submission. The Easy Appointments slot picker might still display those times."
-msgstr "Les plages occupées sont vérifiées au moment d’envoyer la réservation. Le sélecteur Easy Appointments peut encore afficher ces horaires."
+msgid "Busy times also disable public Easy Appointments slots. Final booking submission is rechecked directly with connected calendars."
+msgstr "Les créneaux occupés sont aussi désactivés dans le formulaire public Easy Appointments. La disponibilité est de nouveau vérifiée à la validation de la réservation."
 
 msgid "Calendar"
 msgstr "Agenda"
@@ -353,6 +353,9 @@ msgstr "Période invalide"
 msgid "Keep my appointments inside WordPress only"
 msgstr "Garder mes rendez-vous uniquement dans WordPress"
 
+msgid "language"
+msgstr "fr_FR"
+
 msgid "Last synchronization:"
 msgstr "Dernière synchronisation :"
 
@@ -464,11 +467,17 @@ msgstr "En attente"
 msgid "Pick your everyday calendar. We will guide you without technical setup."
 msgstr "Choisissez votre agenda habituel. Nous vous guiderons sans réglages techniques."
 
+msgid "plural-forms"
+msgstr "nplurals=2; plural=n>1;"
+
 msgid "Prevent double bookings"
 msgstr "Empêcher les doubles réservations"
 
 msgid "Previous"
 msgstr "Précédent"
+
+msgid "project-id-version"
+msgstr "Dendrila Calendar 0.0.3"
 
 msgid "Protect Easy Appointments reservations"
 msgstr "Protéger les réservations Easy Appointments"

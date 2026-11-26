@@ -96,7 +96,7 @@ msgstr ""
 msgid "Booking"
 msgstr ""
 
-msgid "Busy times are checked at booking submission. The Easy Appointments slot picker might still display those times."
+msgid "Busy times also disable public Easy Appointments slots. Final booking submission is rechecked directly with connected calendars."
 msgstr ""
 
 msgid "Calendar"
@@ -351,6 +351,9 @@ msgstr ""
 msgid "Keep my appointments inside WordPress only"
 msgstr ""
 
+msgid "language"
+msgstr ""
+
 msgid "Last synchronization:"
 msgstr ""
 
@@ -462,10 +465,16 @@ msgstr ""
 msgid "Pick your everyday calendar. We will guide you without technical setup."
 msgstr ""
 
+msgid "plural-forms"
+msgstr ""
+
 msgid "Prevent double bookings"
 msgstr ""
 
 msgid "Previous"
+msgstr ""
+
+msgid "project-id-version"
 msgstr ""
 
 msgid "Protect Easy Appointments reservations"

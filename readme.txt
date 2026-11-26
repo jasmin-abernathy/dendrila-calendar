@@ -56,6 +56,15 @@ The WordPress administration calendar is restricted to administrators. Private s
 
 == Changelog ==
 
+= 0.0.3 (development build: external busy slots displayed correctly) =
+* With administrator-opted-in availability protection, public Easy Appointments slots overlapping events in connected Google/Outlook calendars are marked unavailable before selection.
+* Revalidate live availability on reservation creation AND on final confirmation of a temporary reservation.
+* Preserve provider/event privacy; only send slot counts to the public form. A provider outage disables offered slots while protection is enabled.
+* This adapter is specifically for the Easy Appointments 4.x `ea_date_selected` frontend AJAX JSON contract; other booking plugins still require their own availability adapters.
+* Version remains 0.0.3 during internal testing; this build is not ready for WordPress.org.
+
+
+
 = 0.0.3 (development; private testing) =
 * Fixed the return-to-calendar link to use the registered WordPress administration page.
 * WordPress-standard, 20-pixel synchronization icon replaces the previous oversized/reused calendar graphic.
