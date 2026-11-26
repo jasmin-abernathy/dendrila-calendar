@@ -34,3 +34,21 @@ Utiliser un agenda dédié et un événement fictif sans participants ni rappel,
 4. Supprimer l’événement fictif chez le fournisseur, synchroniser et vérifier qu’il est placé dans la Corbeille WordPress.
 
 Effectuer chaque vérification avant la modification suivante. Un seul événement importé suffit pour ce contrôle ; il n’est pas nécessaire de créer un nouvel événement WordPress susceptible d’être exporté vers d’autres connexions.
+
+
+## Comprendre un échec du double sens
+
+La carte de synchronisation affiche un code de diagnostic après une interruption :
+- `HTTP_401` : le fournisseur refuse le jeton d'accès ; renouveler l'autorisation.
+- `HTTP_403` : accès à cet agenda interdit ou autorisations insuffisantes.
+- `HTTP_429` : limite de requêtes atteinte ; relancer plus tard.
+- `HTTP_400` : la requête de lecture a été refusée.
+- `HTTP_500`, `HTTP_502`, `HTTP_503`, `HTTP_504` : erreur temporaire du fournisseur.
+- `PAGINATION_LIMIT` ou `PAGINATION_FORMAT` : lecture des pages incomplète ; aucune suppression n'est déduite d'un inventaire partiel.
+- `RESPONSE_FORMAT` : la réponse du fournisseur ne contient pas la liste d'événements attendue.
+- `CONNECTION_CHANGED` : la connexion a été modifiée pendant la synchronisation.
+- `NETWORK`, `HTTP_OTHER` ou `INTERNAL` : erreur nécessitant une inspection technique plus approfondie.
+
+Le code est stocké sans URL d'API, titre d'événement, identifiant d'agenda ni jeton OAuth. Un export qui fonctionne alors que le double sens échoue oriente le diagnostic vers la lecture distante ou l'importation ; cela n'implique pas nécessairement une erreur d'authentification.
+
+Pour les événements horaires Google, Dendrila transmet l'horodatage avec son décalage local et le fuseau du site WordPress (`Europe/Paris` si configuré). Les heures sont toujours enregistrées en UTC en interne. L'affichage dans Google Calendar dépend aussi du fuseau choisi dans l'interface Google ; le modifier n'altère pas l'heure réelle de l'événement.
