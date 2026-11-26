@@ -16,6 +16,7 @@ function wp_json_encode( $v ) { return json_encode( $v ); }
 function wp_slash( $v ) { return $v; }
 function wp_salt( $v ) { return 'calendar-test-salt'; }
 function wp_timezone() { return new DateTimeZone( 'Europe/Paris' ); }
+function wp_timezone_string() { return 'Europe/Paris'; }
 function wp_parse_url( $v ) { return parse_url( $v ); }
 function home_url( $v = '' ) { return 'https://example.test/' . ltrim( $v, '/' ); }
 function add_query_arg( $args, $url ) { return $url . ( false === strpos( $url, '?' ) ? '?' : '&' ) . http_build_query( $args ); }
