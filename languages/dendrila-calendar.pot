@@ -69,6 +69,15 @@ msgstr ""
 msgid "Add a service"
 msgstr ""
 
+msgid "Add an appointment service"
+msgstr ""
+
+msgid "Diagnostic:"
+msgstr ""
+
+msgid "You cannot create appointment services."
+msgstr ""
+
 msgid "Add a time range"
 msgstr ""
 

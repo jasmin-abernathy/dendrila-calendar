@@ -71,6 +71,15 @@ msgstr "Ajouter un profil"
 msgid "Add a service"
 msgstr "Ajouter une prestation"
 
+msgid "Add an appointment service"
+msgstr "Ajouter une prestation de rendez-vous"
+
+msgid "Diagnostic:"
+msgstr "Diagnostic :"
+
+msgid "You cannot create appointment services."
+msgstr "Vous ne pouvez pas créer de prestations de rendez-vous."
+
 msgid "Add a time range"
 msgstr "Ajouter une plage horaire"
 
