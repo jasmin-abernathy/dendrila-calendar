@@ -29,19 +29,21 @@ final class Dendrila_Calendar_Two_Way {
         $seen = array();
         while ( $url ) {
             if ( ! is_string( $url ) || isset( $seen[ $url ] ) || count( $seen ) >= 100 ) {
-                throw new RuntimeException( 'Incomplete calendar inventory' );
+                throw new RuntimeException( 'inventory_incomplete' );
             }
             $seen[ $url ] = true;
             $response = Dendrila_Calendar_OAuth::api( $item['provider'], $access, 'GET', $url );
             $rows = $response['data'][ $google ? 'items' : 'value' ] ?? null;
-            if ( 200 !== ( $response['status'] ?? 0 ) || ! is_array( $rows ) ) { throw new RuntimeException( 'Calendar read failed' ); }
+            $status = (int) ( $response['status'] ?? 0 );
+            if ( 200 !== $status ) { throw new RuntimeException( 'calendar_http', $status ); }
+            if ( ! is_array( $rows ) ) { throw new RuntimeException( 'calendar_bad_response' ); }
             foreach ( $rows as $row ) {
                 if ( is_array( $row ) && isset( $row['id'] ) && is_string( $row['id'] ) && '' !== $row['id'] ) {
                     $list[ $row['id'] ] = $row;
                 }
             }
             $next = $response['data'][ $google ? 'nextPageToken' : '@odata.nextLink' ] ?? '';
-            if ( ! is_string( $next ) ) { throw new RuntimeException( 'Invalid calendar pagination' ); }
+            if ( ! is_string( $next ) ) { throw new RuntimeException( 'calendar_pagination' ); }
             $url = $google && $next ? add_query_arg( $params + array( 'pageToken' => $next ), $base ) : $next;
         }
         return $list;

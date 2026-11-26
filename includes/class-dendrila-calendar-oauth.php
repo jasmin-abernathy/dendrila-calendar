@@ -382,7 +382,7 @@ final class Dendrila_Calendar_OAuth {
         if ( 'google' === $provider ) {
             $dates = ! empty( $event['all_day'] ) ?
                 array( 'start' => array( 'date' => $start->setTimezone( wp_timezone() )->format( 'Y-m-d' ), 'dateTime' => null, 'timeZone' => null ), 'end' => array( 'date' => $end->setTimezone( wp_timezone() )->format( 'Y-m-d' ), 'dateTime' => null, 'timeZone' => null ) ) :
-                array( 'start' => array( 'dateTime' => $start->format( 'Y-m-d\TH:i:s\Z' ), 'date' => null, 'timeZone' => null ), 'end' => array( 'dateTime' => $end->format( 'Y-m-d\TH:i:s\Z' ), 'date' => null, 'timeZone' => null ) );
+                array( 'start' => array( 'dateTime' => $start->setTimezone( wp_timezone() )->format( 'Y-m-d\TH:i:sP' ), 'timeZone' => wp_timezone_string() ), 'end' => array( 'dateTime' => $end->setTimezone( wp_timezone() )->format( 'Y-m-d\TH:i:sP' ), 'timeZone' => wp_timezone_string() ) );
             return array_merge( array( 'summary' => $event['title'] ), $dates );
         }
         if ( ! empty( $event['all_day'] ) ) {
@@ -745,6 +745,7 @@ final class Dendrila_Calendar_OAuth {
                     ++$failures;
                 }
                 $item['map'] = $map;
+                unset( $item['last_diagnostic'] );
                 $item['last_error'] = $failures ? __( 'Some calendar events could not be updated.', 'dendrila-calendar' ) : '';
                 if ( $two_way ) {
                     try {
@@ -754,7 +755,24 @@ final class Dendrila_Calendar_OAuth {
                             $item['last_error'] = trim( $item['last_error'] . ' ' . __( 'Both copies changed. Match their titles and dates in both calendars, then synchronize again. Local event IDs:', 'dendrila-calendar' ) . ' ' . implode( ', ', array_slice( $report['conflicts'], 0, 20 ) ) );
                         }
                     } catch ( Throwable $error ) {
-                        $item['last_error'] = __( 'Calendar reading was interrupted. Retry synchronization.', 'dendrila-calendar' );
+                        // Persist only fixed diagnostic identifiers. Raw exception messages could
+                        // contain calendar IDs, private event content or other sensitive values.
+                        $reason = $error->getMessage();
+                        $codes = array(
+                            'inventory_incomplete' => 'PAGINATION_LIMIT',
+                            'calendar_bad_response' => 'RESPONSE_FORMAT',
+                            'calendar_pagination' => 'PAGINATION_FORMAT',
+                            'Connection changed; synchronization stopped' => 'CONNECTION_CHANGED',
+                        );
+                        if ( 'calendar_http' === $reason ) {
+                            $status = (int) $error->getCode();
+                            $code = in_array( $status, array( 400, 401, 403, 404, 408, 409, 429, 500, 502, 503, 504 ), true )
+                                ? 'HTTP_' . $status : ( 0 === $status ? 'NETWORK' : 'HTTP_OTHER' );
+                        } else {
+                            $code = $codes[ $reason ] ?? 'INTERNAL';
+                        }
+                        $item['last_diagnostic'] = array( 'stage' => 'two_way', 'code' => $code, 'at' => gmdate( 'Y-m-d H:i:s' ) );
+                        $item['last_error'] = __( 'Calendar synchronization was interrupted. Diagnostic code:', 'dendrila-calendar' ) . ' ' . $code;
                     }
                 }
                 if ( $limited ) {
@@ -987,6 +1005,10 @@ final class Dendrila_Calendar_OAuth {
             echo '<p>' . esc_html__( 'Last synchronization:', 'dendrila-calendar' ) . ' ' . esc_html( $item['last_run'] ?: __( 'Never synchronized', 'dendrila-calendar' ) ) . '</p>';
             if ( ! empty( $item['last_error'] ) ) {
                 echo '<p class="notice notice-warning inline">' . esc_html( $item['last_error'] ) . '</p>';
+                if ( isset( $item['last_diagnostic']['code'] ) ) {
+                    $safe_code = sanitize_key( (string) $item['last_diagnostic']['code'] );
+                    echo '<p class="description">' . esc_html__( 'Diagnostic:', 'dendrila-calendar' ) . ' <code>' . esc_html( strtoupper( $safe_code ) ) . '</code> · ' . esc_html( $item['last_diagnostic']['at'] ?? '' ) . ' UTC</p>';
+                }
             }
             if ( $duplicate ) {
                 echo '<p class="notice notice-warning inline">' .
