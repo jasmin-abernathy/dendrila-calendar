@@ -1,15 +1,16 @@
 # Dendrila Calendar 🌱
 
-**Status: 0.0.4, development build.** This repository contains working Google/Microsoft OAuth connectors and opt-in two-way synchronization for single local events. Real account consent and provider round-trip validation remain required before a public release. No OAuth secret is distributed with the plugin.
+**Status: 0.0.4, development build.** This repository contains Google/Microsoft OAuth connectors and two-way synchronization for single local events. Installation and provider export have been checked on the WordPress laboratory; the final provider round trip remains a manual validation. No OAuth secret is distributed with the plugin.
 
-Dendrila Calendar is a private WordPress administration calendar. It combines local events and appointments from optional booking plugins, with month, week and list views, source filters, search, keyboard controls and a mobile day-details panel. Booking plugins keep ownership of their reservations, validation and payments.
+Dendrila Calendar combines appointment booking, availability management and a private WordPress administration calendar. Native services have a public booking form; paid appointments use WooCommerce products and orders. Optional external booking plugins remain read-only sources and retain ownership of their own reservations and payments.
 
 ## What is implemented
 
 | Source or destination | Behaviour |
 | --- | --- |
+| Native Dendrila bookings | Shared profile availability, public booking, locked acceptance and optional WooCommerce payments |
 | Dendrila local events | Administrator-only creation and editing, timed or all-day events |
-| Google Calendar / Microsoft Outlook | OAuth consent, calendar selection, encrypted tokens, token refresh, outbound events and opt-in two-way local events |
+| Google Calendar / Microsoft Outlook | OAuth consent, calendar selection, encrypted tokens, token refresh, outbound events and two-way local events |
 | Other WordPress event/booking plugins | Read-only source adapters; selected appointments can be exported, but external changes never edit the original booking |
 | Nextcloud / compatible CalDAV | Calendar discovery and one-way export with encrypted application credentials |
 | Private iCalendar subscription | Revocable HTTPS URL; the subscribing application controls refresh timing |
@@ -32,11 +33,13 @@ Unsupported active booking plugins can generate a compatibility report when the 
 
 ## Connecting Google or Microsoft Outlook
 
-Open **Dendrila Calendar → Synchronization**, choose Google or Outlook and use **Connect with…**. When its OAuth app is configured, this button goes directly to the provider's official consent screen. Select a writable calendar, choose the appointment sources and confirm the temporary create/delete test.
+Open **Dendrila Calendar → Synchronization**, choose Google or Outlook and use **Connect with…**. When its OAuth app is configured, this button goes directly to the provider's official consent screen. Select a writable calendar, review the synchronization direction and sources, then use **Connect and synchronize this calendar**. The connection checks its ability to create and remove a temporary event automatically.
 
 The site owner must configure an OAuth application once. The administrator form accepts a client ID and secret and stores the secret encrypted; server-side constants are also supported. Ordinary account authorization then uses the provider's sign-in flow. An unconfigured provider remains visibly unavailable instead of claiming to be connected. See [docs/OAUTH-SETUP.md](docs/OAUTH-SETUP.md) for exact redirect URI and application setup.
 
-Existing connections continue to **export only** after an update. To enable two-way operation, explicitly check **Synchronize local events in both directions** when connecting, or save that setting on the existing connection card. Changing this setting does not require another provider consent flow.
+New destinations propose **Synchronize local events in both directions** by default, with the setting visible and editable before confirmation. Reauthorizing a known destination preserves its previous direction. Updating the plugin does not change the direction of saved connections: existing export-only connections stay export-only until their administrator changes the setting on the connection card. That change does not require another provider consent flow.
+
+The connection flow is for WordPress site administrators (`manage_options`); it does not create personal calendar connections for subscriber accounts. See the French [connection and manual test guide](docs/UTILISATION-GOOGLE-OUTLOOK.md).
 
 ### Two-way scope and conflict handling
 
@@ -70,11 +73,45 @@ Subscription feeds are read only, live when polled, and token-protected. They in
 
 Google's **From URL** subscription setup is available on the web; refresh timing is controlled by Google. Other applications have their own refresh policies. Importing a downloaded file is a one-time operation and does not create a subscription. ICS Calendar can subscribe to a generated URL; ingesting arbitrary feeds already displayed by ICS Calendar remains unsupported.
 
-## Availability and native booking foundation
+## Availability and appointments
 
-Optional Google/Outlook busy-time protection for **Easy Appointments 4.x** checks both the public slot picker and final reservation submission. Provider errors close protected slots rather than confirming an unverified booking. Other booking plugins require their own availability adapters. Local events by themselves do not block bookings in all third-party plugins.
+Create a **profile** for each professional or resource, enable its availability and enter its hours. Services share that profile: a booking for one service blocks overlapping appointments for its other services.
 
-The private native booking foundation includes profiles, services and reservation records. A published profile is required for a service; services have a duration, buffers, an optional price and an optional future WooCommerce product reference. A public native booking form and native WooCommerce checkout are **not enabled** in this build. Entering a product ID does not establish payment compatibility.
+- Multiple weekly time ranges, lunch breaks and closed days.
+- Date exceptions that replace the usual hours, including whole-day closures.
+- A timezone per profile, with real UTC durations and daylight-saving transitions.
+- Per-service minimum notice, rolling booking horizon, optional first/last dates, and start-time intervals independent of appointment duration.
+- Maximum appointments per day, week and calendar month, both across a profile and for one service; zero means no quota. Weeks start on Monday in the profile timezone.
+- Separate preparation/recovery buffers saved on each reservation. The appointment must fit the working hours; buffers can extend beyond them but must remain free. Adjacent reservations' buffers add together.
+- Existing native bookings, active payment holds and local calendar events block overlaps. Checking every connected Google/Outlook calendar is enabled in the profile settings by default. If a configured provider cannot be checked, protected times are not offered.
+
+Public endpoints reveal available slots, never occupied event names, guests or customer records. The form supports `[dendrila_booking]` for a service choice or `[dendrila_booking service="123"]` for one service. Visitors do not need a WordPress account. The browser displays the profile timezone and the visitor's local equivalent.
+
+Final acceptance rechecks the slot under a SQL lock shared by **all services of the profile**, after refreshing WordPress query and metadata caches. A second lock makes repeated request IDs idempotent. Unsupported or lost database locks cause a temporary refusal, never an unprotected confirmation. The native engine requires a MySQL/MariaDB server supporting connection-scoped advisory locks; it does not claim SQLite booking support.
+
+### WooCommerce is the editor for paid services
+
+Create a **simple WooCommerce product**, keep its name, description and price in the normal product fields, then open **Appointment booking**. Select a responsible profile, duration, preparation/recovery times and booking rules. The linked Dendrila service is created automatically; its edit links return to that product. Appointment products become virtual, so there is no shipping step. A disabled/draft product or an unavailable product cannot open paid booking.
+
+The product page displays the booking form in place of ordinary Add to cart. Classic and Store API cart validation refuse an appointment product without its time-selection flow, including a product already present in an older cart. Product blocks and catalogue buttons point to that flow too. A free service can also be created directly in **Dendrila Calendar → Services**, without WooCommerce.
+
+For a product-backed appointment:
+
+1. Dendrila reserves the chosen slot for **20 minutes**, ending sooner if the appointment starts earlier.
+2. It creates one WooCommerce order using the product's actual price, quantity one, and WooCommerce tax calculations. The legacy cents field is not a second price source.
+3. The visitor follows WooCommerce's official **pay for order** URL. Payment gateways remain owned and configured by WooCommerce. This is an order-payment flow, not an injected Cart/Checkout Block payment method.
+4. A successful WooCommerce payment confirms the booking. An `on-hold` order keeps the time reserved pending manual payment confirmation. Failed/cancelled orders and full refunds release the reservation; partial refunds keep it.
+5. An abandoned pending-payment hold expires. Late payment is reconciled under the profile lock: an occupied or cancelled time is never falsely confirmed. The booking is marked for payment review and the order receives a note; refunds remain an explicit WooCommerce action.
+
+Orders and items use WooCommerce CRUD APIs, including HPOS. Product/order snapshots and retries do not duplicate orders or silently reprice an existing one. A zero-total Woo product still creates a real order and follows payment-complete reconciliation. Customer cancellation of a paid appointment requests contact with the organizer; administrator cancellation releases its slot and leaves refund management in WooCommerce.
+
+Confirmed native bookings are shown in the unified calendar and exported to Google/Outlook destinations already selected for Dendrila events; they can also be selected as a source for CalDAV and private subscriptions. Booking exports contain the service title and time, not the customer's name/email. Changing a remote event does **not** override a customer's booking or a WooCommerce payment: bidirectional editing applies to ordinary local events.
+
+See the French [availability, products and booking guide](docs/RESERVATIONS-HORAIRES-WOOCOMMERCE.md).
+
+### Other booking plugins
+
+Optional Google/Outlook busy-time protection for **Easy Appointments 4.x** checks its public slot picker and final submission. Provider errors close protected slots rather than confirming an unverified booking. Other booking plugins require their own availability adapters. Local events by themselves do not block bookings in all third-party plugins.
 
 ## Security and privacy
 
@@ -99,7 +136,7 @@ add_filter( 'dendrila_calendar_source_events_my_source', function ( $events, $st
 }, 10, 3 );
 ```
 
-Source IDs must match `[a-z][a-z0-9_-]{0,31}`. Adapters must filter by the supplied UTC bounds and avoid exposing customer data. Admin AJAX requires a signed-in administrator and nonce; feed URLs use separate tokens. Clickable admin URLs must point to this site's origin.
+Source IDs must match `[a-z][a-z0-9_-]{0,31}`. Adapters must filter by the supplied UTC bounds and avoid exposing customer data. Calendar administration AJAX requires a signed-in administrator and nonce; public booking AJAX has its own nonce, rate limit and server-side validation, and feed URLs use separate tokens. Clickable admin URLs must point to this site's origin.
 
 ## Troubleshooting and validation
 
@@ -107,13 +144,6 @@ Source IDs must match `[a-z][a-z0-9_-]{0,31}`. Adapters must filter by the suppl
 
 Run all PHP test files and JavaScript syntax/browser-initialization checks. [docs/RELEASE-0.0.4-TESTING.md](docs/RELEASE-0.0.4-TESTING.md) records the 0.0.4 validation and remaining real-account checks. Fixtures validate deterministic behaviour; they do not certify live Google, Microsoft, iCloud or every booking-plugin version.
 
-```sh
-find . -name '*.php' -print0 | xargs -0 -n1 php -l
-for test in tests/*.php; do php "$test" || exit 1; done
-node --check assets/calendar.js
-node --check assets/calendar-subscriptions.js
-node --check assets/calendar-connect.js
-node tests/test-calendar-init.js
-```
+Use the unit/DOM commands and the isolated WordPress + WooCommerce + MariaDB integration procedure in [docs/TESTING-NATIVE-BOOKINGS.md](docs/TESTING-NATIVE-BOOKINGS.md). Provider round-trip and live payment-gateway testing are separate manual acceptance checks; local Woo order-transition tests do not claim to have charged a payment card.
 
 License: GPL-2.0-or-later. [Project repository](https://github.com/jasmin-abernathy/dendrila-calendar).

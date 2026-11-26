@@ -1,55 +1,37 @@
-# Dendrila Calendar — first-party booking architecture (0.0.3 development)
+# Dendrila Calendar — native booking architecture (0.0.4 development)
 
-## Product decision
-Dendrila Calendar becomes a native WordPress appointment manager. Existing read-only sources (Easy Appointments, The Events Calendar, Bookly and other supported plugins), ICS subscriptions and Google/Outlook/CalDAV connections remain available, but are **optional integrations**, not dependencies of the new booking engine.
+## Implemented flow
 
-No data migrations, external cancellations or WooCommerce order mutations occur on activation.
+Profiles and services remain private administration content types. Every public booking references a published responsible profile and a published service. Availability and booking are explicitly enabled; activation does not invent a profile or migrate existing reservations.
 
-## Mandatory profiles (implemented in this branch)
-- Every native booking **must** reference a valid, published booking profile AND an owned, published service.
-- A profile may represent a professional, room, association or other reservable resource. It is not necessarily a WordPress user or a WooCommerce customer.
-- A site's first profile must be created by an administrator. The plugin does **not** invent or silently assign one.
-- Post types: \`dendrila_profile\`, \`dendrila_service\`, \`dendrila_booking\` (all nonpublic, admin-only; no REST API exposure).
-- Service metadata: \`_dendrila_booking_profile_id\`, \`_dendrila_duration_minutes\`, \`_dendrila_buffer_before\`, \`_dendrila_buffer_after\`, \`_dendrila_price_cents\`, \`_dendrila_woo_product_id\`.
-- Booking record schema: \`_dendrila_booking_service_id\`, \`_dendrila_booking_profile_id\`, \`_dendrila_booking_start_utc\`, \`_dendrila_booking_end_utc\`, \`_dendrila_booking_status\`.
-- The admin UI and \`validate_booking()\` reject unassigned services, draft/inactive profiles, mismatched identities and mismatched duration.
-- Disabling a profile prevents new bookings from being offered. Historical reservation references must remain intact for audit and cancellation handling.
-- Existing calendar synchronization and setup remain usable on already configured installations even before native profile setup, to avoid breaking active sites.
+`Dendrila_Calendar_Schedule` normalizes weekly hours/date overrides and per-service policies, generates available UTC slots, and revalidates acceptance. It reconciles appointments and their saved buffers across all services of a profile, active payment holds, local events and explicitly enabled connected-calendar checks. Shared and service limits use the profile timezone. Buffers may extend outside working hours, while the appointment itself must fit.
 
-## Native booking flow to implement next (NOT enabled yet)
-1. Per-profile weekly availability, breaks, exceptional leave and timezone policy; services inherit the profile's hours but can narrow them.
-2. Accessible Gutenberg block and shortcode \`[dendrila_booking]\` to choose service, profile and day. AJAX or REST endpoint returns privacy-safe available slots.
-3. Reconcile booked native slots and Google/Outlook busy intervals; provider errors must never advertise false availability when the administrator enables strict protection.
-4. Database-enforced or locked booking hold with expiry, idempotency key and atomic collision check. Do not rely on ordinary WordPress post meta queries for concurrency safety.
-5. Free services can confirm without checkout; paid services use WooCommerce. Never create an unpayable "confirmed" booking or charge a customer before a hold exists.
-6. Booking lifecycle: draft → held → pending_payment → confirmed → cancelled / expired / refunded; define a reconciliation policy for unexpected payment success.
-7. Keep booking identities in Google/Outlook event metadata so edits, cancellations and retries do not duplicate events. Never infer that moving a remote event automatically edits the customer's booking without validation.
-8. Notifications, cancellation policy, rescheduling, privacy retention, consent, calendar visibility and rate limits.
+`Dendrila_Calendar_Booking::create()` is the only public confirmation path: validate input and consent → lock the request ID → lock the profile → refresh WordPress query/meta caches → recheck policy, occupancy and quota → verify lock ownership and unchanged settings → save a private booking → release the profile lock → prepare Woo payment if needed. A lost/unsupported SQL lock fails closed. The draft `booking_record()` helper is not a public confirmation API.
 
-## WooCommerce (optional; preparation implemented)
-- \`Dendrila_Calendar_Woo\` exposes a *read-only* optional product reference and order lookup through Woo CRUD APIs.
-- No checkout hook has been registered. No payment is attempted in this version.
-- Build a product/service association, a server-side hold linked to order item metadata, expiry and cancellation/reconciliation handlers.
-- Support both classic checkout and Cart/Checkout Blocks through WooCommerce Store API extension points.
-- Use \`wc_get_order()\` / \`wc_get_product()\` rather than direct \`wp_posts\` or \`wp_postmeta\` queries for Woo orders (HPOS).
-- Only declare HPOS/Cart Checkout Blocks compatibility after tests, not on the basis of the scaffolding alone.
-- Woo order status and reservation status are separate; an order cancellation/refund must follow explicit booking rules.
+The public shortcode/JavaScript returns only available slots, service names, timezone and the visitor's own confirmation. Customer name/email remain private. Source exports contain the service title and time, not contact details. Native booking exports cannot be modified via the ordinary two-way local-event reconciler.
 
-Official references:
-- https://developer.woocommerce.com/docs/features/orders/high-performance-order-storage/
-- https://developer.woocommerce.com/docs/apis/store-api/extending-store-api/
-- https://developer.woocommerce.com/docs/extensions/best-practices-extensions/compatibility
+## Product ownership
 
-## UI & product rules
-- Calendar remains first on the landing page. Date/view controls and filters remain above the grid; profile/service administration links stay below.
-- New menu items are Profiles, Services, Bookings. Service editor makes profile assignment mandatory, with a creation link when no profile exists.
-- Small, optional "Offrez un café au développeur" footer points to https://app.lepotager.org/soutenir/ (same link as Dendrila Simple Edit).
-- Preserve the original plugin version 0.0.3 throughout testing; identify builds by commit SHA, not fake releases.
+For paid/product-backed appointments, WooCommerce owns product name, description, price, tax calculations and orders. The product Appointment booking tab owns profile assignment, duration, buffers and booking rules. A linked internal service is created or updated on product save. An invalid appointment configuration preserves previous rules; its own nonce is distinct from the standalone service editor. Editing links return to the owning product.
 
-## Validation
-- PHP syntax, existing adapters and translations, test-native-bookings.php.
-- Test opening Dendrila on an existing site with NO profile: existing calendar and Google connections still work; native booking setup clearly requests a profile.
-- Test create, publish, draft/unpublish, rename and delete profile; linked service cannot become bookable if its profile is inactive.
-- Test multiple profiles and different service durations; reject profile mismatch, invalid slot and duration mismatch.
-- Verify WooCommerce absent/present without fatal errors and without any payment side effects.
-- Before a *public booking* release, add concurrency, refund, double-booking and browser responsive tests. The scaffold alone does not meet these acceptance criteria.
+The product page replaces ordinary Add to cart with slot selection. Classic and Store API add-to-cart/checkout guards prevent purchases of linked appointment products without this flow. Normal products are unaffected. Free standalone services remain independent of WooCommerce.
+
+## Payment lifecycle
+
+A product-backed booking starts as `pending_payment`, with a hold up to 20 minutes. The hold precedes order creation. One real WooCommerce order and line item carry private booking/service/profile/UTC identifiers. Only a ready order can be paid through Woo's official pay-for-order page. Retries keep the original order and amount. A zero-total product also completes a real Woo order.
+
+Order payment/status hooks re-read the order under the profile lock. Paid processing/completed orders confirm. `on-hold` keeps the slot reserved for manual payment review. Failed/cancelled orders and full refunds release it; partial refunds retain it. Pending hold expiry is enforced by both availability reads and a scheduled cleanup. The actual Woo pay action rejects expired holds before gateway selection.
+
+Late payment after expiry rechecks availability. Cancellation or collision produces `payment_conflict` and an order note, never a silent confirmation. No automatic refund is performed. Paid customer cancellation asks for organizer contact; administrators can release the booking and manage refunds in WooCommerce.
+
+All order access uses Woo CRUD APIs; no SQL assumes orders are posts. Real integration tests cover HPOS. This order-payment flow does not claim to inject a new payment method into Cart/Checkout Blocks. Payment gateway configuration and a real/test-gateway transaction remain storefront acceptance work.
+
+## Administration and security
+
+Administration, schedules and account connections require `manage_options`. Public booking uses a separate nonce, bounded requests, consent, a honeypot and hashed short-lived request throttles. Idempotency and profile locks are database locks, not transient-cache assumptions. Lock identity is checked after provider work to detect database reconnection. No third-party booking record or Woo refund is silently changed by an external event.
+
+See [French operator guide](RESERVATIONS-HORAIRES-WOOCOMMERCE.md), [test procedure](TESTING-NATIVE-BOOKINGS.md), and [OAuth guide](UTILISATION-GOOGLE-OUTLOOK.md).
+
+## Deliberate remaining scope
+
+Recurring/group/round-robin booking, subscriber-owned calendar connections, a publisher-managed OAuth broker, automatic rescheduling of customer bookings from external calendars, and a custom Woo payment gateway are not implemented. Existing read-only adapters remain optional. Free-booking confirmation is on screen; no automatic email is promised by that form. WooCommerce retains its normal order notification behavior.

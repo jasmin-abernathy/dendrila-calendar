@@ -3,6 +3,19 @@
   'use strict';
   const settings = window.dendrilaCalendarConnect;
   const $ = id => document.getElementById(id);
+  const oauthCalendar = $('dendrila-oauth-calendar');
+  const oauthTwoWay = $('dendrila-oauth-two-way');
+  const modeCalendar = $('dendrila-oauth-mode-calendar');
+  if (oauthCalendar && oauthTwoWay && modeCalendar) {
+    const displayMode = () => {
+      const option = oauthCalendar.selectedOptions[0];
+      if (!option) return;
+      oauthTwoWay.checked = option.dataset.twoWay === '1';
+      modeCalendar.value = oauthCalendar.value;
+    };
+    oauthCalendar.addEventListener('change', displayMode);
+    displayMode();
+  }
   const setup = $('dendrila-calendar-setup-form');
   if (settings && setup) {
     const sources = $('dendrila-setup-sources');

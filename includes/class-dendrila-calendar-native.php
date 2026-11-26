@@ -2,9 +2,8 @@
 /**
  * First-party booking domain: mandatory profiles, services and private bookings.
  *
- * The public booking form and WooCommerce payment acceptance are deliberately
- * not activated until slot locking and checkout integration are implemented.
- * Existing read-only connectors and remote calendar accounts are unaffected.
+ * Profiles and services supply the native availability and locked booking engine.
+ * Existing read-only connectors remain optional.
  */
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
@@ -206,13 +205,17 @@ final class Dendrila_Calendar_Native {
         foreach ( $fields as $key => $field ) {
             $saved = get_post_meta( $post->ID, $field[1], true );
             $value = '' === (string) $saved ? $field[2] : absint( $saved );
+            if ( 'product' === $key && class_exists( 'Dendrila_Calendar_Woo' ) ) {
+                Dendrila_Calendar_Woo::render_product_field( $post->ID, $value );
+                continue;
+            }
             echo '<p><label for="dendrila-service-' . esc_attr( $key ) . '">' . esc_html( $field[0] ) . '</label> ';
             echo '<input id="dendrila-service-' . esc_attr( $key ) . '" type="number" step="1" min="' .
                 esc_attr( $field[3] ) . '" max="' . esc_attr( $field[4] ) . '" name="dendrila_service_' . esc_attr( $key ) .
                 '" value="' . esc_attr( $value ) . '"></p>';
         }
         echo '<p class="description">' .
-            esc_html__( 'Paid bookings are not enabled until WooCommerce checkout is integrated. Prices do not authorize a payment.', 'dendrila-calendar' ) .
+            esc_html__( 'For paid appointments, select a published, purchasable simple virtual WooCommerce product. Its current price and taxes apply. A nonzero price without a valid product keeps online booking closed.', 'dendrila-calendar' ) .
             '</p>';
     }
 
@@ -274,7 +277,7 @@ final class Dendrila_Calendar_Native {
         return true;
     }
 
-    /** A storage contract, not yet exposed as an unauthenticated booking endpoint. */
+    /** Draft storage contract. Public confirmation must use Dendrila_Calendar_Booking::create(). */
     public static function booking_record( $service_id, $profile_id, $start_utc, $end_utc ) {
         $valid = self::validate_booking( $service_id, $profile_id, $start_utc, $end_utc );
         if ( true !== $valid ) {
@@ -322,7 +325,7 @@ final class Dendrila_Calendar_Native {
     public static function render_profiles() {
         self::head(
             __( 'Booking profiles', 'dendrila-calendar' ),
-            __( 'Each reservation will belong to a profile. Create one for yourself, or one per professional or resource.', 'dendrila-calendar' )
+            __( 'Each reservation belongs to a profile. Create one per professional or resource, then set its hours and date exceptions.', 'dendrila-calendar' )
         );
         echo '<p><a class="button button-primary" href="' . esc_url( admin_url( 'post-new.php?post_type=' . self::PROFILE ) ) . '">' .
             esc_html__( 'Add a profile', 'dendrila-calendar' ) . '</a> <a class="button" href="' .
@@ -333,7 +336,12 @@ final class Dendrila_Calendar_Native {
         } else {
             echo '<ul>';
             foreach ( $profiles as $profile ) {
-                echo '<li><a href="' . esc_url( get_edit_post_link( $profile->ID, '' ) ) . '">' . esc_html( $profile->post_title ) . '</a></li>';
+                echo '<li><a href="' . esc_url( get_edit_post_link( $profile->ID, '' ) ) . '">' . esc_html( $profile->post_title ) . '</a>';
+                if ( class_exists( 'Dendrila_Calendar_Schedule' ) ) {
+                    $schedule = Dendrila_Calendar_Schedule::profile( $profile->ID );
+                    echo '<br><span class="description">' . esc_html( $schedule['timezone'] . ' — ' . ( $schedule['enabled'] ? __( 'Availability enabled', 'dendrila-calendar' ) : __( 'Availability closed', 'dendrila-calendar' ) ) ) . '</span>';
+                }
+                echo '</li>';
             }
             echo '</ul>';
         }
@@ -343,7 +351,7 @@ final class Dendrila_Calendar_Native {
     public static function render_services() {
         self::head(
             __( 'Services', 'dendrila-calendar' ),
-            __( 'Create services with their own duration, preparation time, price and mandatory responsible profile.', 'dendrila-calendar' )
+            __( 'Create a WooCommerce product for a paid appointment and use its Appointment booking tab. You can also create a free service directly here. Every service needs a responsible profile.', 'dendrila-calendar' )
         );
         if ( ! self::has_profile() ) {
             echo '<p class="notice notice-warning inline">' .
@@ -351,6 +359,9 @@ final class Dendrila_Calendar_Native {
                 ' <a href="' . esc_url( admin_url( 'post-new.php?post_type=' . self::PROFILE ) ) . '">' .
                 esc_html__( 'Create a profile', 'dendrila-calendar' ) . '</a></p>';
         } else {
+            if ( class_exists( 'Dendrila_Calendar_Woo' ) && Dendrila_Calendar_Woo::available() ) {
+                echo '<p><a class="button button-primary" href="' . esc_url( admin_url( 'post-new.php?post_type=product' ) ) . '">' . esc_html__( 'Add a WooCommerce appointment product', 'dendrila-calendar' ) . '</a></p>';
+            }
             echo '<p><a class="button button-primary" href="' . esc_url( admin_url( 'post-new.php?post_type=' . self::SERVICE ) ) . '">' .
                 esc_html__( 'Add a service', 'dendrila-calendar' ) . '</a></p>';
         }
@@ -362,7 +373,7 @@ final class Dendrila_Calendar_Native {
     public static function render_bookings() {
         self::head(
             __( 'Native bookings', 'dendrila-calendar' ),
-            __( 'Native reservations will be linked to both a service and its profile. The public booking and WooCommerce checkout flows are not active yet.', 'dendrila-calendar' )
+            __( 'Reservations are linked to a service and its profile. Free bookings are confirmed immediately; paid bookings follow their WooCommerce order. Add [dendrila_booking] to a page to offer your enabled services.', 'dendrila-calendar' )
         );
         echo '<p><a class="button" href="' . esc_url( admin_url( 'edit.php?post_type=' . self::BOOKING ) ) . '">' .
             esc_html__( 'View private booking records', 'dendrila-calendar' ) . '</a></p></div>';

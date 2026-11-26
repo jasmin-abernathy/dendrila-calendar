@@ -117,6 +117,21 @@ final class Dendrila_Calendar_OAuth {
         return hash( 'sha256', $provider . '|' . $calendar );
     }
 
+    /** Null means new; legacy entries without a direction remain export-only. */
+    private static function saved_destination_mode( $provider, $calendar ) {
+        foreach ( self::connections() as $item ) {
+            if ( self::same_destination( $item, $provider, $calendar ) ) {
+                return ! empty( $item['two_way'] );
+            }
+        }
+        $archives = get_option( self::ARCHIVES_OPTION, array() );
+        $key = self::destination_key( $provider, $calendar );
+        if ( is_array( $archives ) && isset( $archives[ $key ] ) && is_array( $archives[ $key ] ) ) {
+            return ! empty( $archives[ $key ]['two_way'] );
+        }
+        return null;
+    }
+
     private static function busy( $id ) {
         return get_transient( 'dc_oauth_sync_' . $id ) ||
             (int) get_option( 'dc_oauth_sync_' . $id . '.lock', 0 ) > time() - HOUR_IN_SECONDS;
@@ -451,6 +466,13 @@ final class Dendrila_Calendar_OAuth {
         $submitted = isset( $_POST['sources'] ) && is_array( $_POST['sources'] ) ? wp_unslash( $_POST['sources'] ) : array();
         $requested = array_map( 'sanitize_key', array_filter( $submitted, 'is_string' ) );
         $two_way = isset( $_POST['two_way'] ) && '1' === $_POST['two_way'];
+        $mode_calendar = isset( $_POST['two_way_calendar'] ) && is_string( $_POST['two_way_calendar'] ) ? sanitize_text_field( wp_unslash( $_POST['two_way_calendar'] ) ) : '';
+        $saved_mode = self::saved_destination_mode( $provider, $calendar );
+        // Without JavaScript, choosing another destination must not apply the
+        // first calendar's checkbox to an already configured calendar.
+        if ( $mode_calendar !== $calendar && null !== $saved_mode ) {
+            $two_way = $saved_mode;
+        }
         if ( $two_way ) { $requested[] = 'native'; }
         $sources = Dendrila_Calendar_Subscriptions::allowed_sources( $requested, Dendrila_Calendar_Sources::available() );
         if ( ! isset( $pending['calendars'][ $calendar ] ) || ! $sources ) {
@@ -491,7 +513,7 @@ final class Dendrila_Calendar_OAuth {
             self::redirect( 'probe', $provider );
         }
         // Preserve mappings when an account is disconnected and later authorized again.
-        // The archive contains only identities, never access or refresh tokens.
+        // The archive contains only identities and direction, never access or refresh tokens.
         $connections[ $id ] = $item;
         if ( ! self::store( $connections ) ) {
             self::redirect( 'failed', $provider );
@@ -600,6 +622,7 @@ final class Dendrila_Calendar_OAuth {
             $archives = is_array( $archives ) ? $archives : array();
             $archives[ self::destination_key( $item['provider'], $item['calendar'] ) ] = array(
                 'id' => $id, 'map' => $item['map'] ?? array(),
+                'two_way' => ! empty( $item['two_way'] ),
             );
             update_option( self::ARCHIVES_OPTION, $archives, false );
             unset( $connections[ $id ] );
@@ -658,10 +681,15 @@ final class Dendrila_Calendar_OAuth {
                 $item['last_error'] = __( 'Reconnect this calendar to renew authorization.', 'dendrila-calendar' );
             } else {
                 $sources = Dendrila_Calendar_Subscriptions::allowed_sources( $item['sources'], Dendrila_Calendar_Sources::available() );
+                // Native booking records join a destination already selected for Dendrila.
+                // Customer names and emails are never part of their event payload.
+                if ( in_array( 'native', $sources, true ) && class_exists( 'Dendrila_Calendar_Booking' ) && ! in_array( 'bookings', $sources, true ) ) {
+                    $sources[] = 'bookings';
+                }
                 $now = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
                 $available_events = Dendrila_Calendar_Sources::events( $now->modify( '-7 days' )->format( 'Y-m-d H:i:s' ), $now->modify( '+85 days' )->format( 'Y-m-d H:i:s' ), $sources );
                 $source_warnings = method_exists( 'Dendrila_Calendar_Sources', 'diagnostics' ) ? Dendrila_Calendar_Sources::diagnostics() : array();
-                $limited = count( $available_events ) > 500 || isset( $source_warnings['native'] );
+                $limited = count( $available_events ) > 500 || ! empty( $source_warnings );
                 $events = array_slice( $available_events, 0, 500 );
                 $map = isset( $item['map'] ) && is_array( $item['map'] ) ? $item['map'] : array();
                 $failures = 0;
@@ -755,7 +783,7 @@ final class Dendrila_Calendar_OAuth {
      * Microsoft because getSchedule does not support personal Outlook accounts.
      * On any unavailable provider, return false (never interpret as free).
      */
-    public static function busy_intervals( $from, $to ) {
+    public static function busy_intervals( $from, $to, $ignore_exports = true ) {
         $begin = strtotime( $from ); $finish = strtotime( $to );
         if ( ! $begin || ! $finish || $finish <= $begin || $finish - $begin > 48 * 3600 ||
             ! preg_match( '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/D', $from ) ||
@@ -773,7 +801,7 @@ final class Dendrila_Calendar_OAuth {
             $connections[ $key ]['expires'] = $item['expires'];
             $google = 'google' === $provider;
             $ignore = array();
-            foreach ( (array) ( $item['map'] ?? array() ) as $mapped ) {
+            foreach ( $ignore_exports ? (array) ( $item['map'] ?? array() ) : array() as $mapped ) {
                 if ( is_array( $mapped ) && ! empty( $mapped['remote_id'] ) ) { $ignore[ $mapped['remote_id'] ] = true; }
             }
             $base = $google ?
@@ -868,7 +896,9 @@ final class Dendrila_Calendar_OAuth {
             echo '<div class="notice notice-info inline"><p>' . esc_html( $statuses[ $status ] ) . '</p></div>';
         }
         if ( is_array( $pending ) && ! empty( $pending['calendars'] ) ) {
-            echo '<div class="dendrila-oauth-stage"><span class="dendrila-stage-count">2 / 3</span><strong>' . esc_html__( 'Account authorized: choose your calendar', 'dendrila-calendar' ) . '</strong><p>' . esc_html__( 'The provider has granted access. Select the destination calendar and confirm the final test.', 'dendrila-calendar' ) . '</p></div>';
+            $initial_calendar = (string) array_key_first( $pending['calendars'] );
+            $initial_two_way = self::saved_destination_mode( $pending['provider'], $initial_calendar ) ?? true;
+            echo '<div class="dendrila-oauth-stage"><span class="dendrila-stage-count">2 / 3</span><strong>' . esc_html__( 'Account authorized: choose your calendar', 'dendrila-calendar' ) . '</strong><p>' . esc_html__( 'The provider has granted access. Select the destination calendar and start synchronization.', 'dendrila-calendar' ) . '</p></div>';
             echo '<form action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" method="post" class="dendrila-connect-card dendrila-oauth-step">';
             echo '<input type="hidden" name="action" value="dendrila_calendar_oauth_confirm">';
             wp_nonce_field( 'dendrila_calendar_oauth_confirm' );
@@ -877,15 +907,18 @@ final class Dendrila_Calendar_OAuth {
             echo '<label for="dendrila-oauth-calendar">' . esc_html__( 'Calendar', 'dendrila-calendar' ) . '</label>';
             echo '<select name="calendar" id="dendrila-oauth-calendar" required>';
             foreach ( $pending['calendars'] as $id => $name ) {
-                echo '<option value="' . esc_attr( $id ) . '">' . esc_html( $name ) . '</option>';
+                $two_way = self::saved_destination_mode( $pending['provider'], (string) $id ) ?? true;
+                echo '<option value="' . esc_attr( $id ) . '" data-two-way="' . ( $two_way ? '1' : '0' ) . '">' . esc_html( $name ) . '</option>';
             }
             echo '</select><fieldset><legend>' . esc_html__( 'Which appointments should be sent?', 'dendrila-calendar' ) . '</legend>';
             foreach ( Dendrila_Calendar_Sources::available() as $source => $label ) {
                 echo '<label class="dendrila-source-option"><input type="checkbox" name="sources[]" value="' . esc_attr( $source ) . '" checked> ' . esc_html( $label ) . '</label>';
             }
-            echo '</fieldset><p><label><input type="checkbox" name="two_way" value="1"> ' . esc_html__( 'Synchronize local events in both directions', 'dendrila-calendar' ) . '</label></p>';
+            echo '</fieldset><input type="hidden" name="two_way_calendar" id="dendrila-oauth-mode-calendar" value="' . esc_attr( $initial_calendar ) . '">';
+            echo '<p><label><input type="checkbox" name="two_way" id="dendrila-oauth-two-way" value="1"' . ( $initial_two_way ? ' checked' : '' ) . '> ' . esc_html__( 'Synchronize local events in both directions', 'dendrila-calendar' ) . '</label></p>';
             echo '<p class="description">' . esc_html__( 'Copy titles and dates between this calendar and WordPress. Deletions propagate. New single events are found from 7 days ago to 85 days ahead. Recurring events and invitations are skipped. Other booking sources are export only.', 'dendrila-calendar' ) . '</p>';
-            echo '<p>' . esc_html__( 'A test event is created then removed before automatic synchronization begins.', 'dendrila-calendar' ) . '</p><p><button type="submit" class="button button-primary dendrila-main-action">' . esc_html__( 'Test and connect this calendar', 'dendrila-calendar' ) . '</button></p></form>';
+            echo '<noscript><p class="description">' . esc_html__( 'If you select another previously connected calendar, its saved synchronization direction will be kept. You can change it after connecting.', 'dendrila-calendar' ) . '</p></noscript>';
+            echo '<p>' . esc_html__( 'A test event is created then removed before automatic synchronization begins.', 'dendrila-calendar' ) . '</p><p><button type="submit" class="button button-primary dendrila-main-action">' . esc_html__( 'Connect and synchronize this calendar', 'dendrila-calendar' ) . '</button></p></form>';
         } else {
             // Optional provider hint from the calendar chooser; display preference only.
             // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only interface selection.

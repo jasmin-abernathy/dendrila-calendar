@@ -1,0 +1,141 @@
+.dendrila-schedule-admin,
+.dendrila-schedule-admin * {
+  box-sizing: border-box;
+}
+.dendrila-schedule-admin {
+  max-width: 100%;
+  color: #1d2327;
+}
+.dendrila-schedule-admin h3 {
+  margin: 1.6em 0 .65em;
+  font-size: 1.1em;
+}
+.dendrila-schedule-admin .description {
+  max-width: 76ch;
+  line-height: 1.6;
+}
+.dendrila-schedule-admin label:not(.dendrila-schedule-toggle) {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+.dendrila-schedule-admin input[type="time"],
+.dendrila-schedule-admin input[type="date"],
+.dendrila-schedule-admin input[type="number"],
+.dendrila-schedule-admin select {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 44px;
+}
+.dendrila-schedule-admin select {
+  width: min(100%, 400px);
+}
+.dendrila-schedule-admin .button {
+  min-height: 44px;
+  padding: 5px 12px;
+  white-space: normal;
+  line-height: 1.5;
+}
+.dendrila-schedule-admin [hidden] {
+  display: none !important;
+}
+.dendrila-schedule-toggle {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 44px;
+  width: fit-content;
+  max-width: 100%;
+}
+.dendrila-schedule-toggle input[type="checkbox"] {
+  flex: 0 0 auto;
+  margin: 0;
+}
+.dendrila-schedule-week {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 15px;
+  margin-top: 16px;
+}
+.dendrila-schedule-day,
+.dendrila-schedule-exception {
+  min-width: 0;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid #c3c4c7;
+  border-radius: 5px;
+  background: #fff;
+}
+.dendrila-schedule-day legend,
+.dendrila-schedule-exception legend {
+  padding: 0 5px;
+  font-size: 1em;
+  font-weight: 600;
+}
+.dendrila-schedule-range {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 8px;
+  align-items: end;
+  padding: 8px 0 12px;
+}
+.dendrila-schedule-range + .dendrila-schedule-range {
+  border-top: 1px solid #dcdcde;
+}
+.dendrila-schedule-range .dendrila-schedule-remove {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+.dendrila-schedule-time {
+  min-width: 0;
+}
+.dendrila-schedule-exception {
+  margin-bottom: 16px;
+}
+.dendrila-schedule-exception-heading {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  align-items: end;
+}
+.dendrila-schedule-exception-heading > div {
+  flex: 1 1 160px;
+  max-width: 250px;
+}
+.dendrila-schedule-exception [data-time-ranges] {
+  max-width: 520px;
+}
+.dendrila-schedule-numbers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 16px;
+  margin: 15px 0;
+}
+.dendrila-schedule-numbers > div {
+  min-width: 0;
+}
+.dendrila-schedule-admin .dendrila-schedule-shortcode {
+  display: block;
+  width: min(100%, 520px);
+  min-height: 44px;
+  font-family: monospace;
+}
+.dendrila-schedule-admin .notice {
+  padding: 12px;
+  line-height: 1.6;
+}
+@media (max-width: 782px) {
+  .dendrila-schedule-week,
+  .dendrila-schedule-numbers {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .dendrila-schedule-admin input,
+  .dendrila-schedule-admin select {
+    font-size: 16px;
+  }
+  .dendrila-schedule-day,
+  .dendrila-schedule-exception {
+    padding: 10px;
+  }
+}

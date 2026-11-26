@@ -1,10 +1,10 @@
 # Connecting external calendar accounts (0.0.4 development build)
 
-Dendrila Calendar exports supported WordPress booking sources to external calendars. Google and Microsoft additionally support **opt-in two-way synchronization of single Dendrila local events**. Existing connections remain in export-only mode after an update.
+Dendrila Calendar exports supported WordPress booking sources to external calendars. Google and Microsoft additionally support **two-way synchronization of single Dendrila local events**, proposed by default for new destinations and visible before confirmation. Existing connections retain their saved direction after an update or reauthorization.
 
 ## Google Calendar and Microsoft Outlook: OAuth
 
-The WordPress admin flow is **Dendrila Calendar → Calendar synchronization → Google / Outlook → Connect with Google Calendar / Microsoft Outlook**. The site administrator authorizes access on the provider's official sign-in page, chooses a writable calendar, selects appointment sources, and confirms the tested connection.
+The WordPress admin flow is **Dendrila Calendar → Calendar synchronization → Google / Outlook → Connect with Google Calendar / Microsoft Outlook**. The site administrator authorizes access on the provider's official sign-in page, chooses a writable calendar, reviews the synchronization direction and sources, then clicks **Connect and synchronize this calendar**. The temporary write/delete check runs automatically.
 
 The plugin already contains OAuth authorization-code + PKCE handling, encrypted server-side tokens, calendar discovery, create/update/cancel and local disconnection. Provider-side app consent can be revoked in the account settings. It intentionally does not ship with any client secret.
 
@@ -42,7 +42,7 @@ For a distributable plugin where end users never create OAuth clients, use a **p
 
 ## Enabling two-way events
 
-In the calendar-selection step, check **Synchronize local events in both directions**. An existing connection has the same setting and a **Save synchronization direction** button; another consent flow is unnecessary.
+In the calendar-selection step, **Synchronize local events in both directions** is selected for a new destination. Selecting a known destination restores its saved mode instead. The administrator can change the visible setting before confirming. An existing connection has the same setting and a **Save synchronization direction** button; another consent flow is unnecessary.
 
 This setting synchronizes single event titles, dates/times and all-day status. New events are discovered from 7 days ago to 85 days ahead; existing linked events remain tracked when moved outside that window. Local deletion removes the remote copy, and confirmed remote deletion moves an unchanged local copy to WordPress Trash. Conflicting changes are reported and neither version is overwritten. Recurring events and invitations are skipped. Bookings owned by other WordPress plugins remain outbound only.
 
