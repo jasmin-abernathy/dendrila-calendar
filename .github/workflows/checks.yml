@@ -47,6 +47,7 @@ jobs:
           php tests/test-two-way.php
           php tests/test-two-way-query-encoding.php
           php tests/test-admin-services-ux.php
+          php tests/test-product-editor-placement.php
           php tests/test-availability.php
           php tests/test-native-bookings.php
           php tests/test-native-schedule.php
