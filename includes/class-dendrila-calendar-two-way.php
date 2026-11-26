@@ -24,7 +24,10 @@ final class Dendrila_Calendar_Two_Way {
         $params = $google ? array( 'timeMin' => $start, 'timeMax' => $end, 'maxResults' => 100, 'singleEvents' => 'false' )
             : array( 'startDateTime' => $start, 'endDateTime' => $end, '$top' => 100,
                 '$select' => 'id,subject,start,end,isAllDay,isCancelled,type,changeKey,attendees,isOrganizer,transactionId' );
-        $url = add_query_arg( $params, $base );
+        // add_query_arg() does not encode new values: an RFC3339 '+00:00' would
+        // arrive as a space in Google Calendar's timeMin/timeMax (HTTP 400).
+        // Encode dates, Graph $select and subsequent Google page tokens as RFC3986.
+        $url = $base . '?' . http_build_query( $params, '', '&', PHP_QUERY_RFC3986 );
         $list = array();
         $seen = array();
         while ( $url ) {
@@ -44,7 +47,7 @@ final class Dendrila_Calendar_Two_Way {
             }
             $next = $response['data'][ $google ? 'nextPageToken' : '@odata.nextLink' ] ?? '';
             if ( ! is_string( $next ) ) { throw new RuntimeException( 'calendar_pagination' ); }
-            $url = $google && $next ? add_query_arg( $params + array( 'pageToken' => $next ), $base ) : $next;
+            $url = $google && $next ? $base . '?' . http_build_query( $params + array( 'pageToken' => $next ), '', '&', PHP_QUERY_RFC3986 ) : $next;
         }
         return $list;
     }
