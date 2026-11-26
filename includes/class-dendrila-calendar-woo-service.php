@@ -10,6 +10,7 @@ final class Dendrila_Calendar_Woo_Service {
 
     public static function boot() {
         add_action( 'admin_menu', array( __CLASS__, 'add_service_menu' ), 30 );
+        add_action( 'edit_form_after_title', array( __CLASS__, 'product_editor_notice' ) );
         add_filter( 'woocommerce_product_data_tabs', array( __CLASS__, 'tab' ) );
         add_action( 'woocommerce_product_data_panels', array( __CLASS__, 'panel' ) );
         add_action( 'woocommerce_admin_process_product_object', array( __CLASS__, 'prepare' ) );
@@ -34,7 +35,8 @@ final class Dendrila_Calendar_Woo_Service {
             __( 'Add a service', 'dendrila-calendar' ),
             'edit_products',
             'dendrila-add-service',
-            array( __CLASS__, 'redirect_add_service' )
+            array( __CLASS__, 'redirect_add_service' ),
+            2 // Immediately after WooCommerce's Add new product entry.
         );
         if ( $hook ) { add_action( 'load-' . $hook, array( __CLASS__, 'redirect_add_service' ) ); }
     }
@@ -46,6 +48,29 @@ final class Dendrila_Calendar_Woo_Service {
         }
         wp_safe_redirect( admin_url( 'post-new.php?post_type=product&dendrila_new_service=1' ) );
         exit;
+    }
+
+
+    /** Read-only intent flag for the new-product shortcut. Never change an existing product from GET. */
+    private static function from_shortcut() {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only shortcut; product changes require the WooCommerce save nonce.
+        return isset( $_GET['dendrila_new_service'] ) && is_string( $_GET['dendrila_new_service'] ) &&
+            '1' === sanitize_text_field( wp_unslash( $_GET['dendrila_new_service'] ) ) &&
+            isset( $_GET['post_type'] ) && is_string( $_GET['post_type'] ) && 'product' === sanitize_key( wp_unslash( $_GET['post_type'] ) );
+    }
+
+    /** Visible fallback when WooCommerce has not initialized its product-data tabs yet. */
+    public static function product_editor_notice() {
+        if ( ! current_user_can( 'manage_options' ) || ! current_user_can( 'edit_products' ) ) { return; }
+        $screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+        if ( ! $screen || 'product' !== $screen->post_type ) { return; }
+        $shortcut = self::from_shortcut();
+        echo '<div class="notice notice-info inline" data-dendrila-product-help data-dendrila-new-service="' . ( $shortcut ? '1' : '0' ) . '"><p><strong>' .
+            esc_html( $shortcut ? __( 'New bookable service', 'dendrila-calendar' ) : __( 'Dendrila appointment booking', 'dendrila-calendar' ) ) . '</strong> — ' .
+            esc_html__( 'Enter the product name and price, then configure availability in Product data > Appointment booking.', 'dendrila-calendar' ) . '</p>';
+        echo '<p><a href="#dendrila-product-booking" class="button button-primary" data-dendrila-open-booking-tab>' . esc_html__( 'Open appointment settings', 'dendrila-calendar' ) .
+            '</a> <a class="button" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-guide' ) ) . '">' . esc_html__( 'Step-by-step guide', 'dendrila-calendar' ) . '</a></p>';
+        echo '<p data-dendrila-missing-tab hidden>' . esc_html__( 'The appointment tab is not available in this editor. Use the standard WooCommerce product editor and consult the guide.', 'dendrila-calendar' ) . '</p></div>';
     }
 
     public static function service_id( $product_id ) {
@@ -74,24 +99,7 @@ final class Dendrila_Calendar_Woo_Service {
         $base = dirname( __DIR__ ); $url = plugin_dir_url( $base . '/dendrila-calendar.php' );
         wp_enqueue_style( 'dendrila-calendar-schedule-admin', $url . 'assets/calendar-schedule-admin.css', array(), (string) filemtime( $base . '/assets/calendar-schedule-admin.css' ) );
         wp_enqueue_script( 'dendrila-calendar-schedule-admin', $url . 'assets/calendar-schedule-admin.js', array(), (string) filemtime( $base . '/assets/calendar-schedule-admin.js' ), true );
-        // New-service shortcut: open the WooCommerce appointment tab with booking enabled.
-        // Nothing is saved until the administrator completes the product form.
-        if ( isset( $_GET['dendrila_new_service'] ) && '1' === $_GET['dendrila_new_service'] &&
-            isset( $_GET['post_type'] ) && 'product' === $_GET['post_type'] ) {
-            wp_add_inline_script( 'dendrila-calendar-schedule-admin', <<<'JS'
-document.addEventListener('DOMContentLoaded', function () {
-    var panel = document.getElementById('dendrila-product-booking');
-    if (!panel) { return; }
-    var enabled = panel.querySelector('input[type="checkbox"][name="dendrila_product_booking"]');
-    var rules = panel.querySelector('input[type="checkbox"][name="dendrila_schedule_rules[enabled]"]');
-    if (enabled) { enabled.checked = true; enabled.dispatchEvent(new Event('change', {bubbles: true})); }
-    if (rules) { rules.checked = true; rules.dispatchEvent(new Event('change', {bubbles: true})); }
-    var tab = document.querySelector('.product_data_tabs li.dendrila_booking_options a');
-    if (tab) { tab.click(); }
-});
-JS
-            );
-        }
+        wp_enqueue_script( 'dendrila-calendar-product-admin', $url . 'assets/calendar-product-admin.js', array(), (string) filemtime( $base . '/assets/calendar-product-admin.js' ), true );
         wp_add_inline_style( 'dendrila-calendar-schedule-admin', '#dendrila-product-booking{padding:16px;box-sizing:border-box}#dendrila-product-booking>p{padding:0!important}#dendrila-product-booking label{float:none;width:auto;margin:0}#dendrila-product-booking input[type=number],#dendrila-product-booking input[type=date],#dendrila-product-booking select{float:none;width:100%;max-width:24rem}#dendrila-product-booking .dendrila-product-basics{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:16px;margin:16px 0}#dendrila-product-booking .dendrila-product-basics label{display:block;margin-bottom:6px}' );
     }
 
@@ -101,13 +109,18 @@ JS
         $product_id = $product_object ? $product_object->get_id() : ( $post->ID ?? 0 );
         $service_id = self::service_id( $product_id );
         $enabled = $service_id > 0 && ( ! $product_object || 'no' !== $product_object->get_meta( self::ENABLED_KEY, true ) );
+        // Prefill only an unsaved product opened through the explicit shortcut.
+        if ( ! $service_id && self::from_shortcut() ) { $enabled = true; }
         echo '<div id="dendrila-product-booking" class="panel woocommerce_options_panel hidden">';
         wp_nonce_field( 'dendrila_product_booking_' . $product_id, 'dendrila_product_booking_nonce' );
         echo '<p><input type="hidden" name="dendrila_product_booking" value="0"><label><input type="checkbox" name="dendrila_product_booking" value="1"' . checked( $enabled, true, false ) . '> <strong>' . esc_html__( 'Use this product as an appointment service', 'dendrila-calendar' ) . '</strong></label></p>';
         echo '<p>' . esc_html__( 'Keep the name, description and price in the normal WooCommerce fields. Dendrila adds the appointment settings here and creates the linked service automatically. Appointment products are virtual.', 'dendrila-calendar' ) . '</p>';
         $profile_id = absint( get_post_meta( $service_id, Dendrila_Calendar_Native::PROFILE_KEY, true ) );
+        // A single existing profile can be selected safely without creating or changing data.
+        $profiles = Dendrila_Calendar_Native::profiles();
+        if ( ! $service_id && self::from_shortcut() && 1 === count( $profiles ) ) { $profile_id = (int) $profiles[0]->ID; }
         echo '<div class="dendrila-product-basics"><div><label for="dendrila-product-profile">' . esc_html__( 'Responsible profile', 'dendrila-calendar' ) . '</label><select id="dendrila-product-profile" name="dendrila_product_profile"><option value="0">' . esc_html__( 'Select a profile', 'dendrila-calendar' ) . '</option>';
-        foreach ( Dendrila_Calendar_Native::profiles() as $profile ) { echo '<option value="' . esc_attr( $profile->ID ) . '"' . selected( $profile_id, (int) $profile->ID, false ) . '>' . esc_html( $profile->post_title ) . '</option>'; }
+        foreach ( $profiles as $profile ) { echo '<option value="' . esc_attr( $profile->ID ) . '"' . selected( $profile_id, (int) $profile->ID, false ) . '>' . esc_html( $profile->post_title ) . '</option>'; }
         echo '</select></div>';
         foreach ( array( 'duration' => array( __( 'Duration in minutes', 'dendrila-calendar' ), '_dendrila_duration_minutes', 30, 5 ),
             'before' => array( __( 'Preparation time before (minutes)', 'dendrila-calendar' ), '_dendrila_buffer_before', 0, 0 ),
@@ -117,8 +130,9 @@ JS
             echo '<div><label for="dendrila-product-' . esc_attr( $key ) . '">' . esc_html( $field[0] ) . '</label><input id="dendrila-product-' . esc_attr( $key ) . '" name="dendrila_product_' . esc_attr( $key ) . '" type="number" min="' . esc_attr( $field[3] ) . '" max="1440" step="1" value="' . esc_attr( $value ) . '"></div>';
         }
         echo '</div><p><a href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-profiles' ) ) . '">' . esc_html__( 'Manage profiles and weekly hours', 'dendrila-calendar' ) . '</a></p>';
-        Dendrila_Calendar_Schedule_Admin::render_rules( (object) array( 'ID' => $service_id ), $service_id > 0, false );
+        Dendrila_Calendar_Schedule_Admin::render_rules( (object) array( 'ID' => $service_id ), $service_id > 0, false, ! $service_id && self::from_shortcut() );
         if ( ! $service_id ) { echo '<p class="description">' . esc_html__( 'Save this product to generate its booking shortcode.', 'dendrila-calendar' ) . '</p>'; }
+        echo '<p><a href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar-guide' ) ) . '">' . esc_html__( 'Step-by-step guide', 'dendrila-calendar' ) . '</a></p>';
         echo '</div>';
     }
 
@@ -243,7 +257,7 @@ JS
 
     public static function guard_store_cart( $product, $request ) {
         if ( self::is_appointment( $product->get_id() ) || ( $product->get_parent_id() && self::is_appointment( $product->get_parent_id() ) ) ) {
-            throw new \Automattic\WooCommerce\StoreApi\Exceptions\RouteException( 'dendrila_appointment_time_required', self::cart_message(), 400 );
+            throw new \Automattic\WooCommerce\StoreApi\Exceptions\RouteException( 'dendrila_appointment_time_required', esc_html( self::cart_message() ), 400 );
         }
     }
 

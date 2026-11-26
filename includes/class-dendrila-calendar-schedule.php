@@ -160,7 +160,9 @@ final class Dendrila_Calendar_Schedule {
     public static function booking_windows( $profile_id, $from, $to, $now, $exclude = 0 ) {
         $posts = get_posts( array(
             'post_type' => Dendrila_Calendar_Native::BOOKING, 'post_status' => array( 'private', 'publish' ),
-            'numberposts' => 2001, 'orderby' => 'ID', 'order' => 'ASC', 'suppress_filters' => true,
+            'numberposts' => 2001, 'orderby' => 'ID', 'order' => 'ASC',
+            // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.SuppressFilters_suppress_filters -- All overlapping holds must count, including other site languages.
+            'suppress_filters' => true,
             'meta_query' => array(
                 array( 'key' => Dendrila_Calendar_Native::PROFILE_KEY, 'value' => absint( $profile_id ), 'compare' => '=' ),
                 array( 'key' => Dendrila_Calendar_Native::START_KEY, 'value' => gmdate( 'Y-m-d H:i:s', $to ), 'compare' => '<', 'type' => 'DATETIME' ),

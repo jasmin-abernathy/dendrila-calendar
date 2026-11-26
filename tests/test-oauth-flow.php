@@ -41,6 +41,7 @@ function get_post_meta( $id, $key, $single = true ) { return $GLOBALS['post_meta
 function update_post_meta( $id, $key, $value ) { $GLOBALS['post_meta'][ $id ][ $key ] = $value; return true; }
 function wp_generate_uuid4() { return '00000000-1111-4000-8000-123456789012'; }
 function wp_json_encode( $value ) { return json_encode( $value ); }
+function checked( $value, $expected = true, $echo = true ) { return $value == $expected ? ' checked="checked"' : ''; }
 function wp_timezone() { return new DateTimeZone( 'Europe/Paris' ); }
 function is_wp_error( $response ) { return false; }
 function wp_remote_retrieve_body( $response ) { return $response['body']; }

@@ -19,7 +19,7 @@ function add_submenu_page( $parent, $title, $menu, $cap, $slug, $callback ) {
 }
 require dirname( __DIR__ ) . '/includes/class-dendrila-calendar.php';
 Dendrila_Calendar::register_events();
-if ( $GLOBALS['post_type_args']['labels']['menu_name'] !== 'Local events' ||
+if ( $GLOBALS['post_type_args']['labels']['menu_name'] !== 'Personal events' ||
      $GLOBALS['post_type_args']['show_in_menu'] !== false ) {
     throw new RuntimeException( 'Local-event admin list must be clearly labeled.' );
 }

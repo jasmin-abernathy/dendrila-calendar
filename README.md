@@ -1,6 +1,6 @@
 # Dendrila Calendar 🌱
 
-**Status: 0.0.4, development build.** This repository contains Google/Microsoft OAuth connectors and two-way synchronization for single local events. Installation and provider export have been checked on the WordPress laboratory; the final provider round trip remains a manual validation. No OAuth secret is distributed with the plugin.
+**Status: 0.0.6, development build.** This repository contains Google/Microsoft OAuth connectors and two-way synchronization for single local events. The Services screen lists native and WooCommerce-backed offers with direct editing. The admin calendar supports month navigation by arrow buttons and horizontal touch gestures. A real Google and Outlook round trip still requires a private test calendar. No OAuth secret is distributed with the plugin.
 
 Dendrila Calendar combines appointment booking, availability management and a private WordPress administration calendar. Native services have a public booking form; paid appointments use WooCommerce products and orders. Optional external booking plugins remain read-only sources and retain ownership of their own reservations and payments.
 

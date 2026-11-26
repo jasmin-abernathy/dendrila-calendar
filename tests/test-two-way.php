@@ -236,7 +236,7 @@ check( '2026-03-29T00:00:00' === $formatted['start']['dateTime'] && '2026-03-30T
 check( $norm === Dendrila_Calendar_Two_Way::normalize( $formatted ), 'Microsoft all-day round-trip preserves dates through DST' );
 check( '2026-03-29' === Dendrila_Calendar_OAuth::format_event( 'google', $dates )['start']['date'], 'Google all-day date round-trip' );
 $offset = array( 'title' => 'Offset', 'start' => '2026-07-01T10:00:00+02:00', 'end' => '2026-07-01T11:00:00+02:00' );
-check( '2026-07-01T08:00:00Z' === Dendrila_Calendar_OAuth::format_event( 'google', $offset )['start']['dateTime'], 'Outbound offset is converted to UTC before appending Z' );
+check( '2026-07-01T10:00:00+02:00' === Dendrila_Calendar_OAuth::format_event( 'google', $offset )['start']['dateTime'], 'Outbound instant is preserved using the Paris summer offset' );
 $bad = $day; $bad['start']['date'] = '2026-02-31';
 $thrown = false;
 try { Dendrila_Calendar_Two_Way::normalize( $bad ); } catch ( RuntimeException $error ) { $thrown = true; }

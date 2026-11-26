@@ -94,12 +94,12 @@ jobs:
           cp dendrila-calendar.php readme.txt build/dendrila-calendar/
           cp -R assets includes languages build/dendrila-calendar/
           cd build
-          zip -q -r dendrila-calendar-0.0.4-installable.zip dendrila-calendar
-          unzip -t dendrila-calendar-0.0.4-installable.zip
+          zip -q -r dendrila-calendar-0.0.6-test-ux.zip dendrila-calendar
+          unzip -t dendrila-calendar-0.0.6-test-ux.zip
       - name: Upload installable plugin ZIP
         uses: actions/upload-artifact@v4
         with:
-          name: dendrila-calendar-0.0.4-installable
-          path: build/dendrila-calendar-0.0.4-installable.zip
+          name: dendrila-calendar-0.0.6-test-ux
+          path: build/dendrila-calendar-0.0.6-test-ux.zip
           if-no-files-found: error
           retention-days: 7

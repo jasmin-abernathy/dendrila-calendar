@@ -95,8 +95,8 @@ final class Dendrila_Calendar_Availability {
             return;
         }
         $table = $wpdb->prefix . 'ea_services';
-        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery -- Own registered Easy Appointments service table.
-        $row = $wpdb->get_row( $wpdb->prepare( "SELECT duration, block_before, block_after FROM {$table} WHERE id = %d", $service ), ARRAY_A );
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Read the current duration from the Easy Appointments service table.
+        $row = $wpdb->get_row( $wpdb->prepare( 'SELECT duration, block_before, block_after FROM %i WHERE id = %d', $table, $service ), ARRAY_A );
         if ( ! is_array( $row ) || empty( $row['duration'] ) ) {
             return; // Let EA handle an unknown service or invalid parameters.
         }
@@ -224,8 +224,12 @@ final class Dendrila_Calendar_Availability {
 
     public static function render_settings() {
         if ( ! current_user_can( 'manage_options' ) ) { return; }
+        // Historical bridge only. Native Dendrila bookings check availability independently.
+        if ( ! defined( 'EASY_APPOINTMENTS_VERSION' ) && ! class_exists( 'EAAjax' ) ) { return; }
         $available = (bool) Dendrila_Calendar_OAuth::connections();
-        echo '<section class="dendrila-availability-panel"><h2>' . esc_html__( 'Prevent double bookings', 'dendrila-calendar' ) . '</h2>';
+        echo '<details class="dendrila-availability-panel dendrila-legacy-compat"' . ( self::enabled() ? ' open' : '' ) . '>';
+        echo '<summary>' . esc_html__( 'Easy Appointments compatibility (optional)', 'dendrila-calendar' ) . '</summary>';
+        echo '<h2>' . esc_html__( 'Prevent double bookings in Easy Appointments', 'dendrila-calendar' ) . '</h2>';
         echo '<p>' . esc_html__( 'Check busy times in Google and Outlook before accepting an Easy Appointments booking.', 'dendrila-calendar' ) . '</p>';
         echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"><input type="hidden" name="action" value="dendrila_calendar_availability_save">';
         wp_nonce_field( 'dendrila_calendar_availability_save' );
@@ -235,6 +239,6 @@ final class Dendrila_Calendar_Availability {
             esc_html__( 'If a provider cannot be checked, the new reservation is refused rather than double-booked.', 'dendrila-calendar' ) . '</small></span></label>';
         if ( ! $available ) { echo '<p>' . esc_html__( 'Connect at least one Google or Outlook calendar first.', 'dendrila-calendar' ) . '</p>'; }
         echo '<p><button type="submit" class="button button-primary">' . esc_html__( 'Save availability protection', 'dendrila-calendar' ) . '</button></p></form>';
-        echo '<p class="description">' . esc_html__( 'Busy times also disable public Easy Appointments slots. Final booking submission is rechecked directly with connected calendars.', 'dendrila-calendar' ) . '</p></section>';
+        echo '<p class="description">' . esc_html__( 'Busy times also disable public Easy Appointments slots. Final booking submission is rechecked directly with connected calendars.', 'dendrila-calendar' ) . '</p></details>';
     }
 }

@@ -40,11 +40,12 @@ ob_start();
 Dendrila_Calendar_Setup::render();
 $html = ob_get_clean();
 if ( false === strpos( $html, 'Easy Appointments' ) || false === strpos( $html, 'ICS Calendar' ) ||
-    false === strpos( $html, 'name="sources[]" value="easy_appointments" checked="checked"' ) ||
+    false === strpos( $html, 'name="sources[]" value="easy_appointments"' ) ||
+    false !== strpos( $html, 'name="sources[]" value="easy_appointments" checked="checked"' ) ||
     false === strpos( $html, 'name="sources[]" value="ics_calendar" disabled' ) ||
     false === strpos( $html, 'name="calendar_service" value="nextcloud"' ) ||
-    false !== strpos( $html, 'jasmin@lepotager.org' ) ) {
-    throw new RuntimeException( 'Setup screen must preselect a compatible source, flag unsupported sources and hide the support mailbox.' );
+    preg_match( '/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i', $html ) ) {
+    throw new RuntimeException( 'Setup screen must keep optional sources unchecked, flag unsupported sources and hide the support mailbox.' );
 }
 if ( $GLOBALS['sent'] ) {
     throw new RuntimeException( 'Viewing setup without confirmation must not send a support email.' );

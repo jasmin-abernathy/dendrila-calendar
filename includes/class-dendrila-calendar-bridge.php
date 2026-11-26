@@ -432,7 +432,7 @@ final class Dendrila_Calendar_Bridge {
         echo '<fieldset><legend>' . esc_html__( 'Appointments to send', 'dendrila-calendar' ) . '</legend>';
         $initial = class_exists( 'Dendrila_Calendar_Setup' ) ? Dendrila_Calendar_Setup::selected_sources() : null;
         foreach ( $sources as $name => $source_label ) {
-            $selected = null === $initial || in_array( $name, $initial, true );
+            $selected = null === $initial ? in_array( $name, array( 'native', 'bookings' ), true ) : in_array( $name, $initial, true );
             echo '<label class="dendrila-source-option"><input type="checkbox" name="sources[]" value="' . esc_attr( $name ) . '" ' . checked( $selected, true, false ) . '> ' . esc_html( $source_label ) . '</label> ';
         }
         echo '</fieldset>';

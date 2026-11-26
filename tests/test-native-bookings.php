@@ -35,6 +35,10 @@ function sanitize_key( $value ) { return strtolower( preg_replace( '/[^a-z0-9_-]
 function admin_url( $path ) { return 'https://example.test/wp-admin/' . $path; }
 function get_edit_post_link( $id, $context ) { return 'https://example.test/wp-admin/post.php?post=' . $id; }
 function wp_die( $message ) { throw new RuntimeException( $message ); }
+class WP_Query {
+    public $posts = array();
+    public $max_num_pages = 0;
+}
 class WP_Error {
     private $code;
     public function __construct( $code, $message ) { $this->code = $code; }
@@ -132,7 +136,7 @@ ob_start();
 Dendrila_Calendar_Native::render_services();
 $markup = ob_get_clean();
 if ( strpos( $markup, 'Add a service' ) === false ||
-     strpos( $markup, 'Manage services' ) === false ) {
+     strpos( $markup, 'Your first service will appear here once created.' ) === false ) {
     throw new RuntimeException( 'Native service administration was not rendered.' );
 }
 echo "Native profiles, service assignment, booking record and WooCommerce-optional tests passed\n";

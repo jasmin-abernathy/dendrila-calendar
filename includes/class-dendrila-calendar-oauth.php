@@ -380,9 +380,18 @@ final class Dendrila_Calendar_OAuth {
         $start = ( new DateTimeImmutable( $event['start'], new DateTimeZone( 'UTC' ) ) )->setTimezone( new DateTimeZone( 'UTC' ) );
         $end = ( new DateTimeImmutable( $event['end'], new DateTimeZone( 'UTC' ) ) )->setTimezone( new DateTimeZone( 'UTC' ) );
         if ( 'google' === $provider ) {
-            $dates = ! empty( $event['all_day'] ) ?
-                array( 'start' => array( 'date' => $start->setTimezone( wp_timezone() )->format( 'Y-m-d' ), 'dateTime' => null, 'timeZone' => null ), 'end' => array( 'date' => $end->setTimezone( wp_timezone() )->format( 'Y-m-d' ), 'dateTime' => null, 'timeZone' => null ) ) :
-                array( 'start' => array( 'dateTime' => $start->setTimezone( wp_timezone() )->format( 'Y-m-d\TH:i:sP' ), 'timeZone' => wp_timezone_string() ), 'end' => array( 'dateTime' => $end->setTimezone( wp_timezone() )->format( 'Y-m-d\TH:i:sP' ), 'timeZone' => wp_timezone_string() ) );
+            $dates = array();
+            $timezone = wp_timezone();
+            foreach ( array( 'start' => $start, 'end' => $end ) as $key => $instant ) {
+                $local = $instant->setTimezone( $timezone );
+                if ( ! empty( $event['all_day'] ) ) {
+                    $dates[ $key ] = array( 'date' => $local->format( 'Y-m-d' ), 'dateTime' => null, 'timeZone' => null );
+                } else {
+                    // Clear a previously all-day date on PATCH. A fixed WP offset is not an IANA zone.
+                    $dates[ $key ] = array( 'date' => null, 'dateTime' => $local->format( DATE_RFC3339 ),
+                        'timeZone' => preg_match( '/^[+-]/', $timezone->getName() ) ? null : $timezone->getName() );
+                }
+            }
             return array_merge( array( 'summary' => $event['title'] ), $dates );
         }
         if ( ! empty( $event['all_day'] ) ) {
@@ -930,7 +939,7 @@ final class Dendrila_Calendar_OAuth {
             }
             echo '</select><fieldset><legend>' . esc_html__( 'Which appointments should be sent?', 'dendrila-calendar' ) . '</legend>';
             foreach ( Dendrila_Calendar_Sources::available() as $source => $label ) {
-                echo '<label class="dendrila-source-option"><input type="checkbox" name="sources[]" value="' . esc_attr( $source ) . '" checked> ' . esc_html( $label ) . '</label>';
+                echo '<label class="dendrila-source-option"><input type="checkbox" name="sources[]" value="' . esc_attr( $source ) . '"' . checked( in_array( $source, array( 'native', 'bookings' ), true ), true, false ) . '> ' . esc_html( $label ) . '</label>';
             }
             echo '</fieldset><input type="hidden" name="two_way_calendar" id="dendrila-oauth-mode-calendar" value="' . esc_attr( $initial_calendar ) . '">';
             echo '<p><label><input type="checkbox" name="two_way" id="dendrila-oauth-two-way" value="1"' . ( $initial_two_way ? ' checked' : '' ) . '> ' . esc_html__( 'Synchronize local events in both directions', 'dendrila-calendar' ) . '</label></p>';

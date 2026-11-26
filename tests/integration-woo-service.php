@@ -3,6 +3,7 @@
 require __DIR__ . '/booking-lab-bootstrap.php';
 require_once dirname( __DIR__ ) . '/includes/class-dendrila-calendar-schedule-admin.php';
 require_once dirname( __DIR__ ) . '/includes/class-dendrila-calendar-woo-service.php';
+require_once dirname( __DIR__ ) . '/includes/class-dendrila-calendar-appearance.php';
 require_once dirname( __DIR__ ) . '/includes/class-dendrila-calendar-booking-form.php';
 Dendrila_Calendar_Native::boot();
 Dendrila_Calendar_Schedule_Admin::boot();
@@ -88,6 +89,14 @@ try {
     lab_assert( is_array( $public ) && $public['requires_payment'] && Dendrila_Calendar_Woo::price_text( $service ) === $public['price_text'], 'Public service must display its WooCommerce price.' );
     lab_assert( 0 === (int) get_post_meta( $service, '_dendrila_price_cents', true ), 'The projection must not maintain an independent legacy price.' );
     lab_assert( get_edit_post_link( $service, 'raw' ) === get_edit_post_link( $product_id, 'raw' ), 'Editing a paid service must lead to its product editor.' );
+
+    ob_start();
+    Dendrila_Calendar_Native::render_services();
+    $directory = ob_get_clean();
+    $product_editor = esc_url( get_edit_post_link( $product_id, 'raw' ) . '#dendrila-product-booking' );
+    lab_assert( 1 === substr_count( $directory, 'href="' . $product_editor . '"' ), 'A linked offer needs exactly one source editor link.' );
+    lab_assert( false !== strpos( $directory, esc_html( $public['price_text'] ) ), 'The directory must display the WooCommerce price.' );
+    lab_assert( false !== strpos( $directory, esc_html( get_the_title( $profile ) ) ), 'The directory must show the responsible profile.' );
 
     // Actual Woo template hook and block filters expose the selector instead of direct add-to-cart.
     $old_query = $GLOBALS['wp_query'];

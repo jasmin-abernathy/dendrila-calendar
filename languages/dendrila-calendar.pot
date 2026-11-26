@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Dendrila Calendar 0.0.4\n"
+"Project-Id-Version: Dendrila Calendar 0.0.6\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 
 msgid "%1$d created, %2$d updated, %3$d cancelled, %4$d failed"
@@ -18,6 +18,9 @@ msgstr ""
 msgid "3. Choose where to add appointments"
 msgstr ""
 
+msgid "A compact design that blends into your site."
+msgstr ""
+
 msgid "A compatibility request could not be submitted. Check your WordPress email delivery settings."
 msgstr ""
 
@@ -25,6 +28,9 @@ msgid "A connector compatibility request was submitted for review."
 msgstr ""
 
 msgid "A date exception replaces the weekly hours for that date. Close the whole day or enter different time ranges."
+msgstr ""
+
+msgid "A familiar, balanced booking form."
 msgstr ""
 
 msgid "A horizon of 0 days removes the rolling limit. Any fixed date limits still apply."
@@ -54,10 +60,10 @@ msgstr ""
 msgid "Account username or email"
 msgstr ""
 
-msgid "Actual appointments read from detected booking plugins. Select an appointment in the calendar to open its original booking tool; imported bookings are not editable here."
+msgid "Active"
 msgstr ""
 
-msgid "Add a WooCommerce appointment product"
+msgid "Add a bookable service"
 msgstr ""
 
 msgid "Add a date exception"
@@ -69,16 +75,10 @@ msgstr ""
 msgid "Add a service"
 msgstr ""
 
-msgid "Add an appointment service"
-msgstr ""
-
-msgid "Diagnostic:"
-msgstr ""
-
-msgid "You cannot create appointment services."
-msgstr ""
-
 msgid "Add a time range"
+msgstr ""
+
+msgid "Add an appointment service"
 msgstr ""
 
 msgid "Add an event"
@@ -108,6 +108,12 @@ msgstr ""
 msgid "All-day event"
 msgstr ""
 
+msgid "Already have a WooCommerce product?"
+msgstr ""
+
+msgid "Also tick Enable booking for this service, then publish or update the product. The Dendrila service is created automatically."
+msgstr ""
+
 msgid "An exception contains an invalid date."
 msgstr ""
 
@@ -115,6 +121,9 @@ msgid "Another calendar service"
 msgstr ""
 
 msgid "Another reservation is being processed. Please try again in a moment."
+msgstr ""
+
+msgid "Appearance"
 msgstr ""
 
 msgid "Apple iCloud (app-specific password)"
@@ -133,9 +142,6 @@ msgid "Appointment"
 msgstr ""
 
 msgid "Appointment booking"
-msgstr ""
-
-msgid "Appointments from all detected booking plugins appear here. External calendar connection is not required to view them."
 msgstr ""
 
 msgid "Appointments to send"
@@ -186,7 +192,22 @@ msgstr ""
 msgid "Booking"
 msgstr ""
 
+msgid "Booking appearance"
+msgstr ""
+
+msgid "Booking appearance saved."
+msgstr ""
+
+msgid "Booking calendar appearance"
+msgstr ""
+
+msgid "Booking design"
+msgstr ""
+
 msgid "Booking details"
+msgstr ""
+
+msgid "Booking guide"
 msgstr ""
 
 msgid "Booking limits must be whole numbers from 0 to 10000."
@@ -202,6 +223,9 @@ msgid "Booking reference"
 msgstr ""
 
 msgid "Booking rules"
+msgstr ""
+
+msgid "Booking setup guide"
 msgstr ""
 
 msgid "Booking: %s"
@@ -225,6 +249,9 @@ msgstr ""
 msgid "Busy times also disable public Easy Appointments slots. Final booking submission is rechecked directly with connected calendars."
 msgstr ""
 
+msgid "Buttons and selected times"
+msgstr ""
+
 msgid "Calendar"
 msgstr ""
 
@@ -232,6 +259,9 @@ msgid "Calendar actions"
 msgstr ""
 
 msgid "Calendar availability is temporarily unavailable. Please try again."
+msgstr ""
+
+msgid "Calendar background"
 msgstr ""
 
 msgid "Calendar connected. Automatic direct synchronization is enabled."
@@ -276,6 +306,9 @@ msgstr ""
 msgid "Cannot verify this appointment time. Please select another slot."
 msgstr ""
 
+msgid "Cards"
+msgstr ""
+
 msgid "Change source and destination settings"
 msgstr ""
 
@@ -309,7 +342,13 @@ msgstr ""
 msgid "Choose a calendar and at least one source."
 msgstr ""
 
+msgid "Choose a calendar design"
+msgstr ""
+
 msgid "Choose a date within the available booking period."
+msgstr ""
+
+msgid "Choose a design and its colors in Dendrila Calendar > Appearance. Google and Outlook synchronization are optional."
 msgstr ""
 
 msgid "Choose a later time to leave enough time for payment."
@@ -336,6 +375,9 @@ msgstr ""
 msgid "Choose a time that works for you"
 msgstr ""
 
+msgid "Choose a valid booking design."
+msgstr ""
+
 msgid "Choose an agenda"
 msgstr ""
 
@@ -345,7 +387,13 @@ msgstr ""
 msgid "Choose an available appointment time on the product page before paying for this service."
 msgstr ""
 
+msgid "Choose an available time"
+msgstr ""
+
 msgid "Choose an available time below."
+msgstr ""
+
+msgid "Choose colors with sufficient contrast between text, background and buttons."
 msgstr ""
 
 msgid "Choose how appointments reach the calendar you already use."
@@ -354,19 +402,22 @@ msgstr ""
 msgid "Choose month"
 msgstr ""
 
+msgid "Choose the design shown on product pages and in the booking shortcode. This does not change schedules, appointments or payments."
+msgstr ""
+
 msgid "Choose your destination calendar"
 msgstr ""
 
 msgid "Choosing an app only changes the instructions. Create an actual private link below and add it in that app."
 msgstr ""
 
+msgid "Classic"
+msgstr ""
+
 msgid "Closed"
 msgstr ""
 
 msgid "Closed all day"
-msgstr ""
-
-msgid "Compatible active plugins are preselected. You may deselect them. Inactive or unsupported plugins cannot be synchronized."
 msgstr ""
 
 msgid "Complete payment before %s. After that, the time can become available again."
@@ -453,7 +504,10 @@ msgstr ""
 msgid "Copy titles and dates between this calendar and WordPress. Deletions propagate. New single events are found from 7 days ago to 85 days ahead. Recurring events and invitations are skipped. Other booking sources are export only."
 msgstr ""
 
-msgid "Create a WooCommerce product for a paid appointment and use its Appointment booking tab. You can also create a free service directly here. Every service needs a responsible profile."
+msgid "Create a bookable WooCommerce service"
+msgstr ""
+
+msgid "Create a free service"
 msgstr ""
 
 msgid "Create a private read-only subscription link."
@@ -471,10 +525,16 @@ msgstr ""
 msgid "Create subscription link"
 msgstr ""
 
+msgid "Create the WooCommerce product"
+msgstr ""
+
 msgid "Create the first profile"
 msgstr ""
 
 msgid "Customer"
+msgstr ""
+
+msgid "Customize the selected design colors"
 msgstr ""
 
 msgid "Date"
@@ -504,19 +564,28 @@ msgstr ""
 msgid "Dendrila Calendar setup"
 msgstr ""
 
-msgid "Dendrila bookings"
+msgid "Dendrila appointment booking"
+msgstr ""
+
+msgid "Dendrila appointments and personal events are shown here. Events from other booking plugins can be displayed on request; their records remain managed by their original extension."
 msgstr ""
 
 msgid "Dendrila could not prepare this booking payment."
 msgstr ""
 
-msgid "Dendrila events"
+msgid "Dendrila manages availability and reservations itself. A paid service is edited as a WooCommerce product for its price and payment; the linked Dendrila service is generated automatically. No other booking plugin is needed."
 msgstr ""
 
-msgid "Dendrila local events"
+msgid "Dendrila manages its own events and appointments without another booking plugin. Connect Google or Outlook only if you want calendar synchronization."
+msgstr ""
+
+msgid "Dendrila works independently. You can add appointments and optionally connect an external calendar later."
 msgstr ""
 
 msgid "Dendrila: this payment arrived after the booking was released or cancelled. The appointment is NOT confirmed. Contact the customer to arrange another time or a refund."
+msgstr ""
+
+msgid "Diagnostic:"
 msgstr ""
 
 msgid "Direct account authorization is not available yet for this service. Dendrila cannot connect to your account just by selecting its name."
@@ -528,7 +597,13 @@ msgstr ""
 msgid "Direct synchronization into an existing calendar"
 msgstr ""
 
+msgid "Disabled"
+msgstr ""
+
 msgid "Disconnect"
+msgstr ""
+
+msgid "Duration"
 msgstr ""
 
 msgid "Duration in minutes"
@@ -549,6 +624,12 @@ msgstr ""
 msgid "Each time range needs a start and an end."
 msgstr ""
 
+msgid "Easy Appointments compatibility (optional)"
+msgstr ""
+
+msgid "Edit"
+msgstr ""
+
 msgid "Edit booking profile"
 msgstr ""
 
@@ -561,10 +642,16 @@ msgstr ""
 msgid "Edit service"
 msgstr ""
 
+msgid "Edit that product, select Simple product under Product data, then open Appointment booking and enable both the product association and the booking rules. Keep the existing product, price and orders."
+msgstr ""
+
 msgid "Email"
 msgstr ""
 
 msgid "Email address"
+msgstr ""
+
+msgid "Enable appointment booking"
 msgstr ""
 
 msgid "Enable availability for this profile"
@@ -594,6 +681,9 @@ msgstr ""
 msgid "Enter hours for the date exception or select Closed all day."
 msgstr ""
 
+msgid "Enter the product name and price, then configure availability in Product data > Appointment booking."
+msgstr ""
+
 msgid "Enter the web address of your Nextcloud, then your login details."
 msgstr ""
 
@@ -613,6 +703,9 @@ msgid "Enter your name, a valid email and an available time, then accept the pri
 msgstr ""
 
 msgid "Event"
+msgstr ""
+
+msgid "Every design remembers its own colors. Changes appear immediately in the preview, and take effect on your site after saving."
 msgstr ""
 
 msgid "Every new native reservation must belong to a profile. Add at least one professional or resource before creating bookable services."
@@ -660,6 +753,9 @@ msgstr ""
 msgid "Free"
 msgstr ""
 
+msgid "Free service without WooCommerce (optional)"
+msgstr ""
+
 msgid "Friday"
 msgstr ""
 
@@ -684,6 +780,9 @@ msgstr ""
 msgid "HTTPS is required for private calendar subscriptions."
 msgstr ""
 
+msgid "High contrast"
+msgstr ""
+
 msgid "I agree that my name and email address may be used to manage this booking."
 msgstr ""
 
@@ -693,16 +792,25 @@ msgstr ""
 msgid "If an active booking plugin is detected but its connector is unusable, saving sends a technical compatibility request for review. This includes only the plugin name, entrypoint, version, reason, WordPress/PHP versions and site URL — never appointments, customer data or passwords. Duplicate requests are suppressed."
 msgstr ""
 
+msgid "If the tab is hidden, open Screen Options, show Product data, then expand that box. If your site uses a custom product editor that hides WooCommerce product-data tabs, switch to the standard WooCommerce product editor."
+msgstr ""
+
 msgid "If you already paid, contact the site about its refund policy."
 msgstr ""
 
 msgid "If you select another previously connected calendar, its saved synchronization direction will be kept. You can change it after connecting."
 msgstr ""
 
+msgid "In Dendrila Calendar > Profiles, create a person or resource, publish it, enable availability and set weekly hours and exceptions."
+msgstr ""
+
 msgid "In Nextcloud Calendar, choose New calendar > New subscription from link and paste the private URL. It will appear as a read-only subscribed calendar."
 msgstr ""
 
 msgid "In Outlook on the web, open Calendar > Add calendar > Subscribe from web. Paste the link and save. Updates can take more than 24 hours."
+msgstr ""
+
+msgid "Install and activate WooCommerce to sell paid appointments. Free bookings are available in Dendrila Calendar."
 msgstr ""
 
 msgid "Invalid availability settings."
@@ -756,13 +864,13 @@ msgstr ""
 msgid "Loading the booking form…"
 msgstr ""
 
-msgid "Local events"
-msgstr ""
-
 msgid "Local events can be sent to connected external calendars. They do not yet block booking availability in third-party booking plugins. Do not use this form to prevent reservations."
 msgstr ""
 
 msgid "Looking for your calendars…"
+msgstr ""
+
+msgid "Manage booking profiles"
 msgstr ""
 
 msgid "Manage connected calendars"
@@ -777,10 +885,10 @@ msgstr ""
 msgid "Manage profiles and weekly hours"
 msgstr ""
 
-msgid "Manage services"
+msgid "Maximum number of subscriptions reached. Revoke an old link first."
 msgstr ""
 
-msgid "Maximum number of subscriptions reached. Revoke an old link first."
+msgid "Minimal"
 msgstr ""
 
 msgid "Minimum notice (minutes)"
@@ -807,13 +915,25 @@ msgstr ""
 msgid "Native booking setup: create at least one profile before offering services or taking reservations."
 msgstr ""
 
-msgid "Native bookings"
-msgstr ""
-
 msgid "Never synchronized"
 msgstr ""
 
+msgid "New bookable service"
+msgstr ""
+
+msgid "New: book and sell appointments with WooCommerce"
+msgstr ""
+
 msgid "Next"
+msgstr ""
+
+msgid "Next month"
+msgstr ""
+
+msgid "Next page"
+msgstr ""
+
+msgid "Next week"
 msgstr ""
 
 msgid "Nextcloud (direct connection)"
@@ -849,7 +969,7 @@ msgstr ""
 msgid "No service is currently available for online booking."
 msgstr ""
 
-msgid "No supported appointment plugin was detected. You can start with local events and return to setup later."
+msgid "No services on this page."
 msgstr ""
 
 msgid "No time ranges remain. This day is closed."
@@ -888,6 +1008,9 @@ msgstr ""
 msgid "Online booking is not available at the moment. Reload this page to try again."
 msgstr ""
 
+msgid "Only enable these sources if you already use the corresponding plugins. They are never required for Dendrila appointments."
+msgstr ""
+
 msgid "Only the appointment itself must fit inside these hours. Preparation and recovery time may extend outside them, but must remain free."
 msgstr ""
 
@@ -897,10 +1020,22 @@ msgstr ""
 msgid "Open WooCommerce order"
 msgstr ""
 
+msgid "Open appointment settings"
+msgstr ""
+
 msgid "Open calendar view"
 msgstr ""
 
 msgid "Open configuration assistant"
+msgstr ""
+
+msgid "Open products"
+msgstr ""
+
+msgid "Open the Product data box, select the Appointment booking tab, tick Use this product as an appointment service, choose a published responsible profile and set the duration."
+msgstr ""
+
+msgid "Open the booking setup guide"
 msgstr ""
 
 msgid "Open unified calendar"
@@ -910,6 +1045,9 @@ msgid "Optional date limits"
 msgstr ""
 
 msgid "Other CalDAV service"
+msgstr ""
+
+msgid "Other booking plugins (optional)"
 msgstr ""
 
 msgid "Outlook / Microsoft 365"
@@ -939,6 +1077,12 @@ msgstr ""
 msgid "Pending"
 msgstr ""
 
+msgid "Personal events"
+msgstr ""
+
+msgid "Personalize the booking calendar"
+msgstr ""
+
 msgid "Pick your everyday calendar. We will guide you without technical setup."
 msgstr ""
 
@@ -948,16 +1092,28 @@ msgstr ""
 msgid "Preparation time before (minutes)"
 msgstr ""
 
-msgid "Prevent double bookings"
+msgid "Prevent double bookings in Easy Appointments"
 msgstr ""
 
 msgid "Previous"
+msgstr ""
+
+msgid "Previous month"
+msgstr ""
+
+msgid "Previous page"
+msgstr ""
+
+msgid "Previous week"
 msgstr ""
 
 msgid "Price"
 msgstr ""
 
 msgid "Price in cents (0 = free)"
+msgstr ""
+
+msgid "Price unavailable"
 msgstr ""
 
 msgid "Profiles"
@@ -1017,6 +1173,9 @@ msgstr ""
 msgid "Responsible profile (required)"
 msgstr ""
 
+msgid "Restore the original colors for this design"
+msgstr ""
+
 msgid "Revoke link"
 msgstr ""
 
@@ -1030,6 +1189,9 @@ msgid "Save application credentials"
 msgstr ""
 
 msgid "Save availability protection"
+msgstr ""
+
+msgid "Save design and colors"
 msgstr ""
 
 msgid "Save settings and continue"
@@ -1098,6 +1260,9 @@ msgstr ""
 msgid "Service booking limits"
 msgstr ""
 
+msgid "Service pages"
+msgstr ""
+
 msgid "Service selection"
 msgstr ""
 
@@ -1107,6 +1272,9 @@ msgstr ""
 msgid "Set the hours when this person or resource can accept bookings. Services use these hours and their own booking rules."
 msgstr ""
 
+msgid "Set your working hours"
+msgstr ""
+
 msgid "Setup required"
 msgstr ""
 
@@ -1114,6 +1282,15 @@ msgid "Shared booking limits"
 msgstr ""
 
 msgid "Show instructions for this application (not a connection)"
+msgstr ""
+
+msgid "Show the calendar and receive payments"
+msgstr ""
+
+msgid "Soft background and prominent appointment choices."
+msgstr ""
+
+msgid "Soft highlight background"
 msgstr ""
 
 msgid "Some calendar events could not be updated."
@@ -1137,13 +1314,22 @@ msgstr ""
 msgid "Start (UTC)"
 msgstr ""
 
+msgid "Start with the guided setup. The instructions remain available in Dendrila Calendar > Booking guide."
+msgstr ""
+
 msgid "Status"
 msgstr ""
 
-msgid "Step 1 — Detected appointment sources"
+msgid "Step 1 — Choose what to show"
 msgstr ""
 
 msgid "Step 2 — Your destination calendar"
+msgstr ""
+
+msgid "Step-by-step guide"
+msgstr ""
+
+msgid "Stronger outlines and clearer selection states."
 msgstr ""
 
 msgid "Subscribe your personal calendar"
@@ -1188,7 +1374,13 @@ msgstr ""
 msgid "Synchronize now"
 msgstr ""
 
+msgid "Text color"
+msgstr ""
+
 msgid "The appointment hold was released."
+msgstr ""
+
+msgid "The appointment tab is not available in this editor. Use the standard WooCommerce product editor and consult the guide."
 msgstr ""
 
 msgid "The availability settings changed. Reload the available times before booking."
@@ -1233,6 +1425,9 @@ msgstr ""
 msgid "The payment link is unavailable. Keep your booking reference and contact the site to complete payment."
 msgstr ""
 
+msgid "The product page shows its booking calendar. Visitors select a time before continuing to WooCommerce payment. You can also embed [dendrila_booking] in a page."
+msgstr ""
+
 msgid "The provider did not confirm that events can be created and removed. No connection was saved."
 msgstr ""
 
@@ -1246,6 +1441,9 @@ msgid "The reservation duration must match its service."
 msgstr ""
 
 msgid "The reserved time has expired or been cancelled. Please choose a new time before paying."
+msgstr ""
+
+msgid "The selected colors need more contrast. Adjust text, buttons or background."
 msgstr ""
 
 msgid "The selected profile does not provide this service."
@@ -1266,6 +1464,9 @@ msgstr ""
 msgid "These connections have conflicting event links. Keep them separate until the event copies have been reviewed."
 msgstr ""
 
+msgid "These integrations are only for sites that already use another booking plugin. Dendrila works without them."
+msgstr ""
+
 msgid "These limits apply to this service in addition to the profile limits. 0 means no limit."
 msgstr ""
 
@@ -1278,9 +1479,6 @@ msgstr ""
 msgid "This appointment is not confirmed. Please contact the organizer or choose another time."
 msgstr ""
 
-msgid "This assistant detects active appointment plugins and guides external synchronization. You can view the local calendar before connecting an external destination."
-msgstr ""
-
 msgid "This calendar is connected more than once. Group the connections without deleting calendar events."
 msgstr ""
 
@@ -1290,7 +1488,7 @@ msgstr ""
 msgid "This includes every connected Google and Outlook destination, not only a calendar named after this profile."
 msgstr ""
 
-msgid "This list contains local events and events imported through two-way synchronization. Bookings from Easy Appointments and other plugins appear in the unified calendar."
+msgid "This list contains manually created events and events imported from connected calendars. Customer appointments are shown under Your appointments. Other plugins are optional."
 msgstr ""
 
 msgid "This request could not be completed. Please try again."
@@ -1392,6 +1590,9 @@ msgstr ""
 msgid "Unable to update the subscription."
 msgstr ""
 
+msgid "Unassigned"
+msgstr ""
+
 msgid "Unavailable product #%d"
 msgstr ""
 
@@ -1404,7 +1605,13 @@ msgstr ""
 msgid "Unsupported calendar service."
 msgstr ""
 
+msgid "Untitled service"
+msgstr ""
+
 msgid "Upcoming appointments (server view)"
+msgstr ""
+
+msgid "Use Products > Add a service. Give the simple product a name, description and regular price. You do not need a second service form."
 msgstr ""
 
 msgid "Use a read-only calendar subscription instead"
@@ -1488,6 +1695,15 @@ msgstr ""
 msgid "You can cancel this booking below while this confirmation remains open."
 msgstr ""
 
+msgid "You can override the selected design for a specific page with [dendrila_booking style=\"cards\"]."
+msgstr ""
+
+msgid "You cannot create appointment services."
+msgstr ""
+
+msgid "You cannot edit booking appearance."
+msgstr ""
+
 msgid "You cannot manage Dendrila booking profiles."
 msgstr ""
 
@@ -1500,6 +1716,12 @@ msgstr ""
 msgid "You cannot manage calendar subscriptions."
 msgstr ""
 
+msgid "Your Dendrila appointments and personal events appear here. Other booking plugins are optional and can be shown separately."
+msgstr ""
+
+msgid "Your Dendrila events are selected by default. Other booking extensions are optional and never selected automatically."
+msgstr ""
+
 msgid "Your appointment"
 msgstr ""
 
@@ -1510,6 +1732,9 @@ msgid "Your appointment is confirmed."
 msgstr ""
 
 msgid "Your appointment time remains reserved while the organizer checks the payment."
+msgstr ""
+
+msgid "Your appointments"
 msgstr ""
 
 msgid "Your booking has been cancelled"
@@ -1530,6 +1755,9 @@ msgstr ""
 msgid "Your confirmation and booking reference will appear here."
 msgstr ""
 
+msgid "Your first service will appear here once created."
+msgstr ""
+
 msgid "Your local times are also shown in %s."
 msgstr ""
 
@@ -1540,6 +1768,9 @@ msgid "Your payment is awaiting confirmation"
 msgstr ""
 
 msgid "Your payment is awaiting confirmation. Your appointment time remains reserved."
+msgstr ""
+
+msgid "Your services"
 msgstr ""
 
 msgid "Your time is reserved during payment"
