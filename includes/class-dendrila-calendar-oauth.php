@@ -772,7 +772,7 @@ final class Dendrila_Calendar_OAuth {
                             $code = $codes[ $reason ] ?? 'INTERNAL';
                         }
                         $item['last_diagnostic'] = array( 'stage' => 'two_way', 'code' => $code, 'at' => gmdate( 'Y-m-d H:i:s' ) );
-                        $item['last_error'] = __( 'Calendar synchronization was interrupted. Diagnostic code:', 'dendrila-calendar' ) . ' ' . $code;
+                        $item['last_error'] = __( 'Calendar reading was interrupted. Retry synchronization.', 'dendrila-calendar' ) . ' [' . $code . ']';
                     }
                 }
                 if ( $limited ) {
