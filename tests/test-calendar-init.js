@@ -36,7 +36,7 @@ const today = new Date();
 const start = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 15, 12));
 const finish = new Date(start.getTime() + 30 * 60000);
 const fakeEvent = {
-  id: 'ea-1', source: 'easy_appointments', title: 'Prestation test',
+  id: 'booking-1', source: 'bookings', title: 'Prestation test',
   status: 'pending', start: start.toISOString(), end: finish.toISOString(),
   url: 'https://example.org/wp-admin/admin.php?page=easy-appointments'
 };
@@ -47,7 +47,8 @@ const config = {
   locale: 'fr_FR',
   timezone: 'Europe/Paris',
   weekStartsOn: 1,
-  sources: { easy_appointments: 'Easy Appointments' },
+  sources: { native: 'Personal events', bookings: 'Your appointments', easy_appointments: 'Easy Appointments' },
+  primarySources: ['native', 'bookings'],
   i18n: { loading: 'Chargement', empty: 'Aucun événement', failed: 'Erreur', allDay: 'Toute la journée' }
 };
 const sandbox = {
@@ -63,7 +64,7 @@ const sandbox = {
       ok: true,
       json: async () => ({ success: true, data: {
         events: [fakeEvent],
-        source_counts: { easy_appointments: 1 },
+        source_counts: { bookings: 1 },
         source_warnings: {}
       } })
     };
@@ -78,7 +79,7 @@ function textTree(node) {
 }
 (async () => {
   await new Promise(resolve => setImmediate(resolve));
-  assert(requests > 0, 'Initial AJAX request must be fired');
+  assert(requests > 0, 'Initial AJAX request must be fired for native Dendrila sources');
   assert(ids['dendrila-grid'].children.length > 0, 'Calendar grid should exist');
   assert(textTree(ids['dendrila-grid']).includes('Prestation test'), 'The appointment must be drawn in the calendar');
   const gridDate = `${today.getUTCFullYear()}-${String(today.getUTCMonth() + 1).padStart(2, '0')}-15`;
