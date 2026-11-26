@@ -28,6 +28,7 @@ jobs:
           php tests/test-direct-sync.php
           php tests/test-oauth.php
           php tests/test-oauth-flow.php
+          php tests/test-two-way.php
           php tests/test-availability.php
           php tests/test-native-bookings.php
           php tests/test-discovery.php
@@ -52,6 +53,7 @@ jobs:
           test -s includes/class-dendrila-calendar-detector.php
           test -s includes/class-dendrila-calendar-setup.php
           test -s includes/class-dendrila-calendar-oauth.php
+          test -s includes/class-dendrila-calendar-two-way.php
           test -s includes/class-dendrila-calendar-availability.php
           test -s includes/class-dendrila-calendar-native.php
           test -s includes/class-dendrila-calendar-woo.php
@@ -65,12 +67,12 @@ jobs:
           cp dendrila-calendar.php readme.txt build/dendrila-calendar/
           cp -R assets includes languages build/dendrila-calendar/
           cd build
-          zip -q -r dendrila-calendar-0.0.3-installable.zip dendrila-calendar
-          unzip -t dendrila-calendar-0.0.3-installable.zip
+          zip -q -r dendrila-calendar-0.0.4-installable.zip dendrila-calendar
+          unzip -t dendrila-calendar-0.0.4-installable.zip
       - name: Upload installable plugin ZIP
         uses: actions/upload-artifact@v4
         with:
-          name: dendrila-calendar-0.0.3-installable
-          path: build/dendrila-calendar-0.0.3-installable.zip
+          name: dendrila-calendar-0.0.4-installable
+          path: build/dendrila-calendar-0.0.4-installable.zip
           if-no-files-found: error
-          retention-days: 14
+          retention-days: 7

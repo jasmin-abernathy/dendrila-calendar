@@ -4,7 +4,7 @@ Tags: calendar, events, bookings, administration
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.0.3
+Stable tag: 0.0.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -55,7 +55,7 @@ ICS Calendar can subscribe to the URL as a destination. Importing remote feeds t
 
 = Does it change appointments? =
 
-No. Imported records are strictly read-only. When an administrator enables availability protection, the plugin can reject new Easy Appointments booking requests that overlap connected calendar busy times.
+Bookings from other WordPress plugins remain read-only. Single Dendrila local events can optionally synchronize in both directions with Google/Outlook. When an administrator enables availability protection, the plugin can reject new Easy Appointments booking requests that overlap connected calendar busy times.
 
 = Is Google/Outlook one-click setup available to all sites? =
 
@@ -66,6 +66,16 @@ Not yet. This development build requires Google/Microsoft OAuth apps configured 
 The WordPress administration calendar is restricted to administrators. Private subscription URLs can be accessed by anyone who holds the secret link; these links can be revoked.
 
 == Changelog ==
+
+= 0.0.4 (development: two-way local events) =
+* Direct Connect buttons when provider credentials are configured; change sync direction without repeating consent.
+* Opt-in two-way titles/dates/all-day synchronization for single local events; existing connections stay export-only.
+* Stable identities, pagination, conflict detection with conditional writes, confirmed deletion to Trash and restoration handling.
+* Skip invitations/recurrences and preserve other booking plugins as read-only sources.
+* Keep non-secret mapping history across disconnection/reconnection to avoid duplicates.
+* Preserve UTC offsets and daylight-saving dates; explicitly clear incompatible Google date fields on PATCH.
+* Report source limits/errors; common atomic synchronization lock; French interface updates and regression tests.
+* Live provider consent and real-account round-trip validation are still required before public release.
 
 = 0.0.3 (development build: native booking foundation; no version bump) =
 * Private first-party profile, service and reservation content types; profile mandatory before a service becomes bookable.
@@ -119,13 +129,13 @@ Open Dendrila Calendar > Synchronization. Create a private subscription URL for 
 
 = Is this real-time, bidirectional Google or CalDAV synchronization? =
 
-No. Direct CalDAV pushes bookings into the existing external calendar on a schedule, while read-only URL subscriptions are refreshed by the target application. Neither method writes modifications back to a WordPress booking. Direct Google/Outlook OAuth synchronization has not been implemented yet.
+CalDAV remains one-way and scheduled. Direct CalDAV pushes bookings into the existing external calendar on a schedule, while read-only URL subscriptions are refreshed by the target application. Neither method writes modifications back to a WordPress booking. Google/Outlook OAuth supports opt-in two-way single local events, approximately every five minutes through WordPress Cron. Titles, dates and all-day status synchronize; recurring events, invitations and write-back to other booking plugins are excluded.
 
 == Troubleshooting ==
 
-Use Dendrila Calendar > Calendar view, not Local events, to find imported appointments. An independent list of the next 60 days appears under the calendar for diagnosis. Completing the setup requires a working CalDAV connection or a created calendar subscription URL; choosing an application is not a connection. Google and Outlook direct account authorization are not yet available.
+Use Dendrila Calendar > Calendar view, not Local events, to find imported appointments. An independent list of the next 60 days appears under the calendar for diagnosis. Completing the setup requires a working CalDAV connection or a created calendar subscription URL; choosing an application is not a connection. Google and Outlook use direct OAuth account authorization after the site owner configures the provider application.
 
 
 = Guided calendar connection (development) =
 
-A guided screen helps choose Nextcloud, iCloud or another CalDAV service, find account calendars, select one and synchronize the selected WordPress sources. Read-only iCalendar subscriptions remain a separate fallback. Google/Outlook direct account authorization is not available in this release. Live server verification is pending.
+A guided screen helps choose Nextcloud, iCloud or another CalDAV service, find account calendars, select one and synchronize the selected WordPress sources. Read-only iCalendar subscriptions remain a separate fallback. Google/Outlook use the separate OAuth authorization flow, with optional two-way local events. Live provider verification remains pending.

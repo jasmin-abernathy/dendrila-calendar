@@ -2,8 +2,8 @@
 /**
  * Plugin Name: Dendrila Calendar
  * Plugin URI: https://github.com/jasmin-abernathy/dendrila-calendar
- * Description: Unified private calendar for WordPress events and bookings from optional, read-only integrations.
- * Version: 0.0.3
+ * Description: Private WordPress calendar with optional booking sources and Google/Microsoft event synchronization.
+ * Version: 0.0.4
  * Requires at least: 6.5
  * Requires PHP: 7.4
  * Author: Le Potager du Web
@@ -24,6 +24,7 @@ require_once __DIR__ . '/includes/class-dendrila-calendar-subscriptions.php';
 require_once __DIR__ . '/includes/class-dendrila-calendar-bridge.php';
 require_once __DIR__ . '/includes/class-dendrila-calendar-discovery.php';
 require_once __DIR__ . '/includes/class-dendrila-calendar-oauth.php';
+require_once __DIR__ . '/includes/class-dendrila-calendar-two-way.php';
 require_once __DIR__ . '/includes/class-dendrila-calendar-availability.php';
 require_once __DIR__ . '/includes/class-dendrila-calendar-setup.php';
 require_once __DIR__ . '/includes/class-dendrila-calendar-native.php';

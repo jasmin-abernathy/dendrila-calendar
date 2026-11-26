@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class Dendrila_Calendar {
-    const VERSION = '0.0.3';
+    const VERSION = '0.0.4';
     const POST_TYPE = 'dendrila_event';
     const START_KEY = '_dendrila_calendar_start_utc';
     const END_KEY = '_dendrila_calendar_end_utc';
@@ -137,7 +137,7 @@ final class Dendrila_Calendar {
             return;
         }
         echo '<div class="notice notice-info"><p>' . esc_html__(
-            'This list contains only events created in Dendrila Calendar. Appointments imported from Easy Appointments and other plugins appear in the unified calendar.',
+            'This list contains local events and events imported through two-way synchronization. Bookings from Easy Appointments and other plugins appear in the unified calendar.',
             'dendrila-calendar'
         ) . '</p><p><a class="button button-primary" href="' . esc_url( admin_url( 'admin.php?page=dendrila-calendar' ) ) . '">' . esc_html__(
             'Open unified calendar', 'dendrila-calendar'
@@ -175,6 +175,8 @@ final class Dendrila_Calendar {
         echo '<input id="dendrila-calendar-start" type="datetime-local" name="dendrila_calendar_start" value="' . esc_attr( $start ) . '" required></p>';
         echo '<p><label for="dendrila-calendar-end">' . esc_html__( 'End', 'dendrila-calendar' ) . '</label> ';
         echo '<input id="dendrila-calendar-end" type="datetime-local" name="dendrila_calendar_end" value="' . esc_attr( $end ) . '" required></p>';
+        echo '<p><label><input type="checkbox" name="dendrila_calendar_all_day" value="1"' . ( get_post_meta( $post->ID, '_dendrila_calendar_all_day', true ) ? ' checked' : '' ) . '> ' . esc_html__( 'All-day event', 'dendrila-calendar' ) . '</label></p>';
+        echo '<p class="description">' . esc_html__( 'For all-day events, use midnight for both times. The end date is the first day after the event.', 'dendrila-calendar' ) . '</p>';
         echo '<p class="notice notice-info inline">' . esc_html__( 'Local events can be sent to connected external calendars. They do not yet block booking availability in third-party booking plugins. Do not use this form to prevent reservations.', 'dendrila-calendar' ) . '</p>';
         echo '<p class="description">' . esc_html( sprintf(
             /* translators: %s: WordPress site timezone. */
@@ -208,6 +210,9 @@ final class Dendrila_Calendar {
             // Do not destroy previously valid dates on malformed input.
             return;
         }
+        $all_day = isset( $_POST['dendrila_calendar_all_day'] ) && '1' === $_POST['dendrila_calendar_all_day'] &&
+            '00:00' === $start->format( 'H:i' ) && '00:00' === $end->format( 'H:i' );
+        update_post_meta( $post_id, '_dendrila_calendar_all_day', (int) $all_day );
         update_post_meta( $post_id, self::START_KEY, $start->setTimezone( new DateTimeZone( 'UTC' ) )->format( 'Y-m-d H:i:s' ) );
         update_post_meta( $post_id, self::END_KEY, $end->setTimezone( new DateTimeZone( 'UTC' ) )->format( 'Y-m-d H:i:s' ) );
     }
@@ -342,9 +347,18 @@ final class Dendrila_Calendar {
             );
             echo '<div class="dendrila-agenda-options">';
             foreach ( $choices as $choice ) {
+                $provider = 'Google Calendar' === $choice[0] ? 'google' : 'microsoft';
                 $url = add_query_arg( 'dendrila_method', $choice[1], admin_url( 'admin.php?page=dendrila-calendar-sync' ) );
                 echo '<article class="dendrila-agenda-option"><h3>' . esc_html( $choice[0] ) . '</h3><p>' . esc_html( $choice[2] ) . '</p>';
-                echo '<a class="button button-primary" href="' . esc_url( $url ) . '">' . esc_html__( 'Continue', 'dendrila-calendar' ) . '</a></article>';
+                if ( 'oauth' === $choice[1] && Dendrila_Calendar_OAuth::ready( $provider ) ) {
+                    echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"><input type="hidden" name="action" value="dendrila_calendar_oauth_start"><input type="hidden" name="provider" value="' . esc_attr( $provider ) . '">';
+                    wp_nonce_field( 'dendrila_calendar_oauth_start' );
+                    echo '<button class="button button-primary">' . esc_html( sprintf( __( 'Connect with %s', 'dendrila-calendar' ), $choice[0] ) ) . '</button></form>';
+                } else {
+                    if ( 'oauth' === $choice[1] ) { $url = add_query_arg( 'oauth_provider', $provider, $url ); }
+                    echo '<a class="button button-primary" href="' . esc_url( $url ) . '">' . esc_html__( 'Continue', 'dendrila-calendar' ) . '</a>';
+                }
+                echo '</article>';
             }
             echo '</div></section>';
         }
@@ -408,7 +422,7 @@ final class Dendrila_Calendar {
         $start = $now->modify( '-1 day' )->format( 'Y-m-d H:i:s' );
         $end = $now->modify( '+60 days' )->format( 'Y-m-d H:i:s' );
         $available = Dendrila_Calendar_Sources::available();
-        $events = Dendrila_Calendar_Sources::events( $start, $end, array_keys( $available ) );
+        $events = Dendrila_Calendar_Sources::events( $start, $end, array_keys( $available ), true );
         echo '<details class="dendrila-upcoming" aria-labelledby="dendrila-upcoming-heading"><summary id="dendrila-upcoming-heading">' . esc_html__( 'Upcoming appointments (server view)', 'dendrila-calendar' ) . '</summary>';
         echo '<p class="description">' . esc_html__( 'Actual appointments read from detected booking plugins. Select an appointment in the calendar to open its original booking tool; imported bookings are not editable here.', 'dendrila-calendar' ) . '</p>';
         if ( ! $events ) {
@@ -460,7 +474,7 @@ final class Dendrila_Calendar {
         $requested = array_values( array_intersect( $allowed, $requested ) );
         $start_utc = $start_date->setTimezone( new DateTimeZone( 'UTC' ) )->format( 'Y-m-d H:i:s' );
         $end_utc = $end_date->setTimezone( new DateTimeZone( 'UTC' ) )->format( 'Y-m-d H:i:s' );
-        $events = Dendrila_Calendar_Sources::events( $start_utc, $end_utc, $requested );
+        $events = Dendrila_Calendar_Sources::events( $start_utc, $end_utc, $requested, true );
         // Aggregated source counts help diagnose missing bookings without exposing personal data.
         $source_counts = array_fill_keys( $requested, 0 );
         foreach ( $events as $event ) {

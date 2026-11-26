@@ -1,34 +1,86 @@
 # Dendrila Calendar 🌱
 
-**Status:** first internal test `0.0.1` — development only; not a beta or WordPress.org release.
+**Status: 0.0.4, development build.** This repository contains working Google/Microsoft OAuth connectors and opt-in two-way synchronization for single local events. Real account consent and provider round-trip validation remain required before a public release. No OAuth secret is distributed with the plugin.
 
-**Dendrila Calendar is an independent, private calendar hub for WordPress.** It brings together events and bookings from compatible plugins in one administrator interface. All integrations are optional, including Oryx Bookings. Imported items stay read-only and source plugins retain control of their records and payments.
+Dendrila Calendar is a private WordPress administration calendar. It combines local events and appointments from optional booking plugins, with month, week and list views, source filters, search, keyboard controls and a mobile day-details panel. Booking plugins keep ownership of their reservations, validation and payments.
 
-**Project repository:** https://github.com/jasmin-abernathy/dendrila-calendar
+## What is implemented
 
-## What currently works
+| Source or destination | Behaviour |
+| --- | --- |
+| Dendrila local events | Administrator-only creation and editing, timed or all-day events |
+| Google Calendar / Microsoft Outlook | OAuth consent, calendar selection, encrypted tokens, token refresh, outbound events and opt-in two-way local events |
+| Other WordPress event/booking plugins | Read-only source adapters; selected appointments can be exported, but external changes never edit the original booking |
+| Nextcloud / compatible CalDAV | Calendar discovery and one-way export with encrypted application credentials |
+| Private iCalendar subscription | Revocable HTTPS URL; the subscribing application controls refresh timing |
 
-- Day-by-day **month, week and list** views with a direct month selector; source filters and keyboard-operable controls.
-- **Instant search** across loaded event titles, status and source names, without extra network requests.
-- **Dendrila events**: create/edit your own events using a private WordPress post type (admin only).
-- **Optional event sources:** Event Organiser, Events Manager and The Events Calendar (published single events only, recurrence not yet supported).
-- **Optional booking sources:** Amelia, Booking Calendar, Bookly, Easy Appointments, FluentBooking, Oryx Bookings and Simply Schedule Appointments.
-- **Ten optional external integrations in total**, all read-only. Provider versions and limitations are documented in [the integration audit](docs/INTEGRATIONS.md); no customer contact information or private notes are included in calendar payloads.
-- **Private live calendar subscriptions**: generate a revocable HTTPS calendar URL for any selection of supported sources. Subscribe to it in a compatible calendar application and events are refreshed automatically when that application polls the feed. This is read-only, not a one-time download or a bidirectional write integration.
-- **Optional adapter API**: register sources through WordPress filters without patching other plugins.
-- No vendor scripts, CDN, tracking, third-party API calls, custom tables, or mandatory WooCommerce dependency.
+Ten optional external sources are supported: Event Organiser, Events Manager, The Events Calendar, Amelia, Booking Calendar, Bookly, Easy Appointments, FluentBooking, Oryx Bookings and Simply Schedule Appointments. Compatibility and source-specific limitations are recorded in [docs/INTEGRATIONS.md](docs/INTEGRATIONS.md).
 
-## Requirements and installation
+The plugin has no mandatory WooCommerce dependency, externally hosted JavaScript or tracking SDK. It contacts the chosen calendar provider only after configuration; compatibility reports are a separate disclosed setup action.
 
-- WordPress 6.5+, PHP 7.4+.
-- Install the `dendrila-calendar/` folder containing `dendrila-calendar.php` in `wp-content/plugins/`.
-- Activate it, then visit **Dendrila Calendar** in the administrator menu.
-- All third-party sources are **optional**; source checkboxes appear when active. See the [provider compatibility table](docs/INTEGRATIONS.md).
-- Open **Calendar synchronization** in the Dendrila Calendar admin screen, choose which sources to include and generate a private link. Copy the URL **immediately** (the plugin stores only its SHA-256 hash). Add it in your external calendar using **Subscribe from URL** / **Add calendar by URL**, not **Import file**.
-- Refresh is controlled by the destination app. The feed proposes an hourly interval; Google Calendar and other apps may refresh less frequently.
-- Revoke a link in the same panel at any time, then remove the old subscription from your calendar app.
-- A properly configured **HTTPS** WordPress site is required. Ensure page caching and security plugins do not strip or cache requests containing `dendrila_calendar_feed`.
-- Calendar visibility is restricted to administrators (`manage_options`). Imported sources remain owned by their original plugins.
+## Installation and first setup
+
+1. Install the `dendrila-calendar/` folder or installable ZIP on WordPress 6.5+ with PHP 7.4+.
+2. Activate the plugin and open **Dendrila Calendar → Configuration**. Available booking sources are detected automatically; inactive and unsupported plugins are identified separately.
+3. Select the sources and a destination, or select local-only use.
+4. For Google or Outlook, follow the OAuth flow below. For Nextcloud/CalDAV, enter the HTTPS cloud address, account login and application password, then choose a discovered calendar.
+5. To subscribe through an iCalendar URL, generate a private link and use **Subscribe from URL** in the calendar application. The link is displayed once; only its hash is stored.
+
+The unified calendar stays available while connection setup is incomplete. A destination is considered connected only after a successful provider test or creation of a private subscription link. Merely selecting Google or Outlook does not connect an account.
+
+Unsupported active booking plugins can generate a compatibility report when the administrator confirms setup. The disclosed report includes plugin name/version, WordPress/PHP versions, site URL and adapter status, never customer records or credentials. Requests are deduplicated; failed submissions are throttled for 24 hours. The receiving address is not exposed in the interface. See the existing setup tests for this behaviour.
+
+## Connecting Google or Microsoft Outlook
+
+Open **Dendrila Calendar → Synchronization**, choose Google or Outlook and use **Connect with…**. When its OAuth app is configured, this button goes directly to the provider's official consent screen. Select a writable calendar, choose the appointment sources and confirm the temporary create/delete test.
+
+The site owner must configure an OAuth application once. The administrator form accepts a client ID and secret and stores the secret encrypted; server-side constants are also supported. Ordinary account authorization then uses the provider's sign-in flow. An unconfigured provider remains visibly unavailable instead of claiming to be connected. See [docs/OAUTH-SETUP.md](docs/OAUTH-SETUP.md) for exact redirect URI and application setup.
+
+Existing connections continue to **export only** after an update. To enable two-way operation, explicitly check **Synchronize local events in both directions** when connecting, or save that setting on the existing connection card. Changing this setting does not require another provider consent flow.
+
+### Two-way scope and conflict handling
+
+- Synchronizes **titles, start/end dates and times, and all-day status** for single events. Descriptions, attachments, attendee data and private notes are not copied.
+- New remote events are discovered from **7 days in the past to 85 days ahead**. Previously linked events are checked by their individual IDs even if they move outside this window.
+- Remote imports become private Dendrila events. They can be edited in **Local events** and appear in the unified calendar. Their origin prevents them being exported to unrelated calendars or subscription feeds.
+- Local changes update the same remote event; remote changes update the local copy. Stable event identities, provider transaction IDs and saved links prevent duplicates on retries and reconnection.
+- Deleting a linked local event removes its remote copy. A confirmed remote deletion moves an unchanged local copy to WordPress Trash. With WordPress Trash disabled, the deletion is reported as an error rather than permanently erasing the local event.
+- A simultaneous edit on both sides is a conflict. Neither version is overwritten; the connection card lists local event IDs. Make the intended title/dates identical on both sides, then synchronize again. A concurrent provider revision rejects the write through `If-Match`.
+- Restoring a previously deleted local event creates a new remote identity. A remote event missing from one listing is fetched individually before any deletion decision.
+- **Recurring events and invitations/meetings are excluded**. In particular, changes do not send invitations or update attendees.
+- Source adapters from other booking plugins remain **export only**. Two-way edits never bypass a booking plugin's payment or availability rules.
+
+Synchronization runs approximately every five minutes through WordPress Cron when the site receives traffic, or manually with **Synchronize now**. It is not an instantaneous webhook service. A real server cron can provide regular execution for a low-traffic site.
+
+A source export is limited to 500 events per pass, and local-source discovery to 500 events per date window. A visible warning reports a reached limit; high-volume calendars can therefore have new events omitted. Existing two-way links are still reconciled independently of that source slice. Remote listings are paginated up to 100 pages of 100 events; a failed or incomplete inventory aborts the two-way pass before changes.
+
+Disconnecting removes the active credentials and stops future synchronization. Existing local/remote events remain. Non-secret destination identities and links are retained so reconnecting the same calendar does not duplicate events. Provider-side app consent can also be revoked in the Google/Microsoft account settings.
+
+## Other calendar methods
+
+### CalDAV
+
+Nextcloud and compatible services use HTTPS DAV discovery (account principal, calendar home, calendar collections). A short-lived, user-bound selection token prevents changing the chosen calendar to an undiscovered destination. PHP DOM/XML is required. Credentials are encrypted; private-network URLs, untrusted redirects and HTTP downgrades are rejected.
+
+CalDAV is **one-way**: creates/updates selected WordPress events, and removes previously exported events on an explicit cancellation status. An event simply missing from a source query is not deleted. iCloud uses an app-specific password and an official-host allowlist; real-account compatibility still needs verification.
+
+### Private iCalendar URL
+
+Subscription feeds are read only, live when polled, and token-protected. They include selected event titles, dates, source labels and statuses, without customer contact/payment information or administrative edit links. Treat the URL as a password and revoke it when needed. The feed covers 30 days in the past to 365 days ahead, up to 2,500 events.
+
+Google's **From URL** subscription setup is available on the web; refresh timing is controlled by Google. Other applications have their own refresh policies. Importing a downloaded file is a one-time operation and does not create a subscription. ICS Calendar can subscribe to a generated URL; ingesting arbitrary feeds already displayed by ICS Calendar remains unsupported.
+
+## Availability and native booking foundation
+
+Optional Google/Outlook busy-time protection for **Easy Appointments 4.x** checks both the public slot picker and final reservation submission. Provider errors close protected slots rather than confirming an unverified booking. Other booking plugins require their own availability adapters. Local events by themselves do not block bookings in all third-party plugins.
+
+The private native booking foundation includes profiles, services and reservation records. A published profile is required for a service; services have a duration, buffers, an optional price and an optional future WooCommerce product reference. A public native booking form and native WooCommerce checkout are **not enabled** in this build. Entering a product ID does not establish payment compatibility.
+
+## Security and privacy
+
+Administration and connection mutations require WordPress capabilities and nonces. OAuth uses authorization code + PKCE, a short-lived one-time state bound to the signed-in administrator, encrypted server-side access/refresh tokens, and a query-free HTTPS callback. Provider requests have a fixed host/path allowlist, no redirects, and TLS verification. Token-bearing requests cannot follow an arbitrary pagination URL.
+
+Two-way and outbound jobs share an atomic per-connection lock. A connection changed or removed during synchronization stops further work. Private imported events are excluded from outbound subscriptions and other destination connectors to prevent data loops. Titles are rendered through text nodes/escaped HTML. Date fields are stored in UTC, with all-day calendar dates preserved across daylight-saving changes.
 
 ## Extension API
 
@@ -37,115 +89,31 @@ add_filter( 'dendrila_calendar_sources', function ( $sources ) {
     $sources['my_source'] = 'My source';
     return $sources;
 } );
-
 add_filter( 'dendrila_calendar_source_events_my_source', function ( $events, $start_utc, $end_utc ) {
-    // Query only events overlapping [$start_utc, $end_utc), both 'Y-m-d H:i:s' UTC.
-    return array(
-        array(
-            'id' => 'my_source-12',
-            'title' => 'Example',
-            'start' => '2026-11-24T09:00:00Z',
-            'end' => '2026-11-24T10:00:00Z',
-            'status' => 'confirmed',
-            'url' => admin_url( 'admin.php?page=my-source' ),
-        ),
-    );
+    // Query only events overlapping [$start_utc, $end_utc), both Y-m-d H:i:s UTC.
+    return array( array(
+        'id' => 'my_source-12', 'title' => 'Example',
+        'start' => '2026-11-24T09:00:00Z', 'end' => '2026-11-24T10:00:00Z',
+        'status' => 'confirmed', 'url' => admin_url( 'admin.php?page=my-source' ),
+    ) );
 }, 10, 3 );
 ```
 
-Source IDs must match `[a-z][a-z0-9_-]{0,31}`. Source adapters must filter by the supplied UTC range and must not leak personal information. The **admin AJAX** endpoint requires an authenticated administrator and a WordPress nonce; private subscriptions use a separate token-protected endpoint. The `url` must resolve to this site's origin to be clickable in the UI.
+Source IDs must match `[a-z][a-z0-9_-]{0,31}`. Adapters must filter by the supplied UTC bounds and avoid exposing customer data. Admin AJAX requires a signed-in administrator and nonce; feed URLs use separate tokens. Clickable admin URLs must point to this site's origin.
 
-## Design and security
+## Troubleshooting and validation
 
-- Imported sources: **read-only**. Creation/editing remains in each source's official interface.
-- AJAX: capability and nonce checks, validated date bounds (maximum 93 days), source allowlist, event caps.
-- All event titles inserted as `textContent` (not HTML).
-- WordPress local event dates are converted to UTC for storage; the interface displays time in the configured WordPress site timezone.
-- Events reach the external calendar application **only if an administrator explicitly creates and shares a private subscription link**. Feed requests are authenticated by the unguessable URL token, and the server stores only its hash.
-- Calendar subscriptions include selected event titles, dates, source labels and statuses, **not customer identity/contact/payment data or administrative event URLs**. Treat links as passwords; revoke compromised links.
-- Requests use live source adapters, with no WordPress cron or direct destination-API credentials. The feed supplies a rolling date window (past 30 days through 365 days ahead, up to 2,500 events).
-- No cross-site tracking, SDK or external service is added to WordPress itself.
-- No `Requires Plugins` header: optional integrations **must not** block plugin installation.
+**Calendar view** combines selected sources; **Local events** contains Dendrila-authored events and two-way imports. Original appointments from other plugins are only shown in Calendar view. Source counts, sanitized warnings and a server-rendered upcoming-events table help distinguish source problems from JavaScript problems. Event/style assets use file modification times for cache invalidation.
 
-## Known limitations / roadmap
-
-- No unrestricted public-facing calendar. A private subscription link grants read-only access to the explicitly selected sources; protect it like a password.
-- The Events Calendar recurrence/occurrences still require dedicated version-specific support.
-- Outbound subscription feeds are provided over HTTPS, with read-only iCalendar updates. **Bidirectional CalDAV or Google/Microsoft API sync is not implemented** and requires account-specific authorization plus conflict-resolution rules.
-- **ICS Calendar** can be configured as a feed subscriber using the generated URL, but using the feeds already imported into ICS Calendar as an *inbound source* remains out of scope pending a safe adapter audit.
-- No drag-and-drop editing of imported bookings. This avoids bypassing source-specific validation and payment rules.
-- Eight further adapters have been inspected and covered by isolated fixtures. Their behavior still requires real staging tests.
-- ICS Calendar 12.3.0 has been reviewed but is **not** imported yet, because it primarily renders remote feeds and a naive URL fetch would introduce SSRF risk.
-- Each provider currently limits results to at most 600–750 events per request; this is not yet paginated.
-- Booking Calendar is shown as all-day allocations, not exact appointment times.
-- There is no live WordPress + WooCommerce end-to-end test yet. Please test on a staging site before production use.
-
-## Development checks
+Run all PHP test files and JavaScript syntax/browser-initialization checks. [docs/RELEASE-0.0.4-TESTING.md](docs/RELEASE-0.0.4-TESTING.md) records the 0.0.4 validation and remaining real-account checks. Fixtures validate deterministic behaviour; they do not certify live Google, Microsoft, iCloud or every booking-plugin version.
 
 ```sh
 find . -name '*.php' -print0 | xargs -0 -n1 php -l
+for test in tests/*.php; do php "$test" || exit 1; done
 node --check assets/calendar.js
 node --check assets/calendar-subscriptions.js
-php tests/test-subscriptions.php
-php tests/test-sources.php
-php tests/test-integrations.php
+node --check assets/calendar-connect.js
+node tests/test-calendar-init.js
 ```
 
-License: GPL-2.0-or-later.
-
-## Missing events in the administration calendar
-
-On the calendar page, the line below the source selector now reports how many events were returned per selected source (for the current visible period). If Easy Appointments is active but reports `0`, verify the appointment date, end date and status in the source plugin. If it reports `1` but the event is not rendered, check the selected month, search field and browser console. All customer details remain private. Script and style URLs use file modification times to prevent stale assets during the 0.0.1 development series.
-
-## Finding appointments versus local events
-
-- **Dendrila Calendar → Calendar view** (`wp-admin/admin.php?page=dendrila-calendar`) is the main month/week/list calendar and displays bookings from enabled connectors.
-- **Dendrila Calendar → Local events** (`wp-admin/edit.php?post_type=dendrila_event`) only lists posts authored in Dendrila Calendar. It does not contain imported bookings. A notice links back to the main calendar.
-- If an Easy Appointments booking is visible in its source plugin but not on the calendar, check that the source is selected and that the **Easy Appointments: N** counter is nonzero for the selected month. The booking remains read-only, even when `pending`.
-
-## External calendar subscriptions (0.0.1 development)
-
-The **Synchronization** submenu is a dedicated page, also linked from the main calendar. It contains a source selector, private URL generation and revocation, and instructions for Google Calendar, Apple Calendar, Microsoft Outlook, Nextcloud Calendar and other RFC 5545-compatible applications. Calendar apps must **subscribe to the URL**, not import a file; their individual refresh schedules control update latency. Google Calendar URL subscriptions must be added via desktop/web, not the Android/iOS app. This is a **one-way, pull-based feed**, not OAuth or CalDAV write-back.
-
-The dashboard and local-events list are separate. The appointments shown by providers are not WordPress native calendar posts; the 'Local events (0)' list does not indicate a failed source import.
-
-## Direct synchronization into an existing CalDAV calendar (experimental)
-
-The **Synchronization** admin screen now provides two separate workflows. The first pushes events **into an existing CalDAV calendar**, rather than requiring an ICS subscription. Choose a service such as Nextcloud, enter its website address, username and application password. Dendrila discovers the available calendar collections, lets you pick one, and verifies it before saving encrypted credentials.
-
-A WordPress cron job runs approximately every five minutes when the site receives traffic. It creates and updates events using deterministic `.ics` resource filenames and idempotent calendar identifiers. A **Synchronize now** button can trigger it manually. Only imported source titles, times and statuses are sent, never customer contact information, payment details or notes. Disconnecting stops updates without deleting remote events. Explicit cancellation statuses are deleted only for events previously written by Dendrila. **Events simply disappearing from a provider are not yet deleted**, to avoid destructive mass deletions after a source/API error.
-
-Limitations: This is currently a **one-way CalDAV connector**, not Google or Outlook OAuth synchronization. Its five-minute schedule is WordPress Cron, which needs HTTP traffic or an external cron runner. Nextcloud and other CalDAV services may require an application password. If the service does not support automatic discovery, Dendrila reports the connection failure instead of asking non-technical users to guess a calendar URL. Private-network destinations are blocked by the WordPress safe HTTP client; no arbitrary URL redirects are followed. End-to-end testing against a real CalDAV server remains mandatory before production use. The existing read-only ICS subscription option is still available separately.
-
-## First-run setup and connector compatibility requests (development)
-
-The plugin redirects a WordPress administrator to **Dendrila Calendar → Configuration** after initial activation. Until the assistant is completed, Dendrila's own admin pages point back to it; the rest of WordPress administration remains available. The assistant discovers active plugins from WordPress' `active_plugins` and multisite network activation lists, plus installed plugin metadata (where available), rather than relying exclusively on provider-defined PHP constants.
-
-- Known, active, compatible booking/event plugins are preselected. Installed-but-inactive extensions are listed as inactive; they are not treated as broken.
-- Active plugins whose required runtime API is missing are marked unavailable. ICS Calendar, which does not yet have an audited incoming adapter, and unrecognized active booking plugins are marked unsupported rather than silently ignored.
-- The administrator chooses appointment sources and names an agenda service (Nextcloud, iCloud, Google, Outlook or another service), or local-only mode. Nextcloud and CalDAV services then use guided discovery; Google/Outlook lead only to the separately labeled read-only subscription fallback until OAuth is implemented. The wizard only completes after a destination is actually configured.
-- If an active provider is detected as unsupported or unavailable, validating the assistant sends a **server-side compatibility request** to the plugin maintainers via the site's normal `wp_mail()` transport (e.g. SMTP). This behavior is disclosed before the user confirms the setup. The destination mailbox is never included in the UI, translated text or JavaScript. The message includes only the plugin's name, main file, version, source identifier, reason, WordPress/PHP versions, site URL and Dendrila Calendar version. No booking/customer records or credentials are read or sent.
-- Successful reports are deduplicated per plugin version and reason; failed submissions are throttled for 24 hours. `wp_mail()` reporting success only indicates that the transport accepted the message, **not** proof of inbox delivery. Inactive plugins generate no report.
-
-These source adapters still require real WordPress/booking plugin tests, and direct CalDAV still needs real destination end-to-end verification. The plugin remains at version `0.0.1` without a WordPress.org release.
-
-## Troubleshooting the WordPress calendar screen
-
-- **Calendar view** is the separate admin submenu, with month/week/list views and a direct month selector. **Local events** is a WordPress post list and does **not** list imported bookings.
-- The calendar remains available even if the external sync wizard is incomplete. Imported events also appear in a server-rendered **Upcoming appointments** table (next 60 days) below the interactive calendar. This separates broken JavaScript/AJAX from adapter problems.
-- The admin AJAX response contains aggregate source counts and sanitized connector warnings, never customer records. A failing source no longer fails silently.
-- **Selecting a destination is not connecting it**. A direct CalDAV connection needs an HTTPS cloud/server address, account login, application password, a discovered calendar selection and a successful connection test. An iCalendar subscription needs an actually created private link, then a subscription in the chosen calendar app. A setup is complete only when a connection/link covers the chosen sources.
-- **Google and Outlook are not direct OAuth destinations yet.** The dropdown on the iCalendar section shows setup instructions only and cannot create or authorize a Google/Outlook account connection.
-
-The plugin stays at development version `0.0.1`; do not publish to WordPress.org or claim cross-provider compatibility based on fixtures alone.
-
-
-## Guided connection, experimental (`0.0.1` development)
-
-The administrator chooses the destination **by service name**, not by protocol. The direct connection screen shows only one workflow at a time; read-only subscriptions have their own screen. The setup screen discovers supported appointment plugins and lets the administrator choose Nextcloud, iCloud, Google, Microsoft or another calendar service.
-
-**Nextcloud / CalDAV:** enter the account's HTTPS cloud URL, login and an application password. Dendrila uses safe DAV `PROPFIND` discovery (account principal → calendar home → calendar collections), lists available calendars, and requires a validated, short-lived, user-scoped selection before saving encrypted credentials. The server refuses private-network/unsafe URLs, untrusted redirects, HTTP downgrades and calendar selections not returned by discovery. After connection, it runs its one-way synchronization once and continues using WP-Cron. The required PHP DOM/XML extension must be available on the WordPress server. iCloud discovery supports a limited official host allowlist but requires real-account compatibility testing.
-
-**Google / Microsoft:** not connected directly in this release. These vendors require a Dendrila-specific OAuth 2.0 authorization service/app (client identity, redirect/callback, consent, token refresh and revocation); OAuth credentials or proxy tokens from Google Site Kit, Simple Calendar, or unrelated plugins cannot be reused. Dendrila clearly marks these destinations as unavailable for direct connection and offers its existing read-only calendar subscription as a separate fallback. Selecting a service alone **never** establishes synchronization.
-
-**Security:** account passwords are sent only to validated HTTPS DAV origins. The AJAX discovery response lists only calendar names/URLs and a ten-minute single-use token, never credentials. The linked destination calendar is selected explicitly. Live end-to-end testing with Nextcloud and iCloud and a WordPress site is still required; static and fixture tests alone are not certification.
+License: GPL-2.0-or-later. [Project repository](https://github.com/jasmin-abernathy/dendrila-calendar).

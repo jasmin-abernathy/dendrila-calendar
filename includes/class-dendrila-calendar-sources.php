@@ -47,13 +47,13 @@ final class Dendrila_Calendar_Sources {
         }
     }
 
-    public static function events( $start_utc, $end_utc, $requested ) {
+    public static function events( $start_utc, $end_utc, $requested, $include_imports = false ) {
         $events = array();
         self::$diagnostics = array();
         foreach ( $requested as $source ) {
             try {
                 if ( 'native' === $source ) {
-                    $items = self::native_events( $start_utc, $end_utc );
+                    $items = self::native_events( $start_utc, $end_utc, $include_imports );
                 } elseif ( 'oryx' === $source ) {
                     $items = self::oryx_events( $start_utc, $end_utc );
                 } elseif ( 'tec' === $source ) {
@@ -105,11 +105,11 @@ final class Dendrila_Calendar_Sources {
         return array_slice( $events, 0, 2000 );
     }
 
-    private static function native_events( $start, $end ) {
-        $posts = get_posts( array(
+    private static function native_events( $start, $end, $include_imports ) {
+        $query = array(
             'post_type' => Dendrila_Calendar::POST_TYPE,
             'post_status' => 'publish',
-            'numberposts' => 500,
+            'numberposts' => 501,
             'orderby' => 'date',
             'order' => 'DESC',
             'meta_query' => array(
@@ -117,7 +117,15 @@ final class Dendrila_Calendar_Sources {
                 array( 'key' => Dendrila_Calendar::START_KEY, 'value' => $end, 'compare' => '<', 'type' => 'DATETIME' ),
                 array( 'key' => Dendrila_Calendar::END_KEY, 'value' => $start, 'compare' => '>', 'type' => 'DATETIME' ),
             ),
-        ) );
+        );
+        if ( ! $include_imports ) {
+            $query['meta_query'][] = array( 'key' => '_dendrila_calendar_import_connection', 'compare' => 'NOT EXISTS' );
+        }
+        $posts = get_posts( $query );
+        if ( count( $posts ) > 500 ) {
+            self::$diagnostics['native'] = __( 'More than 500 local events fall in this date range. Only the first 500 are returned.', 'dendrila-calendar' );
+            $posts = array_slice( $posts, 0, 500 );
+        }
         $results = array();
         foreach ( $posts as $post ) {
             $event_start = self::iso( get_post_meta( $post->ID, Dendrila_Calendar::START_KEY, true ) );
@@ -125,6 +133,7 @@ final class Dendrila_Calendar_Sources {
             if ( $event_start && $event_end ) {
                 $results[] = array(
                     'id' => 'native-' . $post->ID,
+                    'all_day' => (bool) get_post_meta( $post->ID, '_dendrila_calendar_all_day', true ),
                     'title' => get_the_title( $post ),
                     'start' => $event_start,
                     'end' => $event_end,

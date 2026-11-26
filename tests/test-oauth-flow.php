@@ -2,6 +2,7 @@
 /** Simulated Google/Microsoft OAuth consent, token handling and calendar selection. */
 define( 'ABSPATH', '/' );
 define( 'MINUTE_IN_SECONDS', 60 );
+define( 'HOUR_IN_SECONDS', 3600 );
 define( 'DAY_IN_SECONDS', 86400 );
 define( 'DENDRILA_CALENDAR_GOOGLE_CLIENT_ID', 'test-google-id' );
 define( 'DENDRILA_CALENDAR_GOOGLE_CLIENT_SECRET', 'test-google-secret' );
@@ -23,7 +24,7 @@ function wp_unslash( $s ) { return $s; }
 function wp_die( $s ) { throw new RuntimeException( $s ); }
 function current_user_can( $cap ) { return $cap === 'manage_options'; }
 function get_current_user_id() { return 7; }
-function check_admin_referer( $nonce ) { if ( ! in_array( $nonce, array( 'dendrila_calendar_oauth_start', 'dendrila_calendar_oauth_confirm', 'dendrila_calendar_oauth_dedupe' ), true ) ) { throw new RuntimeException( 'Unexpected nonce action' ); } }
+function check_admin_referer( $nonce ) { if ( ! in_array( $nonce, array( 'dendrila_calendar_oauth_start', 'dendrila_calendar_oauth_confirm', 'dendrila_calendar_oauth_dedupe', 'dendrila_calendar_oauth_disconnect', 'dendrila_calendar_oauth_mode' ), true ) ) { throw new RuntimeException( 'Unexpected nonce action' ); } }
 function add_query_arg( $arguments, $url ) {
     return $url . ( strpos( $url, '?' ) === false ? '?' : '&' ) . http_build_query( $arguments );
 }
@@ -35,6 +36,8 @@ function get_transient( $key ) { return $GLOBALS['transients'][ $key ] ?? false;
 function delete_transient( $key ) { unset( $GLOBALS['transients'][ $key ] ); }
 function get_option( $key, $default = array() ) { return $GLOBALS['options'][ $key ] ?? $default; }
 function update_option( $key, $value, $autoload = false ) { $GLOBALS['options'][ $key ] = $value; return true; }
+function get_post_meta( $id, $key, $single = true ) { return $GLOBALS['post_meta'][ $id ][ $key ] ?? ''; }
+function update_post_meta( $id, $key, $value ) { $GLOBALS['post_meta'][ $id ][ $key ] = $value; return true; }
 function wp_generate_uuid4() { return '00000000-1111-4000-8000-123456789012'; }
 function wp_json_encode( $value ) { return json_encode( $value ); }
 function wp_timezone() { return new DateTimeZone( 'Europe/Paris' ); }
@@ -43,6 +46,10 @@ function wp_remote_retrieve_body( $response ) { return $response['body']; }
 function wp_remote_retrieve_response_code( $response ) { return $response['status']; }
 function response( $status, $data ) { return array( 'status' => $status, 'body' => json_encode( $data ) ); }
 class RedirectSignal extends RuntimeException {}
+class WP_Upgrader {
+    public static function create_lock( $name, $ttl ) { return true; }
+    public static function release_lock( $name ) {}
+}
 function add_filter( $tag, $callback ) { $GLOBALS['redirect_host_filter'] = $callback; }
 function remove_filter( $tag, $callback ) { unset( $GLOBALS['redirect_host_filter'] ); }
 function wp_redirect( $url, $code = 302, $origin = '' ) { throw new RedirectSignal( $url ); }
@@ -231,3 +238,41 @@ if ( count( $GLOBALS['calls'] ) !== $before_cleanup_calls ) {
     throw new RuntimeException( 'Consolidating connections must not delete or modify remote events.' );
 }
 echo "OAuth same-calendar reauthorization and safe duplicate consolidation passed\n";
+
+// Disconnect forgets credentials while retaining the destination's identities for later reconnection.
+$saved_links = array( 88 => array( 'remote' => 'remote-import', 'baseline' => 'baseline', 'generation' => 0 ) );
+update_option( 'dc_two_way_links_' . $google_id, $saved_links );
+$_POST = array( 'connection_id' => $google_id );
+$disconnected = redirected( array( 'Dendrila_Calendar_OAuth', 'disconnect' ) );
+$archive = get_option( Dendrila_Calendar_OAuth::ARCHIVES_OPTION );
+if ( isset( Dendrila_Calendar_OAuth::connections()[ $google_id ] ) ||
+     false !== strpos( json_encode( $archive ), 'encrypted:' ) ||
+     false !== strpos( json_encode( $archive ), 'fake-access' ) ) {
+    throw new RuntimeException( 'Disconnected destination retained credentials' );
+}
+$_POST = array( 'provider' => 'google' );
+$reconnect_url = redirected( array( 'Dendrila_Calendar_OAuth', 'start' ) );
+parse_str( parse_url( $reconnect_url, PHP_URL_QUERY ), $reconnect_args );
+$_GET = array( 'state' => $reconnect_args['state'], 'code' => 'reconnect-consent' );
+redirected( $GLOBALS['hooks']['admin_post'] );
+$_POST = array( 'calendar' => 'primary@example.test', 'sources' => array( 'easy_appointments' ) );
+redirected( array( 'Dendrila_Calendar_OAuth', 'confirm' ) );
+$reconnected = Dendrila_Calendar_OAuth::connections();
+if ( ! isset( $reconnected[ $google_id ]['map']['existing-source-key'] ) ||
+     $saved_links !== get_option( 'dc_two_way_links_' . $google_id ) ) {
+    throw new RuntimeException( 'Disconnect/reconnect lost destination identity or two-way links' );
+}
+
+// Compatible links and import markers migrate with an explicitly consolidated duplicate.
+$reconnected['duplicate-with-links'] = $reconnected[ $google_id ];
+update_option( Dendrila_Calendar_OAuth::OPTION, $reconnected );
+update_option( 'dc_two_way_links_duplicate-with-links', array( 99 => array( 'remote' => 'second-import', 'baseline' => 'other', 'generation' => 0 ) ) );
+update_post_meta( 99, '_dendrila_calendar_import_connection', 'duplicate-with-links' );
+$_POST = array( 'connection_id' => 'duplicate-with-links' );
+redirected( array( 'Dendrila_Calendar_OAuth', 'consolidate_duplicate' ) );
+if ( ! isset( get_option( 'dc_two_way_links_' . $google_id )[99] ) ||
+     $google_id !== get_post_meta( 99, '_dendrila_calendar_import_connection' ) ||
+     hash( 'sha256', $google_id . '|second-import' ) !== get_post_meta( 99, '_dendrila_calendar_import_identity' ) ) {
+    throw new RuntimeException( 'Consolidation lost two-way links or orphaned imported events' );
+}
+echo "OAuth disconnect/reconnect identity retention and two-way link consolidation passed\n";
