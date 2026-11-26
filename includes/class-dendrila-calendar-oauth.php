@@ -382,7 +382,7 @@ final class Dendrila_Calendar_OAuth {
         if ( 'google' === $provider ) {
             $dates = ! empty( $event['all_day'] ) ?
                 array( 'start' => array( 'date' => $start->setTimezone( wp_timezone() )->format( 'Y-m-d' ), 'dateTime' => null, 'timeZone' => null ), 'end' => array( 'date' => $end->setTimezone( wp_timezone() )->format( 'Y-m-d' ), 'dateTime' => null, 'timeZone' => null ) ) :
-                array( 'start' => array( 'dateTime' => $start->setTimezone( wp_timezone() )->format( 'Y-m-d\TH:i:sP' ), 'timeZone' => wp_timezone_string() ), 'end' => array( 'dateTime' => $end->setTimezone( wp_timezone() )->format( 'Y-m-d\TH:i:sP' ), 'timeZone' => wp_timezone_string() ) );
+                array( 'start' => array( 'date' => null, 'dateTime' => $start->setTimezone( wp_timezone() )->format( 'Y-m-d\TH:i:sP' ), 'timeZone' => wp_timezone_string() ), 'end' => array( 'date' => null, 'dateTime' => $end->setTimezone( wp_timezone() )->format( 'Y-m-d\TH:i:sP' ), 'timeZone' => wp_timezone_string() ) );
             return array_merge( array( 'summary' => $event['title'] ), $dates );
         }
         if ( ! empty( $event['all_day'] ) ) {
