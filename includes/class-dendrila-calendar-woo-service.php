@@ -9,6 +9,7 @@ final class Dendrila_Calendar_Woo_Service {
     private static $saving = false;
 
     public static function boot() {
+        add_action( 'admin_menu', array( __CLASS__, 'add_service_menu' ), 30 );
         add_filter( 'woocommerce_product_data_tabs', array( __CLASS__, 'tab' ) );
         add_action( 'woocommerce_product_data_panels', array( __CLASS__, 'panel' ) );
         add_action( 'woocommerce_admin_process_product_object', array( __CLASS__, 'prepare' ) );
@@ -22,6 +23,29 @@ final class Dendrila_Calendar_Woo_Service {
         add_action( 'woocommerce_store_api_validate_add_to_cart', array( __CLASS__, 'guard_store_cart' ), 20, 2 );
         add_action( 'woocommerce_check_cart_items', array( __CLASS__, 'check_cart' ) );
         add_action( 'woocommerce_store_api_cart_errors', array( __CLASS__, 'check_store_cart' ), 20, 2 );
+    }
+
+    /** Shortcut under WooCommerce Products. The product remains the only source of truth. */
+    public static function add_service_menu() {
+        if ( ! class_exists( 'WooCommerce' ) || ! current_user_can( 'manage_options' ) || ! current_user_can( 'edit_products' ) ) { return; }
+        $hook = add_submenu_page(
+            'edit.php?post_type=product',
+            __( 'Add an appointment service', 'dendrila-calendar' ),
+            __( 'Add a service', 'dendrila-calendar' ),
+            'edit_products',
+            'dendrila-add-service',
+            array( __CLASS__, 'redirect_add_service' )
+        );
+        if ( $hook ) { add_action( 'load-' . $hook, array( __CLASS__, 'redirect_add_service' ) ); }
+    }
+
+    /** Redirect before the admin page renders; never create a second product or service. */
+    public static function redirect_add_service() {
+        if ( ! current_user_can( 'manage_options' ) || ! current_user_can( 'edit_products' ) ) {
+            wp_die( esc_html__( 'You cannot create appointment services.', 'dendrila-calendar' ) );
+        }
+        wp_safe_redirect( admin_url( 'post-new.php?post_type=product&dendrila_new_service=1' ) );
+        exit;
     }
 
     public static function service_id( $product_id ) {
@@ -50,6 +74,24 @@ final class Dendrila_Calendar_Woo_Service {
         $base = dirname( __DIR__ ); $url = plugin_dir_url( $base . '/dendrila-calendar.php' );
         wp_enqueue_style( 'dendrila-calendar-schedule-admin', $url . 'assets/calendar-schedule-admin.css', array(), (string) filemtime( $base . '/assets/calendar-schedule-admin.css' ) );
         wp_enqueue_script( 'dendrila-calendar-schedule-admin', $url . 'assets/calendar-schedule-admin.js', array(), (string) filemtime( $base . '/assets/calendar-schedule-admin.js' ), true );
+        // New-service shortcut: open the WooCommerce appointment tab with booking enabled.
+        // Nothing is saved until the administrator completes the product form.
+        if ( isset( $_GET['dendrila_new_service'] ) && '1' === $_GET['dendrila_new_service'] &&
+            isset( $_GET['post_type'] ) && 'product' === $_GET['post_type'] ) {
+            wp_add_inline_script( 'dendrila-calendar-schedule-admin', <<<'JS'
+document.addEventListener('DOMContentLoaded', function () {
+    var panel = document.getElementById('dendrila-product-booking');
+    if (!panel) { return; }
+    var enabled = panel.querySelector('input[type="checkbox"][name="dendrila_product_booking"]');
+    var rules = panel.querySelector('input[type="checkbox"][name="dendrila_schedule_rules[enabled]"]');
+    if (enabled) { enabled.checked = true; enabled.dispatchEvent(new Event('change', {bubbles: true})); }
+    if (rules) { rules.checked = true; rules.dispatchEvent(new Event('change', {bubbles: true})); }
+    var tab = document.querySelector('.product_data_tabs li.dendrila_booking_options a');
+    if (tab) { tab.click(); }
+});
+JS
+            );
+        }
         wp_add_inline_style( 'dendrila-calendar-schedule-admin', '#dendrila-product-booking{padding:16px;box-sizing:border-box}#dendrila-product-booking>p{padding:0!important}#dendrila-product-booking label{float:none;width:auto;margin:0}#dendrila-product-booking input[type=number],#dendrila-product-booking input[type=date],#dendrila-product-booking select{float:none;width:100%;max-width:24rem}#dendrila-product-booking .dendrila-product-basics{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:16px;margin:16px 0}#dendrila-product-booking .dendrila-product-basics label{display:block;margin-bottom:6px}' );
     }
 
